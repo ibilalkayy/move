@@ -24,11 +24,11 @@ pub struct InitInfo {
 
     /// The PostgreSQL port
     #[clap(short = 'p', long, help = "Your PostgreSQL port number")]
-    pub port: u32,
+    pub port: String,
 
     /// The PostgreSQL SSLMode
     #[clap(short = 's', long, help = "Your PostgreSQL database SSLMode")]
-    pub sslmode: bool,
+    pub sslmode: String,
 
     /// The PostgreSQL username
     #[clap(short = 'u', long, help = "Your PostgreSQL username")]
@@ -40,11 +40,11 @@ pub struct InitInfo {
 
     /// Your Blockchain wallet private key
     #[clap(short = 'k', long, help = "Blockchain wallet private key")]
-    pub private_key: u128,
+    pub private_key: String,
 
     /// Your Alchemy URL
     #[clap(short = 'e', long, help = "Your alchemy URL")]
-    pub alchemy_url: u128,
+    pub alchemy_url: String,
 }
 
 #[derive(Debug, Parser)]
