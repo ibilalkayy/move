@@ -7,7 +7,7 @@ pub struct InitInfo {
     pub app_password: String,
 
     /// The PostgreSQL DB name
-    #[clap(short = 'n', long, help = "Your PostgreSQL database name")]
+    #[clap(short = 'd', long, help = "Your PostgreSQL database name")]
     pub name: String,
 
     /// Your Gmail address for alert notifications
@@ -31,23 +31,31 @@ pub struct InitInfo {
     pub sslmode: bool,
 
     /// The PostgreSQL username
-    #[clap(short = 'u', long, help = "Your PostgreSQL database username")]
+    #[clap(short = 'u', long, help = "Your PostgreSQL username")]
     pub db_username: String,
 
     /// Your username
-    #[clap(short = 'e', long, help = "Your username")]
+    #[clap(short = 'n', long, help = "Your username")]
     pub username: String,
+
+    /// Your Blockchain wallet private key
+    #[clap(short = 'k', long, help = "Blockchain wallet private key")]
+    pub private_key: u128,
+
+    /// Your Alchemy URL
+    #[clap(short = 'e', long, help = "Your alchemy URL")]
+    pub alchemy_url: u128,
 }
 
 #[derive(Debug, Parser)]
 pub struct CreateInfo {
-    /// Write the Total amount for the category
-    #[clap(short, long)]
-    pub amount: u64,
-
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
     pub category: String,
+
+    /// Write the total amount for the category
+    #[clap(short, long)]
+    pub amount: u64,
 }
 
 #[derive(Debug, Parser)]
@@ -60,7 +68,11 @@ pub struct BudgetViewInfo {
 #[derive(Debug, Parser)]
 pub struct GetInfo {
     /// CSV file name where the data will be stored
-    #[clap(short = 'n', long, help = "CSV file name where the data will be stored")]
+    #[clap(
+        short = 'n',
+        long,
+        help = "CSV file name where the data will be stored"
+    )]
     pub filename: String,
 
     /// File path to store the data in
@@ -70,10 +82,6 @@ pub struct GetInfo {
 
 #[derive(Debug, Parser)]
 pub struct BudgetUpdateInfo {
-    /// New amount of the category to update
-    #[clap(short, long)]
-    pub amount: u64,
-
     /// New category name to allocate
     #[clap(short, long)]
     pub new_category: String,
@@ -81,6 +89,10 @@ pub struct BudgetUpdateInfo {
     /// Old category name to update
     #[clap(short, long)]
     pub old_category: String,
+
+    /// New amount of the category to update
+    #[clap(short, long)]
+    pub amount: u64,
 }
 
 #[derive(Debug, Parser)]
@@ -97,11 +109,19 @@ pub struct SetupInfo {
     pub category: String,
 
     /// Frequency of notifications (e.g., hourly, daily, weekly, monthly)
-    #[clap(short = 'f', long, help = "Frequency of notifications (e.g., hourly, daily, weekly, monthly)")]
+    #[clap(
+        short = 'f',
+        long,
+        help = "Frequency of notifications (e.g., hourly, daily, weekly, monthly)"
+    )]
     pub frequency: String,
 
     /// Preferred method of notification [email or CLI] message
-    #[clap(short = 't', long, help = "Preferred method of notification [email or CLI] message")]
+    #[clap(
+        short = 't',
+        long,
+        help = "Preferred method of notification [email or CLI] message"
+    )]
     pub method: String,
 
     /// A day to set the notification
@@ -146,11 +166,19 @@ pub struct UpdateAlertInfo {
     pub category: String,
 
     /// Frequency of notifications (e.g., hourly, daily, weekly, monthly)
-    #[clap(short = 'f', long, help = "Frequency of notifications (e.g., hourly, daily, weekly, monthly)")]
+    #[clap(
+        short = 'f',
+        long,
+        help = "Frequency of notifications (e.g., hourly, daily, weekly, monthly)"
+    )]
     pub frequency: String,
 
     /// Preferred method of notification [email or CLI] message
-    #[clap(short = 't', long, help = "Preferred method of notification [email or CLI] message")]
+    #[clap(
+        short = 't',
+        long,
+        help = "Preferred method of notification [email or CLI] message"
+    )]
     pub method: String,
 
     /// A day to set the notification
@@ -183,14 +211,14 @@ pub struct RemoveAlertInfo {
 
 #[derive(Debug, Parser)]
 pub struct AddInfo {
+    /// Specify a category to include in the total amount
+    #[clap(short, long)]
+    pub category: String,
+
     /// Write the total amount that you want to set
     #[clap(short, long)]
     pub amount: u64,
 
-    /// Specify a category to include in the total amount
-    #[clap(short, long)]
-    pub category: String,
-    
     /// Provide a label for setting up your total amount
     #[clap(short, long)]
     pub label: String,
@@ -198,25 +226,17 @@ pub struct AddInfo {
 
 #[derive(Debug, Parser)]
 pub struct ViewInfo {
-    /// View the total amount
-    #[clap(short, long)]
-    pub amount: u64,
-
     /// View the categories in total amount
     #[clap(short, long)]
     pub categories: String,
+
+    /// View the total amount
+    #[clap(short, long)]
+    pub amount: u64,
 }
 
 #[derive(Debug, Parser)]
 pub struct UpdateInfo {
-    /// Write the total amount that you want to update
-    #[clap(short, long)]
-    pub amount: u64,
-
-    /// Write the label that you want to update
-    #[clap(short, long)]
-    pub label: String,
-
     // Write the new category to update with
     #[clap(short, long)]
     pub new_category: String,
@@ -224,6 +244,14 @@ pub struct UpdateInfo {
     // Write the old category to update
     #[clap(short, long)]
     pub old_category: String,
+
+    /// Write the total amount that you want to update
+    #[clap(short, long)]
+    pub amount: u64,
+
+    /// Write the label that you want to update
+    #[clap(short, long)]
+    pub label: String,
 }
 
 #[derive(Debug, Parser)]

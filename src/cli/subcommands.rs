@@ -1,21 +1,9 @@
-use clap::{Parser, Subcommand};
 use crate::cli::flags::{
-    InitInfo,
-    CreateInfo,
-    BudgetViewInfo,
-    GetInfo,
-    BudgetUpdateInfo,
-    DeleteInfo,
-    SetupInfo,
-    MessageInfo,
-    ViewAlertInfo,
-    UpdateAlertInfo,
-    RemoveAlertInfo,
-    AddInfo,
-    ViewInfo,
-    UpdateInfo,
-    RemoveInfo
+    AddInfo, BudgetUpdateInfo, BudgetViewInfo, CreateInfo, DeleteInfo, GetInfo, InitInfo,
+    MessageInfo, RemoveAlertInfo, RemoveInfo, SetupInfo, UpdateAlertInfo, UpdateInfo,
+    ViewAlertInfo, ViewInfo,
 };
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
@@ -138,7 +126,7 @@ pub enum StatusSubcommand {
 
     /// Make the total amount inactive
     Inactive,
-    
+
     /// Check the status of the total amount
     Check,
 }

@@ -1,5 +1,5 @@
-use clap::Parser;
 use crate::cli::subcommands::Command;
+use clap::Parser;
 
 #[derive(Debug, Parser)]
 #[clap(author, about, version)]
