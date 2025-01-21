@@ -1,7 +1,19 @@
 use crate::cli::{command::Move, subcommands::Command, subcommands::InitSubcommand};
 use crate::db::db::create_table;
 use clap::Parser;
-use std::{fs::File, io::Write};
+use std::{io::Write, fs::OpenOptions};
+
+fn file_options(data_detail: String) {
+    let file_path = ".env";
+    let mut file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .append(true)
+        .open(file_path)
+        .expect("failed to open a file");
+
+    file.write_all(data_detail.as_bytes()).expect("failed to write to file");
+}
 
 pub fn cli() {
     let moves = Move::parse();
@@ -10,13 +22,11 @@ pub fn cli() {
             match details.init_subcommand {
                 InitSubcommand::Database(db_info) => {
                     let data_detail = format!(
-                        "DATABASE_URL=postgres://{}:{}@{}:{}/{}",
+                        "\nDATABASE_URL=postgres://{}:{}@{}:{}/{}",
                         db_info.db_username, db_info.password, db_info.host, db_info.port, db_info.name,
                     );
 
-                    let mut data_file = File::create(".env").expect("Failed to create a file");
-                    data_file.write(data_detail.as_bytes()).expect("Failed to write in the file");
-
+                    file_options(data_detail);
                     println!("Database data is successfully inserted");
 
                     let _ = create_table();
@@ -24,24 +34,20 @@ pub fn cli() {
 
                 InitSubcommand::Blockchain(b_info) => {
                     let data_detail = format!(
-                        "PRIVATE_KEY={}\nALCHEMY_URL={}\n", b_info.private_key, b_info.alchemy_url,
+                        "\nPRIVATE_KEY={}\nALCHEMY_URL={}\n", b_info.private_key, b_info.alchemy_url,
                     );
                     
-                    let mut data_file = File::create(".env").expect("Failed to create a file");
-                    data_file.write(data_detail.as_bytes()).expect("Failed to write in the file");
-
+                    file_options(data_detail);
                     println!("Blockchain data is successfully inserted");
                 }
 
                 InitSubcommand::Gmail(g_info) => {
                     let data_detail = format!(
-                        "GMAIL_USERNAME={}\nGMAIL_ADDRESS={}\nGMAIL_APP_PASSWORD={}",
+                        "\nGMAIL_USERNAME={}\nGMAIL_ADDRESS={}\nGMAIL_APP_PASSWORD={}",
                         g_info.username, g_info.gmail, g_info.app_password,
                     );
                     
-                    let mut data_file = File::create(".env").expect("Failed to create a file");
-                    data_file.write(data_detail.as_bytes()).expect("Failed to write in the file");
-
+                    file_options(data_detail);
                     println!("Gmail data is successfully inserted");
                 }
             }
