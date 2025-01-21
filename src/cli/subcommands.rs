@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    AddInfo, BudgetUpdateInfo, BudgetViewInfo, CreateInfo, DeleteInfo, GetInfo, InitInfo,
+    AddInfo, BudgetUpdateInfo, BudgetViewInfo, CreateInfo, DeleteInfo, GetInfo, DBInfo, BlockchainInfo, GmailInfo,
     MessageInfo, RemoveAlertInfo, RemoveInfo, SetupInfo, UpdateAlertInfo, UpdateInfo,
     ViewAlertInfo, ViewInfo,
 };
@@ -7,7 +7,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Initialize your flow application before running other commands.
+    /// Initialize your move application by inserting the database credentials.
     Init(InitInfo),
 
     /// Allows users to manage their budget allocations for different spending categories
@@ -18,6 +18,24 @@ pub enum Command {
 
     /// Manage your total amount
     TotalAmount(TotalAmountInfo),
+}
+
+#[derive(Debug, Parser)]
+pub struct InitInfo {
+    #[clap(subcommand)]
+    pub init_subcommand: InitSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum InitSubcommand {
+    /// Insert the database credentials
+    Database(DBInfo),
+
+    /// Insert the blockchain credentials
+    Blockchain(BlockchainInfo),
+
+    /// Insert the gmail credentials
+    Gmail(GmailInfo),
 }
 
 #[derive(Debug, Parser)]

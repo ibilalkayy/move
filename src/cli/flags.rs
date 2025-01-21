@@ -1,50 +1,52 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-pub struct InitInfo {
-    /// Write the app password of your gmail account
-    #[clap(short = 'a', long, help = "Your PostgreSQL app password")]
-    pub app_password: String,
-
+pub struct DBInfo {
     /// The PostgreSQL DB name
-    #[clap(short = 'd', long, help = "Your PostgreSQL database name")]
+    #[clap(short = 'n', long, help = "Your PostgreSQL database name")]
     pub name: String,
-
-    /// Your Gmail address for alert notifications
-    #[clap(short = 'g', long, help = "Your Gmail address")]
-    pub gmail: String,
 
     /// The PostgreSQL host
     #[clap(short = 'o', long, help = "Your PostgreSQL host")]
     pub host: String,
 
     /// The PostgreSQL password
-    #[clap(short = 'w', long, help = "Your PostgreSQL password")]
+    #[clap(short = 'a', long, help = "Your PostgreSQL password")]
     pub password: String,
 
     /// The PostgreSQL port
     #[clap(short = 'p', long, help = "Your PostgreSQL port number")]
     pub port: String,
 
-    /// The PostgreSQL SSLMode
-    #[clap(short = 's', long, help = "Your PostgreSQL database SSLMode")]
-    pub sslmode: String,
-
     /// The PostgreSQL username
     #[clap(short = 'u', long, help = "Your PostgreSQL username")]
     pub db_username: String,
+}
 
-    /// Your username
-    #[clap(short = 'n', long, help = "Your username")]
-    pub username: String,
-
+#[derive(Debug, Parser)]
+pub struct BlockchainInfo {
     /// Your Blockchain wallet private key
-    #[clap(short = 'k', long, help = "Blockchain wallet private key")]
+    #[clap(short = 'p', long, help = "Blockchain wallet private key")]
     pub private_key: String,
 
     /// Your Alchemy URL
-    #[clap(short = 'e', long, help = "Your alchemy URL")]
+    #[clap(short = 'a', long, help = "Your alchemy URL")]
     pub alchemy_url: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct GmailInfo {
+    /// Your username
+    #[clap(short = 'u', long, help = "Your username")]
+    pub username: String,
+    
+    /// Your Gmail address for alert notifications
+    #[clap(short = 'g', long, help = "Your Gmail address")]
+    pub gmail: String,
+
+    /// Write the app password of your gmail account
+    #[clap(short = 'a', long, help = "Your PostgreSQL app password")]
+    pub app_password: String,
 }
 
 #[derive(Debug, Parser)]

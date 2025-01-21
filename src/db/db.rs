@@ -11,7 +11,7 @@ fn connection() -> Result<Client, Error> {
 
 pub fn create_table() -> Result<(), Error> {
     let mut client = connection()?;
-    let sql_file_path = Path::new("../sql/create_table.sql");
+    let sql_file_path = Path::new("sql/create_table.sql");
     let sql_query = fs::read_to_string(sql_file_path).expect("Failed to read the SQL file");
     client.batch_execute(&sql_query)?;
     Ok(())
