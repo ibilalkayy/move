@@ -1,6 +1,7 @@
 use dotenv::dotenv;
 use postgres::{Client, NoTls, Error};
 use std::{fs, env, path::Path};
+use crate::cli::flags::BudgetData;
 
 fn connection() -> Result<Client, Error> {
     dotenv().ok();
@@ -15,4 +16,26 @@ pub fn create_table() -> Result<(), Error> {
     let sql_query = fs::read_to_string(sql_file_path).expect("Failed to read the SQL file");
     client.batch_execute(&sql_query)?;
     Ok(())
+}
+
+impl BudgetData {
+    pub fn insert_data(&self) -> Result<(), Error> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "insert into budget(category, amount) values($1, $2::BIGINT)",
+            &[&self.category, &self.amount],
+        )?;
+        Ok(())
+    }
+
+    pub fn view_data(&self) -> Result<(), Error> {
+        let mut client = connection()?;
+        for row in client.query("select category, amount::BIGINT from budget where category=$1", &[&self.category])? {
+            let category: String = row.get(0);
+            let amount: i64 = row.get(1);
+
+            println!("Category: {}\nAmount: {}", category, amount);
+        }
+        Ok(())
+    }
 }

@@ -1,4 +1,5 @@
-create table if not exists datas (
+create table if not exists budget (
     id serial primary key,
-    names text not null
+    category text not null,
+    amount BIGINT not null
 );

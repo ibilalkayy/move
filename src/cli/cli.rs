@@ -1,7 +1,7 @@
-use crate::cli::{command::Move, subcommands::Command, subcommands::InitSubcommand};
+use crate::cli::{command::Move, subcommands::Command, subcommands::InitSubcommand, subcommands::BudgetSubcommand};
 use crate::db::db::create_table;
-use clap::Parser;
 use std::{io::Write, fs::OpenOptions};
+use clap::Parser;
 
 fn file_options(data_detail: String) {
     let file_path = ".env";
@@ -28,8 +28,6 @@ pub fn cli() {
 
                     file_options(data_detail);
                     println!("Database data is successfully inserted");
-
-                    let _ = create_table();
                 }
 
                 InitSubcommand::Blockchain(b_info) => {
@@ -53,8 +51,37 @@ pub fn cli() {
             }
         }
 
-        Command::Budget(_details) => {
-            println!("Manage the budget");
+        Command::Budget(details) => {
+            match details.budget_subcommand {
+                BudgetSubcommand::Create(budget_info) => {
+                    let _ = create_table();
+                    let result = budget_info.insert_data();
+                    match result {
+                        Ok(_) => println!("Budget is successfully created"),
+                        Err(err) => println!("err: {}", err),    
+                    }
+                }
+
+                BudgetSubcommand::View(budget_info) => {
+                    let _ = budget_info.view_data();
+                }
+
+                BudgetSubcommand::Get(_) => {
+                    println!("get subcommand");
+                }
+
+                BudgetSubcommand::Update(_) => {
+                    println!("update subcommand");
+                }
+
+                BudgetSubcommand::Delete(_) => {
+                    println!("delete subcommand");
+                }
+
+                BudgetSubcommand::Alert(_) => {
+                    println!("alert subcommand");
+                }
+            }
         }
 
         Command::Spend(_details) => {

@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    AddInfo, BudgetUpdateInfo, BudgetViewInfo, CreateInfo, DeleteInfo, GetInfo, DBInfo, BlockchainInfo, GmailInfo,
+    AddInfo, BudgetUpdateInfo, BudgetData, DeleteInfo, GetInfo, DBInfo, BlockchainInfo, GmailInfo,
     MessageInfo, RemoveAlertInfo, RemoveInfo, SetupInfo, UpdateAlertInfo, UpdateInfo,
     ViewAlertInfo, ViewInfo,
 };
@@ -10,7 +10,7 @@ pub enum Command {
     /// Initialize your move application by inserting the database credentials.
     Init(InitInfo),
 
-    /// Allows users to manage their budget allocations for different spending categories
+    /// Allows users to manage their budget allocations for different categories
     Budget(BudgetInfo),
 
     /// Provides spending services on various categories
@@ -47,10 +47,10 @@ pub struct BudgetInfo {
 #[derive(Debug, Subcommand)]
 pub enum BudgetSubcommand {
     /// Create the budget for different categories
-    Create(CreateInfo),
+    Create(BudgetData),
 
     /// View the budget details
-    View(BudgetViewInfo),
+    View(BudgetData),
 
     /// Get the budget data in CSV
     Get(GetInfo),
