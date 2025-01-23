@@ -57,7 +57,7 @@ pub struct BudgetData {
 
     /// Write the total amount for the category
     #[clap(short, long)]
-    pub amount: i64,
+    pub amount: Option<i64>,
 }
 
 #[derive(Debug, Parser)]

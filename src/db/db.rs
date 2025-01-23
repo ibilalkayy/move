@@ -19,16 +19,20 @@ pub fn create_table() -> Result<(), Error> {
 }
 
 impl BudgetData {
-    pub fn insert_data(&self) -> Result<(), Error> {
+    pub fn insert_data(&self) -> Result<(), Box<dyn std::error::Error>> {
         let mut client = connection()?;
-        let _ = client.execute(
-            "insert into budget(category, amount) values($1, $2::BIGINT)",
-            &[&self.category, &self.amount],
-        )?;
-        Ok(())
+        if let Some(amount) = self.amount {
+            let _ = client.execute(
+                "insert into budget(category, amount) values($1, $2::BIGINT)",
+                &[&self.category, &amount],
+            )?;
+            Ok(())
+        } else {
+            Err("Amount is required to create a budget".into()) // Convert string to error type
+        }
     }
 
-    pub fn view_data(&self) -> Result<(), Error> {
+    pub fn view_data(&self) -> Result<(), Box<dyn std::error::Error>> {
         let mut client = connection()?;
         for row in client.query("select category, amount::BIGINT from budget where category=$1", &[&self.category])? {
             let category: String = row.get(0);
