@@ -1,9 +1,9 @@
+use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
 use csv::Writer;
 use dotenv::dotenv;
-use std::error::Error;
 use postgres::{Client, NoTls};
-use std::{fs, env, path::Path};
-use crate::cli::flags::{CreateBudget, BudgetData, GetBudget};
+use std::error::Error;
+use std::{env, fs, path::Path};
 
 fn connection() -> Result<Client, Box<dyn Error>> {
     dotenv().ok();
@@ -17,6 +17,17 @@ pub fn create_table() -> Result<(), Box<dyn Error>> {
     let sql_file_path = Path::new("sql/create_table.sql");
     let sql_query = fs::read_to_string(sql_file_path).expect("Failed to read the SQL file");
     client.batch_execute(&sql_query)?;
+    Ok(())
+}
+
+pub fn list_data() -> Result<(), Box<dyn Error>> {
+    let mut client = connection()?;
+    for row in client.query("select category, amount from budget", &[])? {
+        let category: String = row.get(0);
+        let amount: String = row.get(1);
+
+        println!("Category: {}\nAmount: {}", category, amount);
+    }
     Ok(())
 }
 
@@ -34,7 +45,10 @@ impl CreateBudget {
 impl BudgetData {
     pub fn view_data(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
-        for row in client.query("select category, amount from budget where category=$1", &[&self.category])? {
+        for row in client.query(
+            "select category, amount from budget where category=$1",
+            &[&self.category],
+        )? {
             let category: String = row.get(0);
             let amount: String = row.get(1);
 
@@ -45,10 +59,7 @@ impl BudgetData {
 
     pub fn delete_data(&self) -> Result<String, Box<dyn Error>> {
         let mut client = connection()?;
-        let _ = client.execute(
-            "delete from budget where category=$1",
-            &[&self.category],
-        )?;
+        let _ = client.execute("delete from budget where category=$1", &[&self.category])?;
         Ok(self.category.clone())
     }
 }
@@ -69,9 +80,20 @@ impl GetBudget {
 
         wtr.write_record(&["Category", "Amount"])?;
         for (cat, amt) in category.iter().zip(amount.iter()) {
-           wtr.write_record(&[cat, amt])?;
+            wtr.write_record(&[cat, amt])?;
         }
         wtr.flush()?;
+        Ok(())
+    }
+}
+
+impl UpdateBudget {
+    pub fn update_data(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "update budget set category=$1, amount=$2 where category=$3",
+            &[&self.new_category, &self.amount, &self.old_category],
+        )?;
         Ok(())
     }
 }

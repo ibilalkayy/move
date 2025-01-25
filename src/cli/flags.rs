@@ -39,7 +39,7 @@ pub struct GmailInfo {
     /// Your username
     #[clap(short = 'u', long, help = "Your username")]
     pub username: String,
-    
+
     /// Your Gmail address for alert notifications
     #[clap(short = 'g', long, help = "Your Gmail address")]
     pub gmail: String,
@@ -70,7 +70,11 @@ pub struct BudgetData {
 #[derive(Debug, Parser)]
 pub struct GetBudget {
     /// CSV file name where the data will be stored
-    #[clap(short = 'n', long, help = "CSV file name where the data will be stored")]
+    #[clap(
+        short = 'n',
+        long,
+        help = "CSV file name where the data will be stored"
+    )]
     pub filename: String,
 
     /// File path to store the data in
@@ -80,13 +84,13 @@ pub struct GetBudget {
 
 #[derive(Debug, Parser)]
 pub struct UpdateBudget {
-    /// New category name to allocate
-    #[clap(short, long)]
-    pub new_category: String,
-
-    /// Old category name to update
+    /// Old category name to find
     #[clap(short, long)]
     pub old_category: String,
+
+    /// New category name to update
+    #[clap(short, long)]
+    pub new_category: String,
 
     /// New amount of the category to update
     #[clap(short, long)]
@@ -116,23 +120,43 @@ pub struct SetupInfo {
     pub method: String,
 
     /// A day to set the notification
-    #[clap(short = 'd', long, help = "A day to set the notification")]
+    #[clap(
+        short = 'd',
+        long,
+        help = "A day to set the notification"
+    )]
     pub day: String,
 
     ///  An Hour to set the notification
-    #[clap(short = 'o', long, help = "An hour to set the notification")]
+    #[clap(
+        short = 'o',
+        long,
+        help = "An hour to set the notification"
+    )]
     pub hour: String,
 
-    /// The minute to set the notification
-    #[clap(short = 'm', long, help = "The minute to set the notification")]
+    /// A minute to set the notification
+    #[clap(
+        short = 'm',
+        long,
+        help = "A minute to set the notification"
+    )]
     pub minute: String,
 
-    /// The second to set the notification
-    #[clap(short = 's', long, help = "The second to set the notification")]
+    /// A second to set the notification
+    #[clap(
+        short = 's',
+        long,
+        help = "A second to set the notification"
+    )]
     pub second: String,
 
     /// Write a weekday to set the notification
-    #[clap(short = 'w', long, help = "Write a weekday to set the notification")]
+    #[clap(
+        short = 'w',
+        long,
+        help = "Write a weekday to set the notification"
+    )]
     pub weekday: String,
 }
 
@@ -172,24 +196,42 @@ pub struct UpdateAlertInfo {
     )]
     pub method: String,
 
-    /// A day to set the notification
-    #[clap(short = 'd', long, help = "A day to set the notification")]
+    /// A day to update the notification
+    #[clap(
+        short = 'd',
+        long,
+        help = "A day to update the notification"
+    )]
     pub day: String,
 
-    ///  An Hour to set the notification
-    #[clap(short = 'o', long, help = " An hour to set the notification")]
+    ///  An Hour to update the notification
+    #[clap(
+        short = 'o',
+        long,
+        help = "An hour to update the notification")]
     pub hour: String,
 
-    /// The minute to set the notification
-    #[clap(short = 'm', long, help = "The minute to set the notification")]
+    /// A minute to update the notification
+    #[clap(
+        short = 'm',
+        long,
+        help = "A minute to update the notification"
+    )]
     pub minute: String,
 
-    /// The second to set the notification
-    #[clap(short = 's', long, help = "The second to set the notification")]
+    /// A second to update the notification
+    #[clap(
+        short = 's',
+        long,
+        help = "A second to update the notification")]
     pub second: String,
 
-    /// Write a weekday to set the notification
-    #[clap(short = 'w', long, help = "Write a weekday to set the notification")]
+    /// Write a weekday to update the notification
+    #[clap(
+        short = 'w',
+        long,
+        help = "Write a weekday to update the notification"
+    )]
     pub weekday: String,
 }
 
