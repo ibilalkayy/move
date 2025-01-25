@@ -1,4 +1,4 @@
-use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
+use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData};
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
@@ -93,6 +93,35 @@ impl UpdateBudget {
         let _ = client.execute(
             "update budget set category=$1, amount=$2 where category=$3",
             &[&self.new_category, &self.amount, &self.old_category],
+        )?;
+        Ok(())
+    }
+}
+
+impl AlertData {
+    pub fn create_alert(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "insert into alert(
+                category,
+                frequency,
+                method,
+                dayz,
+                hourz,
+                minutez,
+                secondz,
+                weekdays
+            ) values($1, $2, $3, $4, $5, $6, $7, $8)",
+            &[
+                &self.category, 
+                &self.frequency,
+                &self.method,
+                &self.day,
+                &self.hour,
+                &self.minute,
+                &self.second,
+                &self.weekday,
+            ],
         )?;
         Ok(())
     }

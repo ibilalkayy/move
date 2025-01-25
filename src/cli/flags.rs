@@ -98,9 +98,13 @@ pub struct UpdateBudget {
 }
 
 #[derive(Debug, Parser)]
-pub struct SetupInfo {
+pub struct AlertData {
     /// Category name to take its budget amount
-    #[clap(short = 'c', long, help = "Category name to take its budget amount")]
+    #[clap(
+        short = 'c',
+        long,
+        help = "Category name to take its budget amount"
+    )]
     pub category: String,
 
     /// Frequency of notifications (e.g., hourly, daily, weekly, monthly)
@@ -119,43 +123,43 @@ pub struct SetupInfo {
     )]
     pub method: String,
 
-    /// A day to set the notification
+    /// A day for notification
     #[clap(
         short = 'd',
         long,
-        help = "A day to set the notification"
+        help = "A day for notification"
     )]
     pub day: String,
 
-    ///  An Hour to set the notification
+    ///  An Hour for notification
     #[clap(
         short = 'o',
         long,
-        help = "An hour to set the notification"
+        help = "An hour for notification"
     )]
     pub hour: String,
 
-    /// A minute to set the notification
+    /// A minute for notification
     #[clap(
         short = 'm',
         long,
-        help = "A minute to set the notification"
+        help = "A minute for notification"
     )]
     pub minute: String,
 
-    /// A second to set the notification
+    /// A second for notification
     #[clap(
         short = 's',
         long,
-        help = "A second to set the notification"
+        help = "A second for notification"
     )]
     pub second: String,
 
-    /// Write a weekday to set the notification
+    /// Write a weekday for notification
     #[clap(
         short = 'w',
         long,
-        help = "Write a weekday to set the notification"
+        help = "Write a weekday for notification"
     )]
     pub weekday: String,
 }
@@ -172,67 +176,6 @@ pub struct ViewAlertInfo {
     /// Write the category to see the alert values
     #[clap(short, long)]
     pub category: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct UpdateAlertInfo {
-    /// Category name to take its budget amount
-    #[clap(short = 'c', long, help = "Category name to take its budget amount")]
-    pub category: String,
-
-    /// Frequency of notifications (e.g., hourly, daily, weekly, monthly)
-    #[clap(
-        short = 'f',
-        long,
-        help = "Frequency of notifications (e.g., hourly, daily, weekly, monthly)"
-    )]
-    pub frequency: String,
-
-    /// Preferred method of notification [email or CLI] message
-    #[clap(
-        short = 't',
-        long,
-        help = "Preferred method of notification [email or CLI] message"
-    )]
-    pub method: String,
-
-    /// A day to update the notification
-    #[clap(
-        short = 'd',
-        long,
-        help = "A day to update the notification"
-    )]
-    pub day: String,
-
-    ///  An Hour to update the notification
-    #[clap(
-        short = 'o',
-        long,
-        help = "An hour to update the notification")]
-    pub hour: String,
-
-    /// A minute to update the notification
-    #[clap(
-        short = 'm',
-        long,
-        help = "A minute to update the notification"
-    )]
-    pub minute: String,
-
-    /// A second to update the notification
-    #[clap(
-        short = 's',
-        long,
-        help = "A second to update the notification")]
-    pub second: String,
-
-    /// Write a weekday to update the notification
-    #[clap(
-        short = 'w',
-        long,
-        help = "Write a weekday to update the notification"
-    )]
-    pub weekday: String,
 }
 
 #[derive(Debug, Parser)]

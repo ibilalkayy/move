@@ -1,5 +1,7 @@
-use crate::cli::{
-    command::Move, subcommands::BudgetSubcommand, subcommands::Command, subcommands::InitSubcommand,
+use crate::cli::command::Move;
+
+use crate::cli::subcommands::{
+    Command, InitSubcommand, BudgetSubcommand, AlertSubcommand,
 };
 use crate::data::database::{create_table, list_data};
 use clap::Parser;
@@ -59,7 +61,7 @@ pub fn cli() {
                 let result = create_budget.insert_data();
                 match result {
                     Ok(_) => println!("Budget is successfully created"),
-                    Err(err) => println!("err: {}", err),
+                    Err(err) => println!("Error: {}", err),
                 }
             }
 
@@ -89,8 +91,31 @@ pub fn cli() {
                 }
             }
 
-            BudgetSubcommand::Alert(_) => {
-                println!("alert subcommand");
+            BudgetSubcommand::Alert(alert_budget) => match alert_budget.alert_subcommand {
+                AlertSubcommand::Setup(alert_data) => {
+                    let _ = create_table();
+                    let result = alert_data.create_alert();
+                    match result {
+                        Ok(_) => println!("Alert is successfully created"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+                }
+                
+                AlertSubcommand::Message(_) => {
+                    println!("message about the alert");
+                }
+
+                AlertSubcommand::View(_) => {
+                    println!("view the alert");
+                }
+
+                AlertSubcommand::Update(_) => {
+                    println!("update the alert");
+                }
+
+                AlertSubcommand::Remove(_) => {
+                    println!("remove the alert");
+                }
             }
         },
 

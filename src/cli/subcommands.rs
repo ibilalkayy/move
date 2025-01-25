@@ -1,6 +1,6 @@
 use crate::cli::flags::{
     AddInfo, BlockchainInfo, BudgetData, CreateBudget, DBInfo, GetBudget, GmailInfo, MessageInfo,
-    RemoveAlertInfo, RemoveInfo, SetupInfo, UpdateAlertInfo, UpdateBudget, UpdateInfo,
+    RemoveAlertInfo, RemoveInfo, AlertData, UpdateBudget, UpdateInfo,
     ViewAlertInfo, ViewInfo,
 };
 use clap::{Parser, Subcommand};
@@ -65,11 +65,11 @@ pub enum BudgetSubcommand {
     Delete(BudgetData),
 
     /// Get the alert after passing the budget
-    Alert(AlertInfo),
+    Alert(BudgetAlert),
 }
 
 #[derive(Debug, Parser)]
-pub struct AlertInfo {
+pub struct BudgetAlert {
     #[clap(subcommand)]
     pub alert_subcommand: AlertSubcommand,
 }
@@ -77,7 +77,7 @@ pub struct AlertInfo {
 #[derive(Debug, Subcommand)]
 pub enum AlertSubcommand {
     /// Setup for alert notification
-    Setup(SetupInfo),
+    Setup(AlertData),
 
     /// Get alert notifications in your email
     Message(MessageInfo),
@@ -85,8 +85,8 @@ pub enum AlertSubcommand {
     /// View the alert notifications
     View(ViewAlertInfo),
 
-    /// Update the alert values for notification
-    Update(UpdateAlertInfo),
+    /// Update the alert values
+    Update(AlertData),
 
     /// Remove the alert values
     Remove(RemoveAlertInfo),
