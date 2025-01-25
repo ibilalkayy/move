@@ -1,7 +1,7 @@
 use dotenv::dotenv;
 use postgres::{Client, NoTls, Error};
 use std::{fs, env, path::Path};
-use crate::cli::flags::{CreateBudget, BudgetData};
+use crate::cli::flags::{CreateBudget, BudgetData, GetBudget};
 
 fn connection() -> Result<Client, Error> {
     dotenv().ok();
@@ -48,5 +48,22 @@ impl BudgetData {
             &[&self.category],
         )?;
         Ok(self.category.clone())
+    }
+}
+
+impl GetBudget {
+    pub fn get_data(&self) -> Result<(), Error> {
+        let mut client = connection()?;
+        let mut category: Vec<String> = Vec::new();
+        let mut amount: Vec<i64> = Vec::new();
+
+        for row in client.query("select category, amount::BIGINT from budget", &[])? {
+            category.push(row.get(0));
+            amount.push(row.get(1));
+        }
+
+        println!("Category: {:?}\nAmount: {:?}", category, amount);
+
+        Ok(())
     }
 }

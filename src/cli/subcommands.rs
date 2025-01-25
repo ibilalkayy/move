@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    AddInfo, BudgetUpdateInfo, BudgetData, CreateBudget, GetBudget, DBInfo, BlockchainInfo, GmailInfo,
+    AddInfo, UpdateBudget, BudgetData, CreateBudget, GetBudget, DBInfo, BlockchainInfo, GmailInfo,
     MessageInfo, RemoveAlertInfo, RemoveInfo, SetupInfo, UpdateAlertInfo, UpdateInfo,
     ViewAlertInfo, ViewInfo,
 };
@@ -52,11 +52,11 @@ pub enum BudgetSubcommand {
     /// View the budget details
     View(BudgetData),
 
-    /// Get the budget data in CSV
+    /// Get the budget data in a CSV file
     Get(GetBudget),
 
     /// Update the budget details
-    Update(BudgetUpdateInfo),
+    Update(UpdateBudget),
 
     /// Delete the budget details
     Delete(BudgetData),

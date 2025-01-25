@@ -1,5 +1,5 @@
 use crate::cli::{command::Move, subcommands::Command, subcommands::InitSubcommand, subcommands::BudgetSubcommand};
-use crate::db::db::create_table;
+use crate::data::database::create_table;
 use std::{io::Write, fs::OpenOptions};
 use clap::Parser;
 
@@ -66,8 +66,8 @@ pub fn cli() {
                     let _ = budget_data.view_data();
                 }
 
-                BudgetSubcommand::Get(_) => {
-                    println!("get subcommand")
+                BudgetSubcommand::Get(get_budget) => {
+                    let _ = get_budget.get_data();
                 }
 
                 BudgetSubcommand::Update(_) => {

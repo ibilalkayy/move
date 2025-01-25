@@ -79,7 +79,7 @@ pub struct GetBudget {
 }
 
 #[derive(Debug, Parser)]
-pub struct BudgetUpdateInfo {
+pub struct UpdateBudget {
     /// New category name to allocate
     #[clap(short, long)]
     pub new_category: String,
