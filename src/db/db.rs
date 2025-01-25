@@ -1,7 +1,7 @@
 use dotenv::dotenv;
 use postgres::{Client, NoTls, Error};
 use std::{fs, env, path::Path};
-use crate::cli::flags::BudgetData;
+use crate::cli::flags::{CreateBudget, BudgetData};
 
 fn connection() -> Result<Client, Error> {
     dotenv().ok();
@@ -18,21 +18,19 @@ pub fn create_table() -> Result<(), Error> {
     Ok(())
 }
 
-impl BudgetData {
-    pub fn insert_data(&self) -> Result<(), Box<dyn std::error::Error>> {
+impl CreateBudget {
+    pub fn insert_data(&self) -> Result<(), Error> {
         let mut client = connection()?;
-        if let Some(amount) = self.amount {
-            let _ = client.execute(
-                "insert into budget(category, amount) values($1, $2::BIGINT)",
-                &[&self.category, &amount],
-            )?;
-            Ok(())
-        } else {
-            Err("Amount is required to create a budget".into()) // Convert string to error type
-        }
+        let _ = client.execute(
+            "insert into budget(category, amount) values($1, $2::BIGINT)",
+            &[&self.category, &self.amount],
+        )?;
+        Ok(())
     }
+}
 
-    pub fn view_data(&self) -> Result<(), Box<dyn std::error::Error>> {
+impl BudgetData {
+    pub fn view_data(&self) -> Result<(), Error> {
         let mut client = connection()?;
         for row in client.query("select category, amount::BIGINT from budget where category=$1", &[&self.category])? {
             let category: String = row.get(0);
@@ -41,5 +39,14 @@ impl BudgetData {
             println!("Category: {}\nAmount: {}", category, amount);
         }
         Ok(())
+    }
+
+    pub fn delete_data(&self) -> Result<String, Error> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "delete from budget where category=$1",
+            &[&self.category],
+        )?;
+        Ok(self.category.clone())
     }
 }

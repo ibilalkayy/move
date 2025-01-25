@@ -53,29 +53,33 @@ pub fn cli() {
 
         Command::Budget(details) => {
             match details.budget_subcommand {
-                BudgetSubcommand::Create(budget_info) => {
+                BudgetSubcommand::Create(create_budget) => {
                     let _ = create_table();
-                    let result = budget_info.insert_data();
+                    let result = create_budget.insert_data();
                     match result {
                         Ok(_) => println!("Budget is successfully created"),
                         Err(err) => println!("err: {}", err),    
                     }
                 }
 
-                BudgetSubcommand::View(budget_info) => {
-                    let _ = budget_info.view_data();
+                BudgetSubcommand::View(budget_data) => {
+                    let _ = budget_data.view_data();
                 }
 
                 BudgetSubcommand::Get(_) => {
-                    println!("get subcommand");
+                    println!("get subcommand")
                 }
 
                 BudgetSubcommand::Update(_) => {
                     println!("update subcommand");
                 }
 
-                BudgetSubcommand::Delete(_) => {
-                    println!("delete subcommand");
+                BudgetSubcommand::Delete(budget_data) => {
+                    let result = budget_data.delete_data();
+                    match result {
+                        Ok(category) => println!("{} category data has been successfully delete", category),
+                        Err(err) => println!("err: {}", err),  
+                    }
                 }
 
                 BudgetSubcommand::Alert(_) => {

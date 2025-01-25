@@ -50,18 +50,25 @@ pub struct GmailInfo {
 }
 
 #[derive(Debug, Parser)]
-pub struct BudgetData {
+pub struct CreateBudget {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
     pub category: String,
 
     /// Write the total amount for the category
     #[clap(short, long)]
-    pub amount: Option<i64>,
+    pub amount: i64,
 }
 
 #[derive(Debug, Parser)]
-pub struct GetInfo {
+pub struct BudgetData {
+    /// Category name (e.g., groceries, utilities, etc.)
+    #[clap(short, long)]
+    pub category: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct GetBudget {
     /// CSV file name where the data will be stored
     #[clap(short = 'n', long, help = "CSV file name where the data will be stored")]
     pub filename: String,
@@ -84,13 +91,6 @@ pub struct BudgetUpdateInfo {
     /// New amount of the category to update
     #[clap(short, long)]
     pub amount: u64,
-}
-
-#[derive(Debug, Parser)]
-pub struct DeleteInfo {
-    /// Category name to delete
-    #[clap(short, long)]
-    pub category: String,
 }
 
 #[derive(Debug, Parser)]
