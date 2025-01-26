@@ -78,7 +78,11 @@ pub fn cli() {
             }
 
             BudgetSubcommand::Update(update_budget) => {
-                let _ = update_budget.update_data();
+                let result = update_budget.update_data();
+                match result {
+                    Ok(_) => println!("Budget is successfully updated"),
+                    Err(err) => println!("Error: {}", err),
+                }
             }
 
             BudgetSubcommand::Delete(budget_data) => {
@@ -109,8 +113,12 @@ pub fn cli() {
                     println!("view the alert");
                 }
 
-                AlertSubcommand::Update(_) => {
-                    println!("update the alert");
+                AlertSubcommand::Update(update_alert) => {
+                    let result = update_alert.update_data();
+                    match result {
+                        Ok(_) => println!("Alert is successfully updated"),
+                        Err(err) => println!("Error: {}", err),
+                    }
                 }
 
                 AlertSubcommand::Remove(_) => {

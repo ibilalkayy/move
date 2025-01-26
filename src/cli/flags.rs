@@ -99,13 +99,21 @@ pub struct UpdateBudget {
 
 #[derive(Debug, Parser)]
 pub struct AlertData {
-    /// Category name to take its budget amount
+    /// Category name to create new or update new
     #[clap(
         short = 'c',
         long,
-        help = "Category name to take its budget amount"
+        help = "Category name to create new or update new"
     )]
     pub category: String,
+
+    /// Old category name to update it with a new one
+    #[clap(
+        short = 'l',
+        long,
+        help = "Old category name to update it with a new one"
+    )]
+    pub old_category: Option<String>,
 
     /// Frequency of notifications (e.g., hourly, daily, weekly, monthly)
     #[clap(
@@ -131,7 +139,7 @@ pub struct AlertData {
     )]
     pub day: String,
 
-    ///  An Hour for notification
+    /// An Hour for notification
     #[clap(
         short = 'o',
         long,

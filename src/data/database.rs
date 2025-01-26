@@ -125,4 +125,36 @@ impl AlertData {
         )?;
         Ok(())
     }
+
+    pub fn update_data(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        if let Some(old_category) = &self.old_category {
+            let _ = client.execute(
+                "update alert set 
+                category=$1,
+                frequency=$2,
+                method=$3,
+                dayz=$4,
+                hourz=$5,
+                minutez=$6,
+                secondz=$7,
+                weekdays=$8
+                where category=$9",
+                &[
+                    &self.category, 
+                    &self.frequency,
+                    &self.method,
+                    &self.day,
+                    &self.hour,
+                    &self.minute,
+                    &self.second,
+                    &self.weekday,
+                    &old_category,
+                ],
+            )?;
+            Ok(())
+        } else {
+            Err("Old category is required to update the alert".into())
+        }
+    }
 }
