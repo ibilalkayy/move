@@ -173,22 +173,8 @@ pub struct AlertData {
 }
 
 #[derive(Debug, Parser)]
-pub struct MessageInfo {
-    /// Write the category to get the notification
-    #[clap(short, long)]
-    pub category: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct ViewAlertInfo {
-    /// Write the category to see the alert values
-    #[clap(short, long)]
-    pub category: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct RemoveAlertInfo {
-    /// Write the category to remove the alert values
+pub struct AlertInfo {
+    /// Write a category view, get, or remove the alert notification
     #[clap(short, long)]
     pub category: String,
 }

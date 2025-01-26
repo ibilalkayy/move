@@ -1,4 +1,4 @@
-use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData};
+use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData, AlertInfo};
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
@@ -156,5 +156,21 @@ impl AlertData {
         } else {
             Err("Old category is required to update the alert".into())
         }
+    }
+}
+
+impl AlertInfo {
+    pub fn get_alert(&self) {
+        println!("Get your alert notifications through email");
+    }
+
+    pub fn see_alert(&self) {
+        println!("See your alert notifications in the terminal");
+    }
+
+    pub fn remove_alert(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute("delete from alert where category=$1", &[&self.category])?;
+        Ok(())
     }
 }

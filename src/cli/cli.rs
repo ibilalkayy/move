@@ -96,7 +96,7 @@ pub fn cli() {
             }
 
             BudgetSubcommand::Alert(alert_budget) => match alert_budget.alert_subcommand {
-                AlertSubcommand::Setup(alert_data) => {
+                AlertSubcommand::Set(alert_data) => {
                     let _ = create_table();
                     let result = alert_data.create_alert();
                     match result {
@@ -105,12 +105,12 @@ pub fn cli() {
                     }
                 }
                 
-                AlertSubcommand::Message(_) => {
-                    println!("message about the alert");
+                AlertSubcommand::Email(email_alert) => {
+                    email_alert.get_alert();
                 }
 
-                AlertSubcommand::View(_) => {
-                    println!("view the alert");
+                AlertSubcommand::See(cli_alert) => {
+                    cli_alert.see_alert();
                 }
 
                 AlertSubcommand::Update(update_alert) => {
@@ -121,8 +121,12 @@ pub fn cli() {
                     }
                 }
 
-                AlertSubcommand::Remove(_) => {
-                    println!("remove the alert");
+                AlertSubcommand::Remove(remove_alert) => {
+                    let result = remove_alert.remove_alert();
+                    match result {
+                        Ok(_) => println!("Alert data is successfully removed"),
+                        Err(err) => println!("Error: {}", err),
+                    }
                 }
             }
         },
