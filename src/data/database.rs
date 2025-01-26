@@ -1,4 +1,4 @@
-use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData, AlertInfo};
+use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData, AlertInfo, SpendData};
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
@@ -171,6 +171,17 @@ impl AlertInfo {
     pub fn remove_alert(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute("delete from alert where category=$1", &[&self.category])?;
+        Ok(())
+    }
+}
+
+impl SpendData {
+    pub fn insert_spending(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "insert into spend(category, amount) values($1, $2)",
+            &[&self.category, &self.amount],
+        )?;
         Ok(())
     }
 }

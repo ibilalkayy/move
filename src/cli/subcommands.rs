@@ -1,6 +1,6 @@
 use crate::cli::flags::{
     AddInfo, BlockchainInfo, BudgetData, CreateBudget, DBInfo, GetBudget, GmailInfo, RemoveInfo, AlertData, UpdateBudget, UpdateInfo,
-    AlertInfo, ViewInfo,
+    AlertInfo, ViewInfo, SpendData,
 };
 use clap::{Parser, Subcommand};
 
@@ -99,13 +99,16 @@ pub struct SpendInfo {
 
 #[derive(Debug, Subcommand)]
 pub enum SpendSubcommand {
-    /// Provides spending services on various categories.
+    /// Data on which the money will be spent
+    Money(SpendData),
+
+    /// Provides spending services of various categories
     History,
 
-    /// Removes the history data.
+    /// Removes the history data
     Remove,
 
-    /// Show the history data.
+    /// Show the history data
     Show,
 }
 

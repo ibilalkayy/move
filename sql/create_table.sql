@@ -14,4 +14,10 @@ create table if not exists alert (
     minutez text not null,
     secondz text not null,
     weekdays text not null
+);
+
+create table if not exists spend (
+    id serial primary key,
+    category text not null,
+    amount text not null
 )

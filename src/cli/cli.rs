@@ -1,7 +1,7 @@
 use crate::cli::command::Move;
 
 use crate::cli::subcommands::{
-    Command, InitSubcommand, BudgetSubcommand, AlertSubcommand,
+    Command, InitSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand,
 };
 use crate::data::database::{create_table, list_data};
 use clap::Parser;
@@ -131,8 +131,27 @@ pub fn cli() {
             }
         },
 
-        Command::Spend(_details) => {
-            println!("Manage the spending");
+        Command::Spend(details) => match details.spend_subcommand {
+            SpendSubcommand::Money(spend_data) => {
+                let _ = create_table();
+                let result = spend_data.insert_spending();
+                match result {
+                    Ok(_) => println!("Spending data is successfully saved"),
+                    Err(err) => println!("Error: {}", err),
+                }
+            }
+
+            SpendSubcommand::History => {
+                println!("history command");
+            }
+
+            SpendSubcommand::Remove => {
+                println!("remove command");
+            }
+
+            SpendSubcommand::Show => {
+                println!("show command");
+            }
         }
 
         Command::TotalAmount(_details) => {
