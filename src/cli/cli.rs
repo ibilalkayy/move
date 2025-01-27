@@ -1,7 +1,7 @@
 use crate::cli::command::Move;
 
 use crate::cli::subcommands::{
-    Command, InitSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand,
+    Command, InitSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand, TotalAmountSubcommand,
 };
 use crate::data::database::{create_table, list_data};
 use clap::Parser;
@@ -154,8 +154,31 @@ pub fn cli() {
             }
         }
 
-        Command::TotalAmount(_details) => {
-            println!("Manage the total amount");
+        Command::TotalAmount(details) => match details.total_amount {
+            TotalAmountSubcommand::Add(add_total) => {
+                let _ = create_table();
+                let result = add_total.insert_total();
+                match result {
+                    Ok(_) => println!("Total amount is successfully saved"),
+                    Err(err) => println!("Error: {}", err),
+                }
+            }
+
+            TotalAmountSubcommand::View(_details) => {
+                println!("view subcommand");
+            }
+
+            TotalAmountSubcommand::Status(_details) => {
+                println!("status subcommand");
+            }
+
+            TotalAmountSubcommand::Update(_details) => {
+                println!("add subcommand");
+            }
+
+            TotalAmountSubcommand::Remove(_details) => {
+                println!("add subcommand");
+            }
         }
     }
 }

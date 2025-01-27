@@ -1,4 +1,13 @@
-use crate::cli::flags::{BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData, AlertInfo, SpendData};
+use crate::cli::flags::{
+    BudgetData,
+    CreateBudget,
+    GetBudget,
+    UpdateBudget,
+    AlertData,
+    AlertInfo,
+    SpendData,
+    AddTotal,
+};
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
@@ -181,6 +190,17 @@ impl SpendData {
         let _ = client.execute(
             "insert into spend(category, amount) values($1, $2)",
             &[&self.category, &self.amount],
+        )?;
+        Ok(())
+    }
+}
+
+impl AddTotal {
+    pub fn insert_total(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "insert into total_amount(category, amount, label) values($1, $2, $3)",
+            &[&self.category, &self.amount, &self.label],
         )?;
         Ok(())
     }

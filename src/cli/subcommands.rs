@@ -1,6 +1,6 @@
 use crate::cli::flags::{
-    AddInfo, BlockchainInfo, BudgetData, CreateBudget, DBInfo, GetBudget, GmailInfo, RemoveInfo, AlertData, UpdateBudget, UpdateInfo,
-    AlertInfo, ViewInfo, SpendData,
+    AddTotal, RemoveTotal, UpdateTotal, ViewTotal, BlockchainInfo, BudgetData, CreateBudget, DBInfo, 
+    GetBudget, GmailInfo, AlertData, UpdateBudget, AlertInfo, SpendData,
 };
 use clap::{Parser, Subcommand};
 
@@ -102,7 +102,7 @@ pub enum SpendSubcommand {
     /// Data on which the money will be spent
     Money(SpendData),
 
-    /// Provides spending services of various categories
+    /// Shows the spending of various categories
     History,
 
     /// Removes the history data
@@ -121,23 +121,23 @@ pub struct TotalAmountInfo {
 #[derive(Debug, Subcommand)]
 pub enum TotalAmountSubcommand {
     /// Add the total amount data
-    Add(AddInfo),
+    Add(AddTotal),
 
     /// View the total amount data
-    View(ViewInfo),
+    View(ViewTotal),
 
     /// Handle the total amount status
-    Status(StatusInfo),
+    Status(StatusTotal),
 
     /// Update the total amount data
-    Update(UpdateInfo),
+    Update(UpdateTotal),
 
     /// Remove the total amount data
-    Remove(RemoveInfo),
+    Remove(RemoveTotal),
 }
 
 #[derive(Debug, Parser)]
-pub struct StatusInfo {
+pub struct StatusTotal {
     #[clap(subcommand)]
     pub status_subcommand: StatusSubcommand,
 }

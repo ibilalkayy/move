@@ -20,4 +20,11 @@ create table if not exists spend (
     id serial primary key,
     category text not null,
     amount text not null
+);
+
+create table if not exists total_amount (
+    id serial primary key,
+    category text not null,
+    amount text not null,
+    label text not null
 )

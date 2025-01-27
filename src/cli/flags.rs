@@ -191,22 +191,22 @@ pub struct SpendData {
 }
 
 #[derive(Debug, Parser)]
-pub struct AddInfo {
-    /// Specify a category to include in the total amount
+pub struct AddTotal {
+    /// Write a category to include in the total amount
     #[clap(short, long)]
     pub category: String,
 
-    /// Write the total amount that you want to set
+    /// Write the total amount to set
     #[clap(short, long)]
     pub amount: String,
 
-    /// Provide a label for setting up your total amount
+    /// Write a label to include in your total amount
     #[clap(short, long)]
     pub label: String,
 }
 
 #[derive(Debug, Parser)]
-pub struct ViewInfo {
+pub struct ViewTotal {
     /// View the categories in total amount
     #[clap(short, long)]
     pub categories: String,
@@ -217,7 +217,7 @@ pub struct ViewInfo {
 }
 
 #[derive(Debug, Parser)]
-pub struct UpdateInfo {
+pub struct UpdateTotal {
     // Write the new category to update with
     #[clap(short, long)]
     pub new_category: String,
@@ -236,7 +236,7 @@ pub struct UpdateInfo {
 }
 
 #[derive(Debug, Parser)]
-pub struct RemoveInfo {
+pub struct RemoveTotal {
     /// Remove the total amount data
     #[clap(short, long)]
     pub category: String,
