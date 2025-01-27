@@ -172,8 +172,12 @@ pub fn cli() {
                 println!("status subcommand");
             }
 
-            TotalAmountSubcommand::Update(_details) => {
-                println!("add subcommand");
+            TotalAmountSubcommand::Update(update_total) => {
+                let result = update_total.update_data();
+                    match result {
+                        Ok(_) => println!("Total amount is successfully updated"),
+                        Err(err) => println!("Error: {}", err),
+                    }
             }
 
             TotalAmountSubcommand::Remove(_details) => {

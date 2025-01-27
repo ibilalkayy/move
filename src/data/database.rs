@@ -7,6 +7,7 @@ use crate::cli::flags::{
     AlertInfo,
     SpendData,
     AddTotal,
+    UpdateTotal,
 };
 use csv::Writer;
 use dotenv::dotenv;
@@ -216,6 +217,17 @@ impl AddTotal {
         let _ = client.execute(
             "insert into total_amount(category, amount, label) values($1, $2, $3)",
             &[&self.category, &self.amount, &self.label],
+        )?;
+        Ok(())
+    }
+}
+
+impl UpdateTotal {
+    pub fn update_data(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "update total_amount set category=$1, amount=$2, label=$3 where category=$4",
+            &[&self.new_category, &self.amount, &self.label, &self.old_category],
         )?;
         Ok(())
     }
