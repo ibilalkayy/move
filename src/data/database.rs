@@ -40,6 +40,21 @@ pub fn list_data() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+pub fn view_data() -> Result<(), Box<dyn Error>> {
+    let mut client = connection()?;
+    for row in client.query(
+        "select category, amount, label from total_amount",
+        &[],
+    )? {
+        let categories: String = row.get(0);
+        let amount: String = row.get(1);
+        let label: String = row.get(2);
+
+        println!("Category: {}\nAmount: {}\nLabel:{}", categories, amount, label);
+    }
+    Ok(())
+}
+
 impl CreateBudget {
     pub fn insert_data(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;

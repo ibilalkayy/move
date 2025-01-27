@@ -206,17 +206,6 @@ pub struct AddTotal {
 }
 
 #[derive(Debug, Parser)]
-pub struct ViewTotal {
-    /// View the categories in total amount
-    #[clap(short, long)]
-    pub categories: String,
-
-    /// View the total amount
-    #[clap(short, long)]
-    pub amount: String,
-}
-
-#[derive(Debug, Parser)]
 pub struct UpdateTotal {
     // Write the new category to update with
     #[clap(short, long)]

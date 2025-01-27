@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    AddTotal, RemoveTotal, UpdateTotal, ViewTotal, BlockchainInfo, BudgetData, CreateBudget, DBInfo, 
+    AddTotal, RemoveTotal, UpdateTotal, BlockchainInfo, BudgetData, CreateBudget, DBInfo, 
     GetBudget, GmailInfo, AlertData, UpdateBudget, AlertInfo, SpendData,
 };
 use clap::{Parser, Subcommand};
@@ -124,7 +124,7 @@ pub enum TotalAmountSubcommand {
     Add(AddTotal),
 
     /// View the total amount data
-    View(ViewTotal),
+    View,
 
     /// Handle the total amount status
     Status(StatusTotal),
