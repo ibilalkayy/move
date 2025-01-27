@@ -1,3 +1,13 @@
+create table if not exists totalamount (
+    id serial primary key,
+    category text not null,
+    total_amount text not null,
+    spent_amount text not null,
+    remaining_amount text not null,
+    label text not null,
+    statuss text not null
+);
+
 create table if not exists budget (
     id serial primary key,
     category text not null,
@@ -20,11 +30,4 @@ create table if not exists spend (
     id serial primary key,
     category text not null,
     amount text not null
-);
-
-create table if not exists total_amount (
-    id serial primary key,
-    category text not null,
-    amount text not null,
-    label text not null
 )

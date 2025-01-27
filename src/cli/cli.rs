@@ -55,6 +55,41 @@ pub fn cli() {
             }
         },
 
+        Command::TotalAmount(details) => match details.total_amount {
+            TotalAmountSubcommand::Add(add_total) => {
+                let _ = create_table();
+                let result = add_total.insert_total();
+                match result {
+                    Ok(_) => println!("Total amount is successfully saved"),
+                    Err(err) => println!("Error: {}", err),
+                }
+            }
+
+            TotalAmountSubcommand::View => {
+                let _= view_data();
+            }
+
+            TotalAmountSubcommand::Status(_details) => {
+                println!("status subcommand");
+            }
+
+            TotalAmountSubcommand::Update(update_total) => {
+                let result = update_total.update_total();
+                    match result {
+                        Ok(_) => println!("Total amount is successfully updated"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+            }
+
+            TotalAmountSubcommand::Remove(remove_total) => {
+                let result = remove_total.remove_total();
+                    match result {
+                        Ok(_) => println!("Alert data is successfully removed"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+            }
+        },
+
         Command::Budget(details) => match details.budget_subcommand {
             BudgetSubcommand::Create(create_budget) => {
                 let _ = create_table();
@@ -151,41 +186,6 @@ pub fn cli() {
 
             SpendSubcommand::Show => {
                 println!("show command");
-            }
-        }
-
-        Command::TotalAmount(details) => match details.total_amount {
-            TotalAmountSubcommand::Add(add_total) => {
-                let _ = create_table();
-                let result = add_total.insert_total();
-                match result {
-                    Ok(_) => println!("Total amount is successfully saved"),
-                    Err(err) => println!("Error: {}", err),
-                }
-            }
-
-            TotalAmountSubcommand::View => {
-                let _= view_data();
-            }
-
-            TotalAmountSubcommand::Status(_details) => {
-                println!("status subcommand");
-            }
-
-            TotalAmountSubcommand::Update(update_total) => {
-                let result = update_total.update_total();
-                    match result {
-                        Ok(_) => println!("Total amount is successfully updated"),
-                        Err(err) => println!("Error: {}", err),
-                    }
-            }
-
-            TotalAmountSubcommand::Remove(remove_total) => {
-                let result = remove_total.remove_total();
-                    match result {
-                        Ok(_) => println!("Alert data is successfully removed"),
-                        Err(err) => println!("Error: {}", err),
-                    }
             }
         }
     }

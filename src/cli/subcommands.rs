@@ -6,17 +6,17 @@ use clap::{Parser, Subcommand};
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Initialize your move application by inserting the database credentials.
+    /// Initialize your move application by inserting the database credentials
     Init(InitInfo),
+
+    /// Allocate the total amount to manage the buddget and spending under the limit
+    TotalAmount(TotalAmountInfo),
 
     /// Allows users to manage their budget allocations for different categories
     Budget(BudgetInfo),
 
     /// Provides spending services on various categories
     Spend(SpendInfo),
-
-    /// Manage your total amount
-    TotalAmount(TotalAmountInfo),
 }
 
 #[derive(Debug, Parser)]
@@ -35,6 +35,48 @@ pub enum InitSubcommand {
 
     /// Insert the gmail credentials
     Gmail(GmailInfo),
+}
+
+#[derive(Debug, Parser)]
+pub struct TotalAmountInfo {
+    #[clap(subcommand)]
+    pub total_amount: TotalAmountSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum TotalAmountSubcommand {
+    /// Add the total amount data
+    Add(AddTotal),
+
+    /// View the total amount data
+    View,
+
+    /// Handle the total amount status
+    Status(StatusTotal),
+
+    /// Update the total amount data
+    Update(UpdateTotal),
+
+    /// Remove the total amount data
+    Remove(RemoveTotal),
+}
+
+#[derive(Debug, Parser)]
+pub struct StatusTotal {
+    #[clap(subcommand)]
+    pub status_subcommand: StatusSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum StatusSubcommand {
+    /// Make the total amount active
+    Active,
+
+    /// Make the total amount inactive
+    Inactive,
+
+    /// Check the status of the total amount
+    Check,
 }
 
 #[derive(Debug, Parser)]
@@ -110,46 +152,4 @@ pub enum SpendSubcommand {
 
     /// Show the history data
     Show,
-}
-
-#[derive(Debug, Parser)]
-pub struct TotalAmountInfo {
-    #[clap(subcommand)]
-    pub total_amount: TotalAmountSubcommand,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum TotalAmountSubcommand {
-    /// Add the total amount data
-    Add(AddTotal),
-
-    /// View the total amount data
-    View,
-
-    /// Handle the total amount status
-    Status(StatusTotal),
-
-    /// Update the total amount data
-    Update(UpdateTotal),
-
-    /// Remove the total amount data
-    Remove(RemoveTotal),
-}
-
-#[derive(Debug, Parser)]
-pub struct StatusTotal {
-    #[clap(subcommand)]
-    pub status_subcommand: StatusSubcommand,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum StatusSubcommand {
-    /// Make the total amount active
-    Active,
-
-    /// Make the total amount inactive
-    Inactive,
-
-    /// Check the status of the total amount
-    Check,
 }

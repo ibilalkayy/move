@@ -45,16 +45,52 @@ pub fn list_data() -> Result<(), Box<dyn Error>> {
 pub fn view_data() -> Result<(), Box<dyn Error>> {
     let mut client = connection()?;
     for row in client.query(
-        "select category, amount, label from total_amount",
+        "select category, total_amount, spent_amount, remaining_amount, label, statuss from totalamount",
         &[],
     )? {
         let categories: String = row.get(0);
-        let amount: String = row.get(1);
-        let label: String = row.get(2);
+        let total_amount: String = row.get(1);
+        let spent_amount: String = row.get(2);
+        let remaining_amount: String = row.get(3);
+        let label: String = row.get(4);
+        let status: String = row.get(5);
 
-        println!("Category: {}\nAmount: {}\nLabel:{}", categories, amount, label);
+        println!(
+            "Category: {}\nTotal Amount: {}\nSpent Amount: {}\nRemaining Amount: {}\nLabel: {}\nStatus: {}",
+            categories, total_amount, spent_amount, remaining_amount, label, status,
+        );
     }
     Ok(())
+}
+
+impl AddTotal {
+    pub fn insert_total(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "insert into totalamount(category, total_amount, spent_amount, remaining_amount, label, statuss) values($1, $2, $3, $4, $5, $6)",
+            &[&self.category, &self.total_amount, &"0", &"0", &self.label, &"inactive"],
+        )?;
+        Ok(())
+    }
+}
+
+impl UpdateTotal {
+    pub fn update_total(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "update totalamount set category=$1, total_amount=$2, label=$3 where category=$4",
+            &[&self.new_category, &self.total_amount, &self.label, &self.old_category],
+        )?;
+        Ok(())
+    }
+}
+
+impl RemoveTotal {
+    pub fn remove_total(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute("delete from totalamount where category=$1", &[&self.category])?;
+        Ok(())
+    }
 }
 
 impl CreateBudget {
@@ -208,36 +244,6 @@ impl SpendData {
             "insert into spend(category, amount) values($1, $2)",
             &[&self.category, &self.amount],
         )?;
-        Ok(())
-    }
-}
-
-impl AddTotal {
-    pub fn insert_total(&self) -> Result<(), Box<dyn Error>> {
-        let mut client = connection()?;
-        let _ = client.execute(
-            "insert into total_amount(category, amount, label) values($1, $2, $3)",
-            &[&self.category, &self.amount, &self.label],
-        )?;
-        Ok(())
-    }
-}
-
-impl UpdateTotal {
-    pub fn update_total(&self) -> Result<(), Box<dyn Error>> {
-        let mut client = connection()?;
-        let _ = client.execute(
-            "update total_amount set category=$1, amount=$2, label=$3 where category=$4",
-            &[&self.new_category, &self.amount, &self.label, &self.old_category],
-        )?;
-        Ok(())
-    }
-}
-
-impl RemoveTotal {
-    pub fn remove_total(&self) -> Result<(), Box<dyn Error>> {
-        let mut client = connection()?;
-        let _ = client.execute("delete from total_amount where category=$1", &[&self.category])?;
         Ok(())
     }
 }

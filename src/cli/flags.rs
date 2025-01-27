@@ -50,6 +50,47 @@ pub struct GmailInfo {
 }
 
 #[derive(Debug, Parser)]
+pub struct AddTotal {
+    /// Write a category to include in the total amount
+    #[clap(short, long)]
+    pub category: String,
+
+    /// Write the total amount to setup
+    #[clap(short, long)]
+    pub total_amount: String,
+
+    /// Write a label to include in your total amount
+    #[clap(short, long)]
+    pub label: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct UpdateTotal {
+    // Write the new category to update with
+    #[clap(short, long)]
+    pub new_category: String,
+
+    // Write the old category to update
+    #[clap(short, long)]
+    pub old_category: String,
+
+    /// Write the total amount that you want to update
+    #[clap(short, long)]
+    pub total_amount: String,
+
+    /// Write the label that you want to update
+    #[clap(short, long)]
+    pub label: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct RemoveTotal {
+    /// Remove the total amount data
+    #[clap(short, long)]
+    pub category: String,
+}
+
+#[derive(Debug, Parser)]
 pub struct CreateBudget {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
@@ -188,45 +229,4 @@ pub struct SpendData {
     /// Write the spending amount for a category
     #[clap(short, long)]
     pub amount: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct AddTotal {
-    /// Write a category to include in the total amount
-    #[clap(short, long)]
-    pub category: String,
-
-    /// Write the total amount to set
-    #[clap(short, long)]
-    pub amount: String,
-
-    /// Write a label to include in your total amount
-    #[clap(short, long)]
-    pub label: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct UpdateTotal {
-    // Write the new category to update with
-    #[clap(short, long)]
-    pub new_category: String,
-
-    // Write the old category to update
-    #[clap(short, long)]
-    pub old_category: String,
-
-    /// Write the total amount that you want to update
-    #[clap(short, long)]
-    pub amount: String,
-
-    /// Write the label that you want to update
-    #[clap(short, long)]
-    pub label: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct RemoveTotal {
-    /// Remove the total amount data
-    #[clap(short, long)]
-    pub category: String,
 }
