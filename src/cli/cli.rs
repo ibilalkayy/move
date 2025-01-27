@@ -173,15 +173,19 @@ pub fn cli() {
             }
 
             TotalAmountSubcommand::Update(update_total) => {
-                let result = update_total.update_data();
+                let result = update_total.update_total();
                     match result {
                         Ok(_) => println!("Total amount is successfully updated"),
                         Err(err) => println!("Error: {}", err),
                     }
             }
 
-            TotalAmountSubcommand::Remove(_details) => {
-                println!("add subcommand");
+            TotalAmountSubcommand::Remove(remove_total) => {
+                let result = remove_total.remove_total();
+                    match result {
+                        Ok(_) => println!("Alert data is successfully removed"),
+                        Err(err) => println!("Error: {}", err),
+                    }
             }
         }
     }
