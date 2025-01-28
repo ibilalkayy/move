@@ -7,6 +7,31 @@ use dotenv::dotenv;
 use postgres::{Client, NoTls};
 use std::error::Error;
 use std::{env, fs, path::Path};
+use tabled::{Table, Tabled};
+
+#[derive(Tabled)]
+struct TotalAmountRow {
+    #[tabled(rename="Total Amount")]
+    total_amount: String,
+
+    #[tabled(rename="Spent Amount")]
+    spent_amount: String,
+
+    #[tabled(rename="Remaining Amount")]
+    remaining_amount: String,
+}
+
+#[derive(Tabled)]
+struct TotalCategoryRow {
+    #[tabled(rename="Categories")]
+    category: String,
+
+    #[tabled(rename="Labels")]
+    label: String,
+
+    #[tabled(rename="Statuses")]
+    status: String,
+}
 
 fn connection() -> Result<Client, Box<dyn Error>> {
     dotenv().ok();
@@ -34,24 +59,54 @@ pub fn list_data() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn view_data() -> Result<(), Box<dyn Error>> {
+pub fn view_total_amount() -> Result<(), Box<dyn Error>> {
     let mut client = connection()?;
+    let mut rows = Vec::new();
+
     for row in client.query(
-        "select category, total_amount, spent_amount, remaining_amount, label, statuss from totalamount",
+        "select total_amount, spent_amount, remaining_amount from totalamount",
         &[],
     )? {
-        let categories: String = row.get(0);
-        let total_amount: String = row.get(1);
-        let spent_amount: String = row.get(2);
-        let remaining_amount: String = row.get(3);
-        let label: String = row.get(4);
-        let status: String = row.get(5);
+        let total_amount: String = row.get(0);
+        let spent_amount: String = row.get(1);
+        let remaining_amount: String = row.get(2);
 
-        println!(
-            "Category: {}\nTotal Amount: {}\nSpent Amount: {}\nRemaining Amount: {}\nLabel: {}\nStatus: {}",
-            categories, total_amount, spent_amount, remaining_amount, label, status,
-        );
+        rows.push(TotalAmountRow{
+            total_amount,
+            spent_amount,
+            remaining_amount,
+        });
+        break;
     }
+
+    let table = Table::new(rows);
+    println!("{}", table);
+
+    Ok(())
+}
+
+pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
+    let mut client = connection()?;
+    let mut rows = Vec::new();
+
+    for row in client.query(
+        "select category, label, statuss from totalamount",
+        &[],
+    )? {
+        let category: String = row.get(0);
+        let label: String = row.get(1);
+        let status: String = row.get(2);
+
+        rows.push(TotalCategoryRow{
+            category,
+            label,
+            status
+        });
+    }
+
+    let table = Table::new(rows);
+    println!("{}", table);
+
     Ok(())
 }
 
@@ -60,7 +115,7 @@ impl AddTotal {
         let mut client = connection()?;
         let _ = client.execute(
             "insert into totalamount(category, total_amount, spent_amount, remaining_amount, label, statuss) values($1, $2, $3, $4, $5, $6)",
-            &[&self.category, &self.total_amount, &"0", &"0", &self.label, &"inactive"],
+            &[&self.category, &self.amount, &"0", &"0", &self.label, &"inactive"],
         )?;
         Ok(())
     }
@@ -71,7 +126,7 @@ impl UpdateTotal {
         let mut client = connection()?;
         let _ = client.execute(
             "update totalamount set category=$1, total_amount=$2, label=$3 where category=$4",
-            &[&self.new_category, &self.total_amount, &self.label, &self.old_category],
+            &[&self.new_category, &self.amount, &self.label, &self.old_category],
         )?;
         Ok(())
     }

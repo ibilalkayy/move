@@ -66,7 +66,7 @@ pub struct ViewTotal {
     #[clap(subcommand)]
     pub view_subcommand: ViewSubcommand,
 }
-
+ 
 #[derive(Debug, Subcommand)]
 pub enum ViewSubcommand {
     /// View the total amount

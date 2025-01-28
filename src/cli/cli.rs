@@ -3,7 +3,7 @@ use crate::cli::command::Move;
 use crate::cli::subcommands::{
     Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand,
 };
-use crate::data::database::{create_table, list_data, view_data};
+use crate::data::database::{create_table, list_data, view_total_amount, view_total_categories};
 use clap::Parser;
 use std::{fs::OpenOptions, io::Write};
 
@@ -67,11 +67,11 @@ pub fn cli() {
 
             TotalAmountSubcommand::View(view_total) => match view_total.view_subcommand {
                 ViewSubcommand::Amount => {
-                    println!("alert amount data");
+                    let _= view_total_amount();
                 }
 
                 ViewSubcommand::Categories => {
-                    let _= view_data();
+                    let _= view_total_categories();
                 }
             }
 

@@ -57,7 +57,7 @@ pub struct AddTotal {
 
     /// Write the total amount to setup
     #[clap(short, long)]
-    pub total_amount: String,
+    pub amount: String,
 
     /// Write a label to include in your total amount
     #[clap(short, long)]
@@ -76,7 +76,7 @@ pub struct UpdateTotal {
 
     /// Write the total amount that you want to update
     #[clap(short, long)]
-    pub total_amount: String,
+    pub amount: String,
 
     /// Write the label that you want to update
     #[clap(short, long)]
