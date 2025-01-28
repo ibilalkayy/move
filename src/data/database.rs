@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    AddTotal, UpdateTotal, RemoveTotal, BudgetData, CreateBudget, 
+    AddTotalAmount, AddTotalCategories, UpdateTotal, RemoveTotal, BudgetData, CreateBudget, 
     GetBudget, UpdateBudget, AlertData, AlertValues, SpendData,
 };
 use csv::Writer;
@@ -110,12 +110,23 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-impl AddTotal {
-    pub fn insert_total(&self) -> Result<(), Box<dyn Error>> {
+impl AddTotalCategories {
+    pub fn insert_total_categories(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
-            "insert into totalamount(category, total_amount, spent_amount, remaining_amount, label, statuss) values($1, $2, $3, $4, $5, $6)",
-            &[&self.category, &self.amount, &"0", &"0", &self.label, &"inactive"],
+            "insert into totalcategories(category, label, statuss) values($1, $2, $3)",
+            &[&self.category, &self.label, &"inactive"],
+        )?;
+        Ok(())
+    }
+}
+
+impl AddTotalAmount {
+    pub fn insert_total_amount(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "insert into totalamount(total_amount, spent_amount, remaining_amount) values($1, $2, $3)",
+            &[&self.amount, &"0", &"0"],
         )?;
         Ok(())
     }

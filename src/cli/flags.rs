@@ -50,14 +50,17 @@ pub struct GmailCred {
 }
 
 #[derive(Debug, Parser)]
-pub struct AddTotal {
-    /// Write a category to include in the total amount
-    #[clap(short, long)]
-    pub category: String,
-
+pub struct AddTotalAmount {
     /// Write the total amount to setup
     #[clap(short, long)]
     pub amount: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct AddTotalCategories {
+    /// Write a category to include in the total amount
+    #[clap(short, long)]
+    pub category: String,
 
     /// Write a label to include in your total amount
     #[clap(short, long)]

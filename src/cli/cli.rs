@@ -1,7 +1,7 @@
 use crate::cli::command::Move;
 
 use crate::cli::subcommands::{
-    Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand,
+    Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand, AddTotalSubcommand,
 };
 use crate::data::database::{create_table, list_data, view_total_amount, view_total_categories};
 use clap::Parser;
@@ -56,12 +56,23 @@ pub fn cli() {
         },
 
         Command::TotalAmount(details) => match details.total_amount {
-            TotalAmountSubcommand::Add(add_total) => {
-                let _ = create_table();
-                let result = add_total.insert_total();
-                match result {
-                    Ok(_) => println!("Total amount is successfully saved"),
-                    Err(err) => println!("Error: {}", err),
+            TotalAmountSubcommand::Add(add_total) => match add_total.add_subcommand {
+                AddTotalSubcommand::Amount(amount) => {
+                    let _ = create_table();
+                    let result = amount.insert_total_amount();
+                    match result {
+                        Ok(_) => println!("Total amount is successfully saved"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+                }
+
+                AddTotalSubcommand::Categories(categories) => {
+                    let _ = create_table();
+                    let result = categories.insert_total_categories();
+                    match result {
+                        Ok(_) => println!("Total amount category is successfully saved"),
+                        Err(err) => println!("Error: {}", err),
+                    }
                 }
             }
 
