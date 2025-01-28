@@ -1,6 +1,6 @@
 use crate::cli::flags::{
-    AddTotal, RemoveTotal, UpdateTotal, BlockchainInfo, BudgetData, CreateBudget, DBInfo, 
-    GetBudget, GmailInfo, AlertData, UpdateBudget, AlertInfo, SpendData,
+    DBCred, BlockchainCred, GmailCred, AddTotal, RemoveTotal, UpdateTotal, BudgetData,
+    CreateBudget, GetBudget, UpdateBudget, AlertData, AlertValues, SpendData,
 };
 use clap::{Parser, Subcommand};
 
@@ -9,7 +9,7 @@ pub enum Command {
     /// Initialize your move application by inserting the database credentials
     Init(InitInfo),
 
-    /// Allocate the total amount to manage the buddget and spending under the limit
+    /// Allocate the total amount to manage the budget and spending under the limit
     TotalAmount(TotalAmountInfo),
 
     /// Allows users to manage their budget allocations for different categories
@@ -28,13 +28,13 @@ pub struct InitInfo {
 #[derive(Debug, Subcommand)]
 pub enum InitSubcommand {
     /// Insert the database credentials
-    Database(DBInfo),
+    Database(DBCred),
 
     /// Insert the blockchain credentials
-    Blockchain(BlockchainInfo),
+    Blockchain(BlockchainCred),
 
     /// Insert the gmail credentials
-    Gmail(GmailInfo),
+    Gmail(GmailCred),
 }
 
 #[derive(Debug, Parser)]
@@ -49,7 +49,7 @@ pub enum TotalAmountSubcommand {
     Add(AddTotal),
 
     /// View the total amount data
-    View,
+    View(ViewTotal),
 
     /// Handle the total amount status
     Status(StatusTotal),
@@ -59,6 +59,21 @@ pub enum TotalAmountSubcommand {
 
     /// Remove the total amount data
     Remove(RemoveTotal),
+}
+
+#[derive(Debug, Parser)]
+pub struct ViewTotal {
+    #[clap(subcommand)]
+    pub view_subcommand: ViewSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ViewSubcommand {
+    /// View the total amount
+    Amount,
+
+    /// View the categories of total amount
+    Categories,
 }
 
 #[derive(Debug, Parser)]
@@ -106,11 +121,11 @@ pub enum BudgetSubcommand {
     Delete(BudgetData),
 
     /// Get the alert after passing the budget
-    Alert(BudgetAlert),
+    Alert(AlertBudget),
 }
 
 #[derive(Debug, Parser)]
-pub struct BudgetAlert {
+pub struct AlertBudget {
     #[clap(subcommand)]
     pub alert_subcommand: AlertSubcommand,
 }
@@ -120,17 +135,17 @@ pub enum AlertSubcommand {
     /// Set the alert notification data
     Set(AlertData),
 
-    /// Get the alert notifications in your email
-    Email(AlertInfo),
-
     /// See the alert notifications in your terminal
-    See(AlertInfo),
+    See(AlertValues),
 
-    /// Update the alert values
+    /// Get the alert notifications in your email
+    Email(AlertValues),
+
+    /// Update the alert data
     Update(AlertData),
 
-    /// Remove the alert values
-    Remove(AlertInfo),
+    /// Remove the alert data
+    Remove(AlertValues),
 }
 
 #[derive(Debug, Parser)]

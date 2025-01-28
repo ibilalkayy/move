@@ -1,7 +1,7 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-pub struct DBInfo {
+pub struct DBCred {
     /// The PostgreSQL DB name
     #[clap(short = 'n', long, help = "Your PostgreSQL database name")]
     pub name: String,
@@ -24,7 +24,7 @@ pub struct DBInfo {
 }
 
 #[derive(Debug, Parser)]
-pub struct BlockchainInfo {
+pub struct BlockchainCred {
     /// Your Blockchain wallet private key
     #[clap(short = 'p', long, help = "Blockchain wallet private key")]
     pub private_key: String,
@@ -35,7 +35,7 @@ pub struct BlockchainInfo {
 }
 
 #[derive(Debug, Parser)]
-pub struct GmailInfo {
+pub struct GmailCred {
     /// Your username
     #[clap(short = 'u', long, help = "Your username")]
     pub username: String,
@@ -214,8 +214,8 @@ pub struct AlertData {
 }
 
 #[derive(Debug, Parser)]
-pub struct AlertInfo {
-    /// Write a category view, get, or remove the alert notification
+pub struct AlertValues {
+    /// Write a category to see, get, or remove the alert notification
     #[clap(short, long)]
     pub category: String,
 }

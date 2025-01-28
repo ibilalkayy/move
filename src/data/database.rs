@@ -1,14 +1,6 @@
 use crate::cli::flags::{
-    BudgetData,
-    CreateBudget,
-    GetBudget,
-    UpdateBudget,
-    AlertData,
-    AlertInfo,
-    SpendData,
-    AddTotal,
-    UpdateTotal,
-    RemoveTotal,
+    AddTotal, UpdateTotal, RemoveTotal, BudgetData, CreateBudget, 
+    GetBudget, UpdateBudget, AlertData, AlertValues, SpendData,
 };
 use csv::Writer;
 use dotenv::dotenv;
@@ -221,7 +213,7 @@ impl AlertData {
     }
 }
 
-impl AlertInfo {
+impl AlertValues {
     pub fn get_alert(&self) {
         println!("Get your alert notifications through email");
     }
