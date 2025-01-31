@@ -1,6 +1,6 @@
 use crate::cli::flags::{
-    AddTotalAmount, AddTotalCategories, UpdateTotal, RemoveTotal, BudgetData, CreateBudget, 
-    GetBudget, UpdateBudget, AlertData, AlertValues, SpendData,
+    AddTotalAmount, AddTotalCategories, UpdateTotalAmount, RemoveTotal, BudgetData, CreateBudget, 
+    GetBudget, UpdateBudget, AlertData, AlertValues, SpendData, UpdateTotalCategories,
 };
 use csv::Writer;
 use dotenv::dotenv;
@@ -90,7 +90,7 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
     let mut rows = Vec::new();
 
     for row in client.query(
-        "select category, label, statuss from totalamount",
+        "select category, label, statuss from totalcategories",
         &[],
     )? {
         let category: String = row.get(0);
@@ -132,12 +132,23 @@ impl AddTotalAmount {
     }
 }
 
-impl UpdateTotal {
+impl UpdateTotalAmount {
     pub fn update_total(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
-            "update totalamount set category=$1, total_amount=$2, label=$3 where category=$4",
-            &[&self.new_category, &self.amount, &self.label, &self.old_category],
+            "update totalamount set total_amount=$1, spent_amount=$2, remaining_amount=$3",
+            &[&self.amount, &"0", &"0"],
+        )?;
+        Ok(())
+    }
+}
+
+impl UpdateTotalCategories {
+    pub fn update_category(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "update totalcategories set category=$1, label=$2, statuss=$3 where category=$4",
+            &[&self.new_category, &self.label, &"statuess", &self.old_category],
         )?;
         Ok(())
     }

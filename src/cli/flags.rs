@@ -68,7 +68,14 @@ pub struct AddTotalCategories {
 }
 
 #[derive(Debug, Parser)]
-pub struct UpdateTotal {
+pub struct UpdateTotalAmount {
+    /// Write the total amount that you want to update
+    #[clap(short, long)]
+    pub amount: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct UpdateTotalCategories {
     // Write the new category to update with
     #[clap(short, long)]
     pub new_category: String,
@@ -76,10 +83,6 @@ pub struct UpdateTotal {
     // Write the old category to update
     #[clap(short, long)]
     pub old_category: String,
-
-    /// Write the total amount that you want to update
-    #[clap(short, long)]
-    pub amount: String,
 
     /// Write the label that you want to update
     #[clap(short, long)]

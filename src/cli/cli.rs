@@ -1,7 +1,8 @@
 use crate::cli::command::Move;
 
 use crate::cli::subcommands::{
-    Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, AlertSubcommand, SpendSubcommand, AddTotalSubcommand,
+    Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, 
+    UpdateTotalSubcommand, AlertSubcommand, SpendSubcommand, AddTotalSubcommand,
 };
 use crate::data::database::{create_table, list_data, view_total_amount, view_total_categories};
 use clap::Parser;
@@ -90,12 +91,22 @@ pub fn cli() {
                 println!("status subcommand");
             }
 
-            TotalAmountSubcommand::Update(update_total) => {
-                let result = update_total.update_total();
+            TotalAmountSubcommand::Update(update) => match update.update_subcommand {
+                UpdateTotalSubcommand::Amount(update_total) => {
+                    let result = update_total.update_total();
                     match result {
                         Ok(_) => println!("Total amount is successfully updated"),
                         Err(err) => println!("Error: {}", err),
                     }
+                }
+
+                UpdateTotalSubcommand::Categories(update_category) => {
+                    let result = update_category.update_category();
+                    match result {
+                        Ok(_) => println!("Total amount is successfully updated"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+                }
             }
 
             TotalAmountSubcommand::Remove(remove_total) => {

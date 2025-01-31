@@ -1,6 +1,6 @@
 use crate::cli::flags::{
-    DBCred, BlockchainCred, GmailCred, AddTotalAmount, AddTotalCategories, RemoveTotal, UpdateTotal, BudgetData,
-    CreateBudget, GetBudget, UpdateBudget, AlertData, AlertValues, SpendData,
+    DBCred, BlockchainCred, GmailCred, AddTotalAmount, AddTotalCategories, UpdateTotalAmount, UpdateTotalCategories, 
+    RemoveTotal, BudgetData, CreateBudget, GetBudget, UpdateBudget, AlertData, AlertValues, SpendData,
 };
 use clap::{Parser, Subcommand};
 
@@ -59,6 +59,21 @@ pub enum TotalAmountSubcommand {
 
     /// Remove the total amount data
     Remove(RemoveTotal),
+}
+
+#[derive(Debug, Parser)]
+pub struct UpdateTotal {
+    #[clap(subcommand)]
+    pub update_subcommand: UpdateTotalSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum UpdateTotalSubcommand {
+    /// Update the total amount
+    Amount(UpdateTotalAmount),
+
+    /// Update the categories
+    Categories(UpdateTotalCategories),
 }
 
 #[derive(Debug, Parser)]
