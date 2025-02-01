@@ -1,9 +1,13 @@
-use crate::cli::command::Move;
+use crate::cli::command::command::Move;
+use crate::cli::subcommands::subcommands::Command;
 
 use crate::cli::subcommands::{
-    Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, 
-    UpdateTotalSubcommand, AlertSubcommand, SpendSubcommand, AddTotalSubcommand, StatusSubcommand,
+    init::InitSubcommand,
+    total_amount::{AddTotalSubcommand, StatusSubcommand, TotalAmountSubcommand, UpdateTotalSubcommand, ViewSubcommand},
+    budget::{AlertSubcommand, BudgetSubcommand},
+    spend::SpendSubcommand,
 };
+
 use crate::data::database::{create_table, list_data, view_total_amount, view_total_categories};
 use clap::Parser;
 use std::{fs::OpenOptions, io::Write};
@@ -75,7 +79,7 @@ pub fn cli() {
                         Err(err) => println!("Error: {}", err),
                     }
                 }
-            }
+            },
 
             TotalAmountSubcommand::View(view_total) => match view_total.view_subcommand {
                 ViewSubcommand::Amount => {
@@ -85,7 +89,7 @@ pub fn cli() {
                 ViewSubcommand::Categories => {
                     let _ = view_total_categories();
                 }
-            }
+            },
 
             TotalAmountSubcommand::Status(status_total) => match status_total.status_subcommand {
                 StatusSubcommand::Active => {
@@ -107,7 +111,7 @@ pub fn cli() {
                 StatusSubcommand::Check => {
                     let _ = status_total.check_status();
                 }
-            }
+            },
 
             TotalAmountSubcommand::Update(update) => match update.update_subcommand {
                 UpdateTotalSubcommand::Amount(update_total) => {
@@ -125,7 +129,7 @@ pub fn cli() {
                         Err(err) => println!("Error: {}", err),
                     }
                 }
-            }
+            },
 
             TotalAmountSubcommand::Remove(remove_total) => {
                 let result = remove_total.remove_total();
@@ -185,7 +189,7 @@ pub fn cli() {
                         Err(err) => println!("Error: {}", err),
                     }
                 }
-                
+
                 AlertSubcommand::Email(email_alert) => {
                     email_alert.get_alert();
                 }
@@ -209,7 +213,7 @@ pub fn cli() {
                         Err(err) => println!("Error: {}", err),
                     }
                 }
-            }
+            },
         },
 
         Command::Spend(details) => match details.spend_subcommand {
@@ -233,6 +237,6 @@ pub fn cli() {
             SpendSubcommand::Show => {
                 println!("show command");
             }
-        }
+        },
     }
 }

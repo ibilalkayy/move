@@ -1,9 +1,10 @@
-use crate::cli::flags::{
-    AddTotalAmount, AddTotalCategories, UpdateTotalAmount, RemoveTotal, BudgetData, CreateBudget, 
-    GetBudget, UpdateBudget, AlertData, AlertValues, SpendData, UpdateTotalCategories,
-};
+use crate::cli::flags::alert::{AlertData, AlertValues};
+use crate::cli::flags::spend::SpendData;
 
-use crate::cli::subcommands::StatusTotal;
+use crate::cli::flags::total_amount::{AddTotalAmount, AddTotalCategories, RemoveTotal, UpdateTotalAmount, UpdateTotalCategories};
+use crate::cli::flags::budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
+
+use crate::cli::subcommands::total_amount::StatusTotal;
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
@@ -13,25 +14,25 @@ use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
 struct TotalAmountRow {
-    #[tabled(rename="Total Amount")]
+    #[tabled(rename = "Total Amount")]
     total_amount: String,
 
-    #[tabled(rename="Spent Amount")]
+    #[tabled(rename = "Spent Amount")]
     spent_amount: String,
 
-    #[tabled(rename="Remaining Amount")]
+    #[tabled(rename = "Remaining Amount")]
     remaining_amount: String,
 
-    #[tabled(rename="Status")]
+    #[tabled(rename = "Status")]
     status: String,
 }
 
 #[derive(Tabled)]
 struct TotalCategoryRow {
-    #[tabled(rename="Categories")]
+    #[tabled(rename = "Categories")]
     category: String,
 
-    #[tabled(rename="Labels")]
+    #[tabled(rename = "Labels")]
     label: String,
 }
 
@@ -74,7 +75,7 @@ pub fn view_total_amount() -> Result<(), Box<dyn Error>> {
         let remaining_amount: String = row.get(2);
         let status: String = row.get(3);
 
-        rows.push(TotalAmountRow{
+        rows.push(TotalAmountRow {
             total_amount,
             spent_amount,
             remaining_amount,
@@ -93,18 +94,11 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
     let mut client = connection()?;
     let mut rows = Vec::new();
 
-    for row in client.query(
-        "select category, label from totalcategories",
-        &[],
-    )? {
+    for row in client.query("select category, label from totalcategories", &[])? {
         let category: String = row.get(0);
         let label: String = row.get(1);
 
-        rows.push(TotalCategoryRow{
-            category,
-            label,
-
-        });
+        rows.push(TotalCategoryRow { category, label });
     }
 
     let table = Table::new(rows);
@@ -160,9 +154,7 @@ impl UpdateTotalCategories {
 impl StatusTotal {
     pub fn update_status(&self, status: String) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
-        let _ = client.execute(
-            "update totalamount set statuss=$1", &[&status],
-        )?;
+        let _ = client.execute("update totalamount set statuss=$1", &[&status])?;
         Ok(())
     }
 
@@ -179,7 +171,10 @@ impl StatusTotal {
 impl RemoveTotal {
     pub fn remove_total(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
-        let _ = client.execute("delete from totalamount where category=$1", &[&self.category])?;
+        let _ = client.execute(
+            "delete from totalamount where category=$1",
+            &[&self.category],
+        )?;
         Ok(())
     }
 }
@@ -266,7 +261,7 @@ impl AlertData {
                 weekdays
             ) values($1, $2, $3, $4, $5, $6, $7, $8)",
             &[
-                &self.category, 
+                &self.category,
                 &self.frequency,
                 &self.method,
                 &self.day,
@@ -294,7 +289,7 @@ impl AlertData {
                 weekdays=$8
                 where category=$9",
                 &[
-                    &self.category, 
+                    &self.category,
                     &self.frequency,
                     &self.method,
                     &self.day,

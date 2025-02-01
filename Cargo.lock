@@ -449,7 +449,7 @@ dependencies = [
 
 [[package]]
 name = "move"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "clap",
  "csv",
