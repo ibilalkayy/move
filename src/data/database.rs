@@ -2,6 +2,8 @@ use crate::cli::flags::{
     AddTotalAmount, AddTotalCategories, UpdateTotalAmount, RemoveTotal, BudgetData, CreateBudget, 
     GetBudget, UpdateBudget, AlertData, AlertValues, SpendData, UpdateTotalCategories,
 };
+
+use crate::cli::subcommands::StatusTotal;
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
@@ -19,6 +21,9 @@ struct TotalAmountRow {
 
     #[tabled(rename="Remaining Amount")]
     remaining_amount: String,
+
+    #[tabled(rename="Status")]
+    status: String,
 }
 
 #[derive(Tabled)]
@@ -28,9 +33,6 @@ struct TotalCategoryRow {
 
     #[tabled(rename="Labels")]
     label: String,
-
-    #[tabled(rename="Statuses")]
-    status: String,
 }
 
 fn connection() -> Result<Client, Box<dyn Error>> {
@@ -64,17 +66,19 @@ pub fn view_total_amount() -> Result<(), Box<dyn Error>> {
     let mut rows = Vec::new();
 
     for row in client.query(
-        "select total_amount, spent_amount, remaining_amount from totalamount",
+        "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
         &[],
     )? {
         let total_amount: String = row.get(0);
         let spent_amount: String = row.get(1);
         let remaining_amount: String = row.get(2);
+        let status: String = row.get(3);
 
         rows.push(TotalAmountRow{
             total_amount,
             spent_amount,
             remaining_amount,
+            status,
         });
         break;
     }
@@ -90,17 +94,16 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
     let mut rows = Vec::new();
 
     for row in client.query(
-        "select category, label, statuss from totalcategories",
+        "select category, label from totalcategories",
         &[],
     )? {
         let category: String = row.get(0);
         let label: String = row.get(1);
-        let status: String = row.get(2);
 
         rows.push(TotalCategoryRow{
             category,
             label,
-            status
+
         });
     }
 
@@ -110,23 +113,23 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-impl AddTotalCategories {
-    pub fn insert_total_categories(&self) -> Result<(), Box<dyn Error>> {
+impl AddTotalAmount {
+    pub fn insert_total_amount(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
-            "insert into totalcategories(category, label, statuss) values($1, $2, $3)",
-            &[&self.category, &self.label, &"inactive"],
+            "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values($1, $2, $3, $4)",
+            &[&self.amount, &"0", &"0", &"inactive"],
         )?;
         Ok(())
     }
 }
 
-impl AddTotalAmount {
-    pub fn insert_total_amount(&self) -> Result<(), Box<dyn Error>> {
+impl AddTotalCategories {
+    pub fn insert_total_categories(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
-            "insert into totalamount(total_amount, spent_amount, remaining_amount) values($1, $2, $3)",
-            &[&self.amount, &"0", &"0"],
+            "insert into totalcategories(category, label) values($1, $2)",
+            &[&self.category, &self.label],
         )?;
         Ok(())
     }
@@ -147,9 +150,28 @@ impl UpdateTotalCategories {
     pub fn update_category(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
-            "update totalcategories set category=$1, label=$2, statuss=$3 where category=$4",
-            &[&self.new_category, &self.label, &"statuess", &self.old_category],
+            "update totalcategories set category=$1, label=$2 where category=$3",
+            &[&self.new_category, &self.label, &self.old_category],
         )?;
+        Ok(())
+    }
+}
+
+impl StatusTotal {
+    pub fn update_status(&self, status: String) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        let _ = client.execute(
+            "update totalamount set statuss=$1", &[&status],
+        )?;
+        Ok(())
+    }
+
+    pub fn check_status(&self) -> Result<(), Box<dyn Error>> {
+        let mut client = connection()?;
+        for row in client.query("select statuss from totalamount", &[])? {
+            let status: String = row.get(0);
+            println!("Total amount status: {}", status);
+        }
         Ok(())
     }
 }

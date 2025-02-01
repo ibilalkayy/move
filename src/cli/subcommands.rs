@@ -62,21 +62,6 @@ pub enum TotalAmountSubcommand {
 }
 
 #[derive(Debug, Parser)]
-pub struct UpdateTotal {
-    #[clap(subcommand)]
-    pub update_subcommand: UpdateTotalSubcommand,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum UpdateTotalSubcommand {
-    /// Update the total amount
-    Amount(UpdateTotalAmount),
-
-    /// Update the categories
-    Categories(UpdateTotalCategories),
-}
-
-#[derive(Debug, Parser)]
 pub struct AddTotal {
     #[clap(subcommand)]
     pub add_subcommand: AddTotalSubcommand,
@@ -122,6 +107,21 @@ pub enum StatusSubcommand {
 
     /// Check the status of the total amount
     Check,
+}
+
+#[derive(Debug, Parser)]
+pub struct UpdateTotal {
+    #[clap(subcommand)]
+    pub update_subcommand: UpdateTotalSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum UpdateTotalSubcommand {
+    /// Update the total amount
+    Amount(UpdateTotalAmount),
+
+    /// Update the categories
+    Categories(UpdateTotalCategories),
 }
 
 #[derive(Debug, Parser)]

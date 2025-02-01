@@ -69,7 +69,7 @@ pub struct AddTotalCategories {
 
 #[derive(Debug, Parser)]
 pub struct UpdateTotalAmount {
-    /// Write the total amount that you want to update
+    /// Write the total amount to update
     #[clap(short, long)]
     pub amount: String,
 }

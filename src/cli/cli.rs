@@ -2,7 +2,7 @@ use crate::cli::command::Move;
 
 use crate::cli::subcommands::{
     Command, InitSubcommand, TotalAmountSubcommand, ViewSubcommand, BudgetSubcommand, 
-    UpdateTotalSubcommand, AlertSubcommand, SpendSubcommand, AddTotalSubcommand,
+    UpdateTotalSubcommand, AlertSubcommand, SpendSubcommand, AddTotalSubcommand, StatusSubcommand,
 };
 use crate::data::database::{create_table, list_data, view_total_amount, view_total_categories};
 use clap::Parser;
@@ -79,16 +79,34 @@ pub fn cli() {
 
             TotalAmountSubcommand::View(view_total) => match view_total.view_subcommand {
                 ViewSubcommand::Amount => {
-                    let _= view_total_amount();
+                    let _ = view_total_amount();
                 }
 
                 ViewSubcommand::Categories => {
-                    let _= view_total_categories();
+                    let _ = view_total_categories();
                 }
             }
 
-            TotalAmountSubcommand::Status(_status_total) => {
-                println!("status subcommand");
+            TotalAmountSubcommand::Status(status_total) => match status_total.status_subcommand {
+                StatusSubcommand::Active => {
+                    let result = status_total.update_status("active".to_string());
+                    match result {
+                        Ok(_) => println!("Total amount is activated"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+                }
+
+                StatusSubcommand::Inactive => {
+                    let result = status_total.update_status("inactive".to_string());
+                    match result {
+                        Ok(_) => println!("Total amount is now inactive"),
+                        Err(err) => println!("Error: {}", err),
+                    }
+                }
+
+                StatusSubcommand::Check => {
+                    let _ = status_total.check_status();
+                }
             }
 
             TotalAmountSubcommand::Update(update) => match update.update_subcommand {
@@ -111,10 +129,10 @@ pub fn cli() {
 
             TotalAmountSubcommand::Remove(remove_total) => {
                 let result = remove_total.remove_total();
-                    match result {
-                        Ok(_) => println!("Alert data is successfully removed"),
-                        Err(err) => println!("Error: {}", err),
-                    }
+                match result {
+                    Ok(_) => println!("Alert data is successfully removed"),
+                    Err(err) => println!("Error: {}", err),
+                }
             }
         },
 
