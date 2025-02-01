@@ -64,11 +64,7 @@ pub fn cli() {
             TotalAmountSubcommand::Add(add_total) => match add_total.add_subcommand {
                 AddTotalSubcommand::Amount(amount) => {
                     let _ = create_table();
-                    let result = amount.insert_total_amount();
-                    match result {
-                        Ok(_) => println!("Total amount is successfully saved"),
-                        Err(err) => println!("Error: {}", err),
-                    }
+                    let _ = amount.insert_total_amount();
                 }
 
                 AddTotalSubcommand::Categories(categories) => {

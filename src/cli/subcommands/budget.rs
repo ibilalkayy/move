@@ -1,5 +1,7 @@
-use crate::cli::flags::alert::{AlertData, AlertValues};
-use crate::cli::flags::budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
+use crate::cli::flags::{
+    alert::{AlertData, AlertValues},
+    budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget},
+};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]

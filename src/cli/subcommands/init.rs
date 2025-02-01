@@ -1,7 +1,6 @@
 use crate::cli::flags::init::{DBCred, GmailCred, BlockchainCred};
 use clap::{Parser, Subcommand};
 
-
 #[derive(Debug, Parser)]
 pub struct InitInfo {
     #[clap(subcommand)]

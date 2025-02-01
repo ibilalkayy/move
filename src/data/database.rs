@@ -1,16 +1,17 @@
-use crate::cli::flags::alert::{AlertData, AlertValues};
-use crate::cli::flags::spend::SpendData;
-
-use crate::cli::flags::total_amount::{AddTotalAmount, AddTotalCategories, RemoveTotal, UpdateTotalAmount, UpdateTotalCategories};
-use crate::cli::flags::budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
-
-use crate::cli::subcommands::total_amount::StatusTotal;
 use csv::Writer;
 use dotenv::dotenv;
 use postgres::{Client, NoTls};
 use std::error::Error;
 use std::{env, fs, path::Path};
 use tabled::{Table, Tabled};
+
+use crate::cli::flags::{
+    spend::SpendData,
+    alert::{AlertData, AlertValues},
+    total_amount::{AddTotalAmount, AddTotalCategories, RemoveTotal, UpdateTotalAmount, UpdateTotalCategories},
+    budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget},
+};
+use crate::cli::subcommands::total_amount::StatusTotal;
 
 #[derive(Tabled)]
 struct TotalAmountRow {
@@ -110,10 +111,18 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
 impl AddTotalAmount {
     pub fn insert_total_amount(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
+        let row_exists = client.query_one("SELECT EXISTS (SELECT 1 FROM totalamount)", &[])?.get(0);
+
+        if row_exists {
+            println!("The total amount data is already inserted");
+            return Ok(())
+        }
+
         let _ = client.execute(
             "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values($1, $2, $3, $4)",
             &[&self.amount, &"0", &"0", &"inactive"],
         )?;
+        println!("Total amount category is successfully saved");
         Ok(())
     }
 }

@@ -1,4 +1,10 @@
-use crate::cli::flags::total_amount::{AddTotalAmount, AddTotalCategories, RemoveTotal, UpdateTotalAmount, UpdateTotalCategories};
+use crate::cli::flags::total_amount::{
+    AddTotalAmount,
+    AddTotalCategories,
+    RemoveTotal,
+    UpdateTotalAmount,
+    UpdateTotalCategories,
+};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
