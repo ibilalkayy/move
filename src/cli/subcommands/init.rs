@@ -1,4 +1,4 @@
-use crate::cli::flags::init::{DBCred, GmailCred, BlockchainCred};
+use crate::cli::flags::init::{BlockchainCred, DBCred, GmailCred};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]

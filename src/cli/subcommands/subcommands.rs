@@ -1,8 +1,5 @@
 use crate::cli::subcommands::{
-    init::InitInfo,
-    total_amount::TotalAmountInfo,
-    budget::BudgetInfo,
-    spend::SpendInfo,
+    budget::BudgetInfo, init::InitInfo, spend::SpendInfo, total_amount::TotalAmountInfo,
 };
 
 use clap::Subcommand;

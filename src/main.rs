@@ -1,7 +1,7 @@
 mod cli;
 mod database;
 
-use crate::cli::cli::cli;
+use crate::cli::controller::cli::cli;
 
 fn main() {
     cli();

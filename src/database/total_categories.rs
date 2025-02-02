@@ -1,7 +1,7 @@
 use crate::cli::flags::total_amount::{AddTotalCategories, UpdateTotalCategories};
 use crate::database::db::connection;
-use tabled::{Table, Tabled};
 use std::error::Error;
+use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
 struct TotalCategoryRow {

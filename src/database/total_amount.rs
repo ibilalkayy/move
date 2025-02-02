@@ -1,8 +1,8 @@
 use crate::cli::flags::total_amount::{AddTotalAmount, RemoveTotal, UpdateTotalAmount};
 use crate::cli::subcommands::total_amount::StatusTotal;
 use crate::database::db::connection;
-use tabled::{Table, Tabled};
 use std::error::Error;
+use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
 struct TotalAmountRow {
@@ -22,11 +22,13 @@ struct TotalAmountRow {
 impl AddTotalAmount {
     pub fn insert_total_amount(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
-        let row_exists = client.query_one("SELECT EXISTS (SELECT 1 FROM totalamount)", &[])?.get(0);
+        let row_exists = client
+            .query_one("SELECT EXISTS (SELECT 1 FROM totalamount)", &[])?
+            .get(0);
 
         if row_exists {
             println!("The total amount data is already inserted");
-            return Ok(())
+            return Ok(());
         }
 
         let _ = client.execute(

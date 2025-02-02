@@ -1,7 +1,7 @@
 use crate::cli::flags::budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
 use crate::database::db::connection;
-use std::error::Error;
 use csv::Writer;
+use std::error::Error;
 
 impl CreateBudget {
     pub fn insert_data(&self) -> Result<(), Box<dyn Error>> {
