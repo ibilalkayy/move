@@ -8,7 +8,13 @@ use crate::cli::subcommands::{
     spend::SpendSubcommand,
 };
 
-use crate::data::database::{create_table, list_data, view_total_amount, view_total_categories};
+use crate::database::{
+    total_amount::view_total_amount,
+    total_categories::view_total_categories,
+    budget::list_data,
+};
+
+use crate::database::db::create_table;
 use clap::Parser;
 use std::{fs::OpenOptions, io::Write};
 
