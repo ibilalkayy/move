@@ -1,4 +1,4 @@
-use crate::cli::flags::total_amount::{AddTotalAmount, RemoveTotal, UpdateTotalAmount};
+use crate::cli::flags::total_amount::{AddTotalAmount, RemoveTotalCategories, UpdateTotalAmount};
 use crate::cli::subcommands::total_amount::StatusTotal;
 use crate::database::db::connection;
 use std::error::Error;
@@ -79,11 +79,17 @@ impl UpdateTotalAmount {
     }
 }
 
-impl RemoveTotal {
-    pub fn remove_total(&self) -> Result<(), Box<dyn Error>> {
+pub fn remove_total_amount() -> Result<(), Box<dyn Error>> {
+    let mut client = connection()?;
+    let _ = client.execute("delete from totalamount", &[])?;
+    Ok(())
+}
+
+impl RemoveTotalCategories {
+    pub fn remove_total_category(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
-            "delete from totalamount where category=$1",
+            "delete from totalcategories where category=$1",
             &[&self.category],
         )?;
         Ok(())

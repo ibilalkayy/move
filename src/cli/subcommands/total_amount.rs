@@ -1,5 +1,5 @@
 use crate::cli::flags::total_amount::{
-    AddTotalAmount, AddTotalCategories, RemoveTotal, UpdateTotalAmount, UpdateTotalCategories,
+    AddTotalAmount, AddTotalCategories, RemoveTotalCategories, UpdateTotalAmount, UpdateTotalCategories,
 };
 use clap::{Parser, Subcommand};
 
@@ -88,4 +88,19 @@ pub enum UpdateTotalSubcommand {
 
     /// Update the categories
     Categories(UpdateTotalCategories),
+}
+
+#[derive(Debug, Parser)]
+pub struct RemoveTotal {
+    #[clap(subcommand)]
+    pub remove_subcommand: RemoveTotalSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum RemoveTotalSubcommand {
+    /// Remove the total amount
+    Amount,
+
+    /// Remove a specific category
+    Categories(RemoveTotalCategories),
 }

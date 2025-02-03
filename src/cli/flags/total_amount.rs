@@ -41,7 +41,7 @@ pub struct UpdateTotalCategories {
 }
 
 #[derive(Debug, Parser)]
-pub struct RemoveTotal {
+pub struct RemoveTotalCategories {
     /// Remove the total amount data
     #[clap(short, long)]
     pub category: String,

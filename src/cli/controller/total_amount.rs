@@ -1,9 +1,9 @@
 use crate::cli::subcommands::total_amount::{
     AddTotalSubcommand, StatusSubcommand, TotalAmountInfo, TotalAmountSubcommand,
-    UpdateTotalSubcommand, ViewSubcommand,
+    UpdateTotalSubcommand, ViewSubcommand, RemoveTotalSubcommand,
 };
 
-use crate::database::{total_amount::view_total_amount, total_categories::view_total_categories};
+use crate::database::{total_amount::view_total_amount, total_categories::view_total_categories, total_amount::remove_total_amount};
 
 use crate::database::db::create_table;
 
@@ -75,11 +75,21 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
             }
         },
 
-        TotalAmountSubcommand::Remove(remove_total) => {
-            let result = remove_total.remove_total();
-            match result {
-                Ok(_) => println!("Alert data is successfully removed"),
-                Err(err) => println!("Error: {}", err),
+        TotalAmountSubcommand::Remove(remove_total) => match remove_total.remove_subcommand {
+            RemoveTotalSubcommand::Amount => {
+                let result = remove_total_amount();
+                match result {
+                    Ok(_) => println!("Total amount is successfully removed"),
+                    Err(err) => println!("Error: {}", err),
+                }
+            }
+
+            RemoveTotalSubcommand::Categories(remove_category) => {
+                let result = remove_category.remove_total_category();
+                match result {
+                    Ok(_) => println!("Total amount category is successfully removed"),
+                    Err(err) => println!("Error: {}", err),
+                }
             }
         }
     }
