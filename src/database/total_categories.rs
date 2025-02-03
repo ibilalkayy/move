@@ -1,18 +1,18 @@
-use crate::cli::flags::total_amount::{AddTotalCategories, UpdateTotalCategories};
+use crate::cli::flags::total_amount::{AddTotalCategory, UpdateTotalCategories};
 use crate::database::db::connection;
 use std::error::Error;
 use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
 struct TotalCategoryRow {
-    #[tabled(rename = "Categories")]
+    #[tabled(rename = "Category")]
     category: String,
 
-    #[tabled(rename = "Labels")]
+    #[tabled(rename = "Label")]
     label: String,
 }
 
-impl AddTotalCategories {
+impl AddTotalCategory {
     pub fn insert_total_categories(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(

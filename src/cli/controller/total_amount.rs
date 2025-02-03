@@ -15,9 +15,9 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
                 let _ = amount.insert_total_amount();
             }
 
-            AddTotalSubcommand::Categories(categories) => {
+            AddTotalSubcommand::Category(category) => {
                 let _ = create_table();
-                let result = categories.insert_total_categories();
+                let result = category.insert_total_categories();
                 match result {
                     Ok(_) => println!("Total amount category is successfully saved"),
                     Err(err) => println!("Error: {}", err),

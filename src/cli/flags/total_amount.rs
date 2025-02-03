@@ -8,7 +8,7 @@ pub struct AddTotalAmount {
 }
 
 #[derive(Debug, Parser)]
-pub struct AddTotalCategories {
+pub struct AddTotalCategory {
     /// Write a category to include in the total amount
     #[clap(short, long)]
     pub category: String,
