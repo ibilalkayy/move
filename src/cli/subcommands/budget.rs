@@ -45,6 +45,9 @@ pub enum AlertSubcommand {
     /// Set the alert notification data
     Set(AlertData),
 
+    /// View the alert notification data
+    View,
+
     /// See the alert notifications in your terminal
     See(AlertValues),
 

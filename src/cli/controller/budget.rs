@@ -1,5 +1,6 @@
 use crate::cli::subcommands::budget::{AlertSubcommand, BudgetInfo, BudgetSubcommand};
 use crate::database::budget::list_budget;
+use crate::database::alert::view_alert;
 use crate::database::db::create_table;
 
 pub fn handle_budget(details: BudgetInfo) {
@@ -55,6 +56,10 @@ pub fn handle_budget(details: BudgetInfo) {
                     Ok(_) => println!("Alert is successfully created"),
                     Err(err) => println!("Error: {}", err),
                 }
+            }
+
+            AlertSubcommand::View => {
+                let _ = view_alert();
             }
 
             AlertSubcommand::Email(email_alert) => {
