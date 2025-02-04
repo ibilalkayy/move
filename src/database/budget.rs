@@ -1,10 +1,20 @@
 use crate::cli::flags::budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget};
 use crate::database::db::connection;
-use csv::Writer;
+use tabled::{Table, Tabled};
 use std::error::Error;
+use csv::Writer;
+
+#[derive(Tabled)]
+struct BudgetRow {
+    #[tabled(rename="Category")]
+    category: String,
+
+    #[tabled(rename="Amount")]
+    amount: String,
+}
 
 impl CreateBudget {
-    pub fn insert_data(&self) -> Result<(), Box<dyn Error>> {
+    pub fn insert_budget(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
             "insert into budget(category, amount) values($1, $2)",
@@ -14,20 +24,29 @@ impl CreateBudget {
     }
 }
 
-pub fn list_data() -> Result<(), Box<dyn Error>> {
+pub fn list_budget() -> Result<(), Box<dyn Error>> {
     let mut client = connection()?;
+    let mut rows = Vec::new();
+
     for row in client.query("select category, amount from budget", &[])? {
         let category: String = row.get(0);
         let amount: String = row.get(1);
 
-        println!("Category: {}\nAmount: {}", category, amount);
+        rows.push(BudgetRow {
+            category,
+            amount,
+        })
     }
+
+    let table = Table::new(rows);
+    println!("{}", table);
     Ok(())
 }
 
 impl BudgetData {
-    pub fn view_data(&self) -> Result<(), Box<dyn Error>> {
+    pub fn view_budget(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
+        let mut rows = Vec::new();
         for row in client.query(
             "select category, amount from budget where category=$1",
             &[&self.category],
@@ -35,12 +54,18 @@ impl BudgetData {
             let category: String = row.get(0);
             let amount: String = row.get(1);
 
-            println!("Category: {}\nAmount: {}", category, amount);
+            rows.push(BudgetRow {
+                category,
+                amount,
+            })
         }
+
+        let table = Table::new(rows);
+        println!("{}", table);
         Ok(())
     }
 
-    pub fn delete_data(&self) -> Result<String, Box<dyn Error>> {
+    pub fn delete_budget(&self) -> Result<String, Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute("delete from budget where category=$1", &[&self.category])?;
         Ok(self.category.clone())
@@ -48,7 +73,7 @@ impl BudgetData {
 }
 
 impl GetBudget {
-    pub fn get_data(&self) -> Result<(), Box<dyn Error>> {
+    pub fn get_budget(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let mut category: Vec<String> = Vec::new();
         let mut amount: Vec<String> = Vec::new();
@@ -71,7 +96,7 @@ impl GetBudget {
 }
 
 impl UpdateBudget {
-    pub fn update_data(&self) -> Result<(), Box<dyn Error>> {
+    pub fn update_budget(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
             "update budget set category=$1, amount=$2 where category=$3",

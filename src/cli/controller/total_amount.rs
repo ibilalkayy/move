@@ -3,9 +3,9 @@ use crate::cli::subcommands::total_amount::{
     UpdateTotalSubcommand, ViewSubcommand, RemoveTotalSubcommand,
 };
 
-use crate::database::{total_amount::view_total_amount, total_categories::view_total_categories, total_amount::remove_total_amount};
-
-use crate::database::db::create_table;
+use crate::database::{
+    db::create_table, total_amount::view_total_amount, total_categories::view_total_categories, total_amount::remove_total_amount
+};
 
 pub fn handle_total_amount(details: TotalAmountInfo) {
     match details.total_amount {
@@ -67,7 +67,7 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
             }
 
             UpdateTotalSubcommand::Categories(update_category) => {
-                let result = update_category.update_category();
+                let result = update_category.update_total_category();
                 match result {
                     Ok(_) => println!("Total amount is successfully updated"),
                     Err(err) => println!("Error: {}", err),

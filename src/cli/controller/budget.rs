@@ -1,12 +1,12 @@
 use crate::cli::subcommands::budget::{AlertSubcommand, BudgetInfo, BudgetSubcommand};
-use crate::database::budget::list_data;
+use crate::database::budget::list_budget;
 use crate::database::db::create_table;
 
 pub fn handle_budget(details: BudgetInfo) {
     match details.budget_subcommand {
         BudgetSubcommand::Create(create_budget) => {
             let _ = create_table();
-            let result = create_budget.insert_data();
+            let result = create_budget.insert_budget();
             match result {
                 Ok(_) => println!("Budget is successfully created"),
                 Err(err) => println!("Error: {}", err),
@@ -14,19 +14,19 @@ pub fn handle_budget(details: BudgetInfo) {
         }
 
         BudgetSubcommand::View(budget_data) => {
-            let _ = budget_data.view_data();
+            let _ = budget_data.view_budget();
         }
 
         BudgetSubcommand::List => {
-            let _ = list_data();
+            let _ = list_budget();
         }
 
         BudgetSubcommand::Get(get_budget) => {
-            let _ = get_budget.get_data();
+            let _ = get_budget.get_budget();
         }
 
         BudgetSubcommand::Update(update_budget) => {
-            let result = update_budget.update_data();
+            let result = update_budget.update_budget();
             match result {
                 Ok(_) => println!("Budget is successfully updated"),
                 Err(err) => println!("Error: {}", err),
@@ -34,10 +34,10 @@ pub fn handle_budget(details: BudgetInfo) {
         }
 
         BudgetSubcommand::Delete(budget_data) => {
-            let result = budget_data.delete_data();
+            let result = budget_data.delete_budget();
             match result {
                 Ok(category) => {
-                    println!("{} category data has been successfully delete", category)
+                    println!("{} category data has been successfully deleted", category)
                 }
                 Err(err) => println!("err: {}", err),
             }

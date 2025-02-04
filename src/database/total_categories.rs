@@ -41,11 +41,16 @@ pub fn view_total_categories() -> Result<(), Box<dyn Error>> {
 }
 
 impl UpdateTotalCategories {
-    pub fn update_category(&self) -> Result<(), Box<dyn Error>> {
+    pub fn update_total_category(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
             "update totalcategories set category=$1, label=$2 where category=$3",
             &[&self.new_category, &self.label, &self.old_category],
+        )?;
+
+        let _ = client.execute(
+            "update budget set category=$1 where category=$2",
+            &[&self.new_category, &self.old_category],
         )?;
         Ok(())
     }
