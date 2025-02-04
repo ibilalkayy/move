@@ -22,7 +22,11 @@ pub fn handle_budget(details: BudgetInfo) {
         }
 
         BudgetSubcommand::Get(get_budget) => {
-            let _ = get_budget.get_budget();
+            let result = get_budget.get_budget();
+            match result {
+                Ok(_) => println!("Budget data is successfully stored in the CSV file"),
+                Err(err) => println!("Error: {}", err),
+            }
         }
 
         BudgetSubcommand::Update(update_budget) => {

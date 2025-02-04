@@ -17,7 +17,7 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
 
             AddTotalSubcommand::Category(category) => {
                 let _ = create_table();
-                let result = category.insert_total_categories();
+                let result = category.insert_total_category();
                 match result {
                     Ok(_) => println!("Total amount category is successfully saved"),
                     Err(err) => println!("Error: {}", err),
@@ -37,7 +37,7 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
 
         TotalAmountSubcommand::Status(status_total) => match status_total.status_subcommand {
             StatusSubcommand::Active => {
-                let result = status_total.update_status("active".to_string());
+                let result = status_total.update_total_status("active".to_string());
                 match result {
                     Ok(_) => println!("Total amount is activated"),
                     Err(err) => println!("Error: {}", err),
@@ -45,7 +45,7 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
             }
 
             StatusSubcommand::Inactive => {
-                let result = status_total.update_status("inactive".to_string());
+                let result = status_total.update_total_status("inactive".to_string());
                 match result {
                     Ok(_) => println!("Total amount is now inactive"),
                     Err(err) => println!("Error: {}", err),
@@ -53,13 +53,13 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
             }
 
             StatusSubcommand::Check => {
-                let _ = status_total.check_status();
+                let _ = status_total.check_total_status();
             }
         },
 
         TotalAmountSubcommand::Update(update) => match update.update_subcommand {
             UpdateTotalSubcommand::Amount(update_total) => {
-                let result = update_total.update_total();
+                let result = update_total.update_total_amount();
                 match result {
                     Ok(_) => println!("Total amount is successfully updated"),
                     Err(err) => println!("Error: {}", err),
@@ -84,7 +84,7 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
                 }
             }
 
-            RemoveTotalSubcommand::Categories(remove_category) => {
+            RemoveTotalSubcommand::Category(remove_category) => {
                 let result = remove_category.remove_total_category();
                 match result {
                     Ok(_) => println!("Total amount category is successfully removed"),

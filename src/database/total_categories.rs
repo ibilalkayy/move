@@ -13,7 +13,7 @@ struct TotalCategoryRow {
 }
 
 impl AddTotalCategory {
-    pub fn insert_total_categories(&self) -> Result<(), Box<dyn Error>> {
+    pub fn insert_total_category(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
             "insert into totalcategories(category, label) values($1, $2)",

@@ -1,8 +1,8 @@
-use crate::cli::flags::total_amount::{AddTotalAmount, RemoveTotalCategories, UpdateTotalAmount};
+use crate::cli::flags::total_amount::{AddTotalAmount, RemoveTotalCategory, UpdateTotalAmount};
 use crate::cli::subcommands::total_amount::StatusTotal;
 use crate::database::db::connection;
-use std::error::Error;
 use tabled::{Table, Tabled};
+use std::error::Error;
 
 #[derive(Tabled)]
 struct TotalAmountRow {
@@ -69,7 +69,7 @@ pub fn view_total_amount() -> Result<(), Box<dyn Error>> {
 }
 
 impl UpdateTotalAmount {
-    pub fn update_total(&self) -> Result<(), Box<dyn Error>> {
+    pub fn update_total_amount(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
             "update totalamount set total_amount=$1, spent_amount=$2, remaining_amount=$3",
@@ -85,7 +85,7 @@ pub fn remove_total_amount() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-impl RemoveTotalCategories {
+impl RemoveTotalCategory {
     pub fn remove_total_category(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute(
@@ -97,13 +97,13 @@ impl RemoveTotalCategories {
 }
 
 impl StatusTotal {
-    pub fn update_status(&self, status: String) -> Result<(), Box<dyn Error>> {
+    pub fn update_total_status(&self, status: String) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         let _ = client.execute("update totalamount set statuss=$1", &[&status])?;
         Ok(())
     }
 
-    pub fn check_status(&self) -> Result<(), Box<dyn Error>> {
+    pub fn check_total_status(&self) -> Result<(), Box<dyn Error>> {
         let mut client = connection()?;
         for row in client.query("select statuss from totalamount", &[])? {
             let status: String = row.get(0);
