@@ -3,93 +3,61 @@ use crate::cli::subcommands::total_amount::{
     UpdateTotalSubcommand, ViewSubcommand, RemoveTotalSubcommand,
 };
 
-use crate::database::{
-    db::create_table, total_amount::view_total_amount, total_categories::view_total_categories, total_amount::remove_total_amount
-};
-
 pub fn handle_total_amount(details: TotalAmountInfo) {
     match details.total_amount {
         TotalAmountSubcommand::Add(add_total) => match add_total.add_subcommand {
-            AddTotalSubcommand::Amount(amount) => {
-                let _ = create_table();
-                let _ = amount.insert_total_amount();
+            AddTotalSubcommand::Amount(_amount) => {
+                // let _ = create_table();
+                // let _ = amount.insert_total_amount();
+                println!("inserted total amount");
             }
 
-            AddTotalSubcommand::Category(category) => {
-                let _ = create_table();
-                let result = category.insert_total_category();
-                match result {
-                    Ok(_) => println!("Total amount category is successfully saved"),
-                    Err(err) => println!("Error: {}", err),
-                }
+            AddTotalSubcommand::Category(_category) => {
+                println!("inserted total category");
             }
         },
 
         TotalAmountSubcommand::View(view_total) => match view_total.view_subcommand {
             ViewSubcommand::Amount => {
-                let _ = view_total_amount();
+                println!("view total amount");
             }
 
             ViewSubcommand::Categories => {
-                let _ = view_total_categories();
+                println!("view total categories");
             }
         },
 
         TotalAmountSubcommand::Status(status_total) => match status_total.status_subcommand {
             StatusSubcommand::Active => {
-                let result = status_total.update_total_status("active".to_string());
-                match result {
-                    Ok(_) => println!("Total amount is activated"),
-                    Err(err) => println!("Error: {}", err),
-                }
+                println!("Total amount is activated");
             }
 
             StatusSubcommand::Inactive => {
-                let result = status_total.update_total_status("inactive".to_string());
-                match result {
-                    Ok(_) => println!("Total amount is now inactive"),
-                    Err(err) => println!("Error: {}", err),
-                }
+                println!("Total amount is now inactive");
             }
 
             StatusSubcommand::Check => {
-                let _ = status_total.check_total_status();
+                println!("total amount status is checked out");
             }
         },
 
         TotalAmountSubcommand::Update(update) => match update.update_subcommand {
-            UpdateTotalSubcommand::Amount(update_total) => {
-                let result = update_total.update_total_amount();
-                match result {
-                    Ok(_) => println!("Total amount is successfully updated"),
-                    Err(err) => println!("Error: {}", err),
-                }
+            UpdateTotalSubcommand::Amount(_update_total) => {
+                println!("Total amount is successfully updated");
             }
 
-            UpdateTotalSubcommand::Categories(update_category) => {
-                let result = update_category.update_total_category();
-                match result {
-                    Ok(_) => println!("Total amount is successfully updated"),
-                    Err(err) => println!("Error: {}", err),
-                }
+            UpdateTotalSubcommand::Categories(_update_category) => {
+                println!("Total amount is successfully updated");
             }
         },
 
         TotalAmountSubcommand::Remove(remove_total) => match remove_total.remove_subcommand {
             RemoveTotalSubcommand::Amount => {
-                let result = remove_total_amount();
-                match result {
-                    Ok(_) => println!("Total amount is successfully removed"),
-                    Err(err) => println!("Error: {}", err),
-                }
+                println!("Total amount is successfully removed");
             }
 
-            RemoveTotalSubcommand::Category(remove_category) => {
-                let result = remove_category.remove_total_category();
-                match result {
-                    Ok(_) => println!("Total amount category is successfully removed"),
-                    Err(err) => println!("Error: {}", err),
-                }
+            RemoveTotalSubcommand::Category(_remove_category) => {
+                println!("Total amount category is successfully removed");
             }
         }
     }

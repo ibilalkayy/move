@@ -16,16 +16,6 @@ fn file_options(data_detail: String) {
 
 pub fn handle_init(details: InitInfo) {
     match details.init_subcommand {
-        InitSubcommand::Database(db_info) => {
-            let data_detail = format!(
-                "\nDATABASE_URL=postgres://{}:{}@{}:{}/{}",
-                db_info.db_username, db_info.password, db_info.host, db_info.port, db_info.name,
-            );
-
-            file_options(data_detail);
-            println!("Database data is successfully inserted");
-        }
-
         InitSubcommand::Blockchain(b_info) => {
             let data_detail = format!(
                 "\nPRIVATE_KEY={}\nALCHEMY_URL={}\n",

@@ -1,29 +1,6 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-pub struct DBCred {
-    /// The PostgreSQL DB name
-    #[clap(short = 'n', long, help = "Your PostgreSQL database name")]
-    pub name: String,
-
-    /// The PostgreSQL host
-    #[clap(short = 'o', long, help = "Your PostgreSQL host")]
-    pub host: String,
-
-    /// The PostgreSQL password
-    #[clap(short = 'a', long, help = "Your PostgreSQL password")]
-    pub password: String,
-
-    /// The PostgreSQL port
-    #[clap(short = 'p', long, help = "Your PostgreSQL port number")]
-    pub port: String,
-
-    /// The PostgreSQL username
-    #[clap(short = 'u', long, help = "Your PostgreSQL username")]
-    pub db_username: String,
-}
-
-#[derive(Debug, Parser)]
 pub struct BlockchainCred {
     /// Your Blockchain wallet private key
     #[clap(short = 'p', long, help = "Blockchain wallet private key")]
