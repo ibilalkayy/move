@@ -23,9 +23,6 @@ move --help
 It will give you a list of all subcommands that you can execute like:
 
 ```
-// Initialize the application
-move init -n username -g gmail-id -a app-password -o postgresql-host -p 5432 -u postgresql-user -w postgresql-password -d postgresql-dbname -s sslmode -k privatekey -e alchemy-url
-
 // Create a budget
 move budget create --category groceries/utilities --amount 300
 
