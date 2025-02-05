@@ -1,14 +1,14 @@
-use crate::cli::flags::init::{BlockchainCred, GmailCred};
+use crate::cli::flags::cred::{BlockchainCred, GmailCred};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
-pub struct InitInfo {
+pub struct CredInfo {
     #[clap(subcommand)]
-    pub init_subcommand: InitSubcommand,
+    pub cred_subcommand: CredSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
-pub enum InitSubcommand {
+pub enum CredSubcommand {
     /// Insert the blockchain credentials
     Blockchain(BlockchainCred),
 

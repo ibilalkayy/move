@@ -1,13 +1,13 @@
 use crate::cli::subcommands::{
-    budget::BudgetInfo, init::InitInfo, spend::SpendInfo, total_amount::TotalAmountInfo,
+    budget::BudgetInfo, cred::CredInfo, spend::SpendInfo, total_amount::TotalAmountInfo,
 };
 
 use clap::Subcommand;
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Initialize your move application by inserting the database credentials
-    Init(InitInfo),
+    /// Insert the blockchain and gmail credentials
+    Cred(CredInfo),
 
     /// Allocate the total amount to manage the budget and spending under the limit
     TotalAmount(TotalAmountInfo),
