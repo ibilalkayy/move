@@ -1,7 +1,7 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-pub struct SpendData {
+pub struct SpendingData {
     /// Write the category name to spend the money on
     #[clap(short, long)]
     pub category: String,

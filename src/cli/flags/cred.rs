@@ -9,10 +9,6 @@ pub struct BlockchainCred {
     /// Your Alchemy URL
     #[clap(short = 'a', long, help = "Your alchemy URL")]
     pub alchemy_url: String,
-
-    /// The path and file name to store the data
-    #[clap(short = 't', long, help = "The path and filename to store the data")]
-    pub file_path: String,
 }
 
 #[derive(Debug, Parser)]
@@ -28,8 +24,4 @@ pub struct GmailCred {
     /// Write the app password of your gmail account
     #[clap(short = 'a', long, help = "Your PostgreSQL app password")]
     pub app_password: String,
-
-    /// The path and file name to store the data
-    #[clap(short = 't', long, help = "The path and filename to store the data")]
-    pub file_path: String,
 }

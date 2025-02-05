@@ -1,6 +1,6 @@
 use crate::cli::flags::{
     alert::{AlertData, AlertValues},
-    budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget},
+    budget::{BudgetData, CreateBudget, UpdateBudget},
 };
 use clap::{Parser, Subcommand};
 
@@ -20,9 +20,6 @@ pub enum BudgetSubcommand {
 
     /// List all the budget details
     List,
-
-    /// Get the budget data in a CSV file
-    Get(GetBudget),
 
     /// Update the budget details
     Update(UpdateBudget),

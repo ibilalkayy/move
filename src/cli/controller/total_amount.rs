@@ -3,17 +3,23 @@ use crate::cli::subcommands::total_amount::{
     UpdateTotalSubcommand, ViewSubcommand, RemoveTotalSubcommand,
 };
 
+use crate::data::handle_data::insert_data;
+
 pub fn handle_total_amount(details: TotalAmountInfo) {
     match details.total_amount {
         TotalAmountSubcommand::Add(add_total) => match add_total.add_subcommand {
-            AddTotalSubcommand::Amount(_amount) => {
+            AddTotalSubcommand::Amount(amount) => {
                 // let _ = create_table();
                 // let _ = amount.insert_total_amount();
-                println!("inserted total amount");
+                let header = ["Total Amount", "Spent Amount", "Remaining Amount", "Status"];
+                let total_amount_detail = vec![vec![amount.amount, "0".to_string(), "0".to_string(), "inactive".to_string()]];
+                insert_data(&header, total_amount_detail, "total_amount_data.csv", "Total amount").unwrap();
             }
 
-            AddTotalSubcommand::Category(_category) => {
-                println!("inserted total category");
+            AddTotalSubcommand::Category(category) => {
+                let header = ["Category", "Label"];
+                let total_amount_detail = vec![vec![category.category, category.label]];
+                insert_data(&header, total_amount_detail, "total_category_data.csv", "Total category").unwrap();
             }
         },
 

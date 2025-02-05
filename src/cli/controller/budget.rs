@@ -1,9 +1,12 @@
 use crate::cli::subcommands::budget::{AlertSubcommand, BudgetInfo, BudgetSubcommand};
+use crate::data::handle_data::insert_data;
 
 pub fn handle_budget(details: BudgetInfo) {
     match details.budget_subcommand {
-        BudgetSubcommand::Create(_create_budget) => {
-            println!("Budget is successfully created");
+        BudgetSubcommand::Create(create_budget) => {
+            let header = ["Category", "Amount"];
+            let budget_data = vec![vec![create_budget.category, create_budget.amount]];
+            insert_data(&header, budget_data, "budget_data.csv", "Budget").unwrap();
         }
 
         BudgetSubcommand::View(_budget_data) => {
@@ -12,15 +15,6 @@ pub fn handle_budget(details: BudgetInfo) {
 
         BudgetSubcommand::List => {
             println!("Budget is successfully listed");
-        }
-
-        BudgetSubcommand::Get(_get_budget) => {
-            println!("Budget data is successfully stored in the CSV file");
-            // let result = get_budget.get_budget();
-            // match result {
-            //     Ok(_) => println!("Budget data is successfully stored in the CSV file"),
-            //     Err(err) => println!("Error: {}", err),
-            // }
         }
 
         BudgetSubcommand::Update(_update_budget) => {
@@ -32,8 +26,13 @@ pub fn handle_budget(details: BudgetInfo) {
         }
 
         BudgetSubcommand::Alert(alert_budget) => match alert_budget.alert_subcommand {
-            AlertSubcommand::Set(_alert_data) => {
-                println!("Alert is successfully created")
+            AlertSubcommand::Set(alert_data) => {
+                let header = ["Category", "Frequency", "Method", "Day", "Minute", "Second", "Weekday"];
+                let alert_data = vec![vec![
+                    alert_data.category, alert_data.frequency, alert_data.method, 
+                    alert_data.day, alert_data.minute, alert_data.second, alert_data.weekday,
+                ]];
+                insert_data(&header, alert_data, "alert_data.csv", "Alert").unwrap();
             }
 
             AlertSubcommand::View => {
