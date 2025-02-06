@@ -3,13 +3,20 @@ use crate::cli::subcommands::total_amount::{
     UpdateTotalSubcommand, ViewSubcommand, RemoveTotalSubcommand,
 };
 
+use crate::database::db::connection;
+
+use crate::database::total_amount::view_total_amount;
+
 pub fn handle_total_amount(details: TotalAmountInfo) {
     match details.total_amount {
         TotalAmountSubcommand::Add(add_total) => match add_total.add_subcommand {
-            AddTotalSubcommand::Amount(_amount) => {
-                // let _ = create_table();
-                // let _ = amount.insert_total_amount();
-                println!("inserted total amount");
+            AddTotalSubcommand::Amount(amount) => {
+                let conn = connection().unwrap();
+                let result = amount.insert_total_amount(&conn);
+                match result {
+                    Ok(_) => println!("Total amount is successfully saved"),
+                    Err(error) => println!("Err: {}", error),
+                }
             }
 
             AddTotalSubcommand::Category(_category) => {
@@ -19,7 +26,8 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
 
         TotalAmountSubcommand::View(view_total) => match view_total.view_subcommand {
             ViewSubcommand::Amount => {
-                println!("view total amount");
+                let conn = connection().unwrap();
+                let _ = view_total_amount(&conn);
             }
 
             ViewSubcommand::Categories => {

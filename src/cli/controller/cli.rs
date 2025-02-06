@@ -1,5 +1,6 @@
 use crate::cli::command::command::Move;
 use crate::cli::subcommands::subcommands::Command;
+use crate::database::db::create_table;
 use clap::Parser;
 
 use crate::cli::controller::{
@@ -9,6 +10,7 @@ use crate::cli::controller::{
 };
 
 pub fn cli() {
+    let _ = create_table();
     let moves = Move::parse();
     match moves.command {
         Command::Cred(details) => handle_cred(details),
