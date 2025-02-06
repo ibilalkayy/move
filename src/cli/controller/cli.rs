@@ -10,7 +10,11 @@ use crate::cli::controller::{
 };
 
 pub fn cli() {
-    let _ = create_table();
+    let result = create_table();
+    match result {
+        Ok(_) => (),
+        Err(error) => println!("Err: {}", error),
+    }
     let moves = Move::parse();
     match moves.command {
         Command::Cred(details) => handle_cred(details),

@@ -12,8 +12,9 @@ pub fn handle_spending(details: SpendInfo) {
             }
         }
 
-        SpendSubcommand::History => {
-            println!("history command");
+        SpendSubcommand::History(spend) => {
+            let conn = connection().unwrap();
+            let _ = spend.view_spending(&conn, &spend.category);
         }
 
         SpendSubcommand::Remove => {

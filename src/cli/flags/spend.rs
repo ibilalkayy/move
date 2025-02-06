@@ -12,6 +12,13 @@ pub struct SpendData {
 }
 
 #[derive(Debug, Parser)]
+pub struct SpendFinder {
+    /// Write the category name to spend the money on
+    #[clap(short, long)]
+    pub category: String,
+}
+
+#[derive(Debug, Parser)]
 pub struct GetSpending {
     /// CSV file name where the data will be stored
     #[clap(

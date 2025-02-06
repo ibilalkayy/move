@@ -9,7 +9,7 @@ create table if not exists gmail (
     username text not null,
     gmail_address text not null,
     app_password text not null
-)
+);
 
 create table if not exists totalamount (
     id serial primary key,

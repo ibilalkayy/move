@@ -5,7 +5,10 @@ use crate::cli::subcommands::total_amount::{
 
 use crate::database::db::connection;
 
-use crate::database::total_amount::view_total_amount;
+use crate::database::{
+    total_amount::view_total_amount,
+    total_categories::view_total_categories,
+};
 
 pub fn handle_total_amount(details: TotalAmountInfo) {
     match details.total_amount {
@@ -36,7 +39,8 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
             }
 
             ViewSubcommand::Categories => {
-                println!("view total categories");
+                let conn = connection().unwrap();
+                let _ = view_total_categories(&conn);
             }
         },
 

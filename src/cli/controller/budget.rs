@@ -1,5 +1,9 @@
 use crate::cli::subcommands::budget::{AlertSubcommand, BudgetInfo, BudgetSubcommand};
 use crate::database::db::connection;
+use crate::database::{
+    budget::list_budget,
+    alert::view_alert,
+};
 
 pub fn handle_budget(details: BudgetInfo) {
     match details.budget_subcommand {
@@ -12,12 +16,14 @@ pub fn handle_budget(details: BudgetInfo) {
             }
         }
 
-        BudgetSubcommand::View(_budget_data) => {
-            println!("Budget is successfully viewed");
+        BudgetSubcommand::View(budget) => {
+            let conn = connection().unwrap();
+            let _ = budget.view_budget(&conn, &budget.category);
         }
 
         BudgetSubcommand::List => {
-            println!("Budget is successfully listed");
+            let conn = connection().unwrap();
+            let _ = list_budget(&conn);
         }
 
         BudgetSubcommand::Get(_get_budget) => {
@@ -43,7 +49,8 @@ pub fn handle_budget(details: BudgetInfo) {
             }
 
             AlertSubcommand::View => {
-                println!("Alert is successfully viewed");
+                let conn = connection().unwrap();
+                let _ = view_alert(&conn);
             }
 
             AlertSubcommand::Email(_email_alert) => {

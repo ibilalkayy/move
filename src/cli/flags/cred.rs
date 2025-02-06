@@ -19,7 +19,7 @@ pub struct GmailCred {
 
     /// Your Gmail address for alert notifications
     #[clap(short = 'g', long, help = "Your Gmail address")]
-    pub address: String,
+    pub gmail_address: String,
 
     /// Write the app password of your gmail account
     #[clap(short = 'a', long, help = "Your PostgreSQL app password")]

@@ -1,4 +1,4 @@
-use crate::cli::flags::spend::{SpendData, GetSpending};
+use crate::cli::flags::spend::{SpendData, SpendFinder, GetSpending};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -9,11 +9,11 @@ pub struct SpendInfo {
 
 #[derive(Debug, Subcommand)]
 pub enum SpendSubcommand {
-    /// Data on which the money will be spent
+    /// Where the money will be spent
     Money(SpendData),
 
-    /// Shows the spending of various categories
-    History,
+    /// Shows the spending based on various categories
+    History(SpendFinder),
 
     /// Removes the history data
     Remove,
