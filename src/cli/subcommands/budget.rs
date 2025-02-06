@@ -12,8 +12,8 @@ pub struct BudgetInfo {
 
 #[derive(Debug, Subcommand)]
 pub enum BudgetSubcommand {
-    /// Create the budget for different categories
-    Create(CreateBudget),
+    /// Set the budget for different categories
+    Set(CreateBudget),
 
     /// View the specific category details
     View(BudgetData),

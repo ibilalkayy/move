@@ -1,8 +1,15 @@
-create table if not exists totalcategories (
+create table if not exists blockchain (
     id serial primary key,
-    category text not null,
-    label text not null
+    private_key text not null,
+    alchemy_url text not null
 );
+
+create table if not exists gmail (
+    id serial primary key,
+    username text not null,
+    gmail_address text not null,
+    app_password text not null
+)
 
 create table if not exists totalamount (
     id serial primary key,
@@ -10,6 +17,12 @@ create table if not exists totalamount (
     spent_amount text not null,
     remaining_amount text not null,
     statuss text not null
+);
+
+create table if not exists totalcategories (
+    id serial primary key,
+    category text not null,
+    label text not null
 );
 
 create table if not exists budget (

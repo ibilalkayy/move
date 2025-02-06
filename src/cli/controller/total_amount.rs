@@ -19,8 +19,13 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
                 }
             }
 
-            AddTotalSubcommand::Category(_category) => {
-                println!("inserted total category");
+            AddTotalSubcommand::Category(category) => {
+                let conn = connection().unwrap();
+                let result = category.insert_total_category(&conn);
+                match result {
+                    Ok(_) => println!("Category is successfully saved"),
+                    Err(error) => println!("Err: {}", error),
+                }
             }
         },
 
