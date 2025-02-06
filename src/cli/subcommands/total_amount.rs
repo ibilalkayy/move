@@ -1,6 +1,7 @@
 use crate::cli::flags::total_amount::{
-    AddTotalAmount, AddTotalCategory, RemoveTotalCategory, UpdateTotalAmount, UpdateTotalCategories,
+    AddTotalAmount, AddTotalCategory, RemoveTotalCategory, UpdateTotalAmount, UpdateTotalCategories, GetTotal,
 };
+
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -25,6 +26,9 @@ pub enum TotalAmountSubcommand {
 
     /// Remove the total amount data
     Remove(RemoveTotal),
+
+    /// Get the total amount data in CSV file
+    Get(GetTotal),
 }
 
 #[derive(Debug, Parser)]

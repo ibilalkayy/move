@@ -46,3 +46,18 @@ pub struct RemoveTotalCategory {
     #[clap(short, long)]
     pub category: String,
 }
+
+#[derive(Debug, Parser)]
+pub struct GetTotal {
+    /// CSV file name where the data will be stored
+    #[clap(
+        short = 'n',
+        long,
+        help = "CSV file name where the data will be stored"
+    )]
+    pub filename: String,
+
+    /// File path to store the data in
+    #[clap(short = 'p', long, help = "Filepath to store the data in")]
+    pub filepath: String,
+}

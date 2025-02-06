@@ -1,4 +1,4 @@
-use crate::cli::flags::cred::{BlockchainCred, GmailCred};
+use crate::cli::flags::cred::{BlockchainCred, GmailCred, GetCred};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -14,4 +14,10 @@ pub enum CredSubcommand {
 
     /// Insert the gmail credentials
     Gmail(GmailCred),
+
+    /// Get the blockchain data in a CSV file
+    GetBlockchain(GetCred),
+
+    /// Get the gmail data in a CSV file
+    GetGmail(GetCred),
 }

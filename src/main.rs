@@ -1,5 +1,5 @@
 mod cli;
-mod data;
+mod database;
 
 use crate::cli::controller::cli::cli;
 

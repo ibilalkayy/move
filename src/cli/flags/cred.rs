@@ -25,3 +25,18 @@ pub struct GmailCred {
     #[clap(short = 'a', long, help = "Your PostgreSQL app password")]
     pub app_password: String,
 }
+
+#[derive(Debug, Parser)]
+pub struct GetCred {
+    /// CSV file name where the data will be stored
+    #[clap(
+        short = 'n',
+        long,
+        help = "CSV file name where the data will be stored"
+    )]
+    pub filename: String,
+
+    /// File path to store the data in
+    #[clap(short = 'p', long, help = "Filepath to store the data in")]
+    pub filepath: String,
+}

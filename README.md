@@ -46,8 +46,6 @@ Navigate to the project directory:
 cd move
 ```
 
-Create a `.env` file to put all your PostgresSQL credentials.
-
 ## **Contributing**
 
 We welcome contributions! If you have ideas for new features, find a bug, or want to improve documentation, feel free to open an issue or submit a pull request. Please follow our Contribution Guidelines for a smooth collaboration.
