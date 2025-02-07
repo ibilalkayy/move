@@ -37,13 +37,13 @@ pub struct GetBudget {
 pub struct UpdateBudget {
     /// Old category name to find
     #[clap(short, long)]
-    pub old_category: String,
+    pub old_category: Option<String>,
 
     /// New category name to update
     #[clap(short, long)]
-    pub new_category: String,
+    pub new_category: Option<String>,
 
     /// New amount of the category to update
     #[clap(short, long)]
-    pub amount: String,
+    pub amount: Option<String>,
 }

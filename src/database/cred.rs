@@ -39,7 +39,7 @@ impl BlockchainCred {
         }
 
         conn.execute(
-            "insert into blockchain(private_key, alchemy_url) values($1, $2)",
+            "insert into blockchain(private_key, alchemy_url) values(?1, ?2)",
             &[&self.private_key, &self.alchemy_url],
         )?;
         Ok(())
@@ -60,7 +60,7 @@ impl GmailCred {
         }
 
         conn.execute(
-            "insert into gmail(username, gmail_address, app_password) values($1, $2, $3)",
+            "insert into gmail(username, gmail_address, app_password) values(?1, ?2, ?3)",
             &[&self.username, &self.gmail_address, &self.app_password],
         )?;
         Ok(())

@@ -15,7 +15,7 @@ struct CategoryRow {
 impl AddTotalCategory {
     pub fn insert_total_category(&self, conn: &Connection) -> Result<()> {
         conn.execute(
-            "insert into totalcategories(category, label) values($1, $2)",
+            "insert into totalcategories(category, label) values(?1, ?2)",
             &[&self.category, &self.label],
         )?;
         Ok(())

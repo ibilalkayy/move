@@ -32,7 +32,7 @@ impl AddTotalAmount {
         }
         
         conn.execute(
-            "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values($1, $2, $3, $4)",
+            "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values(?1, ?2, ?3, ?4)",
             &[&self.amount, &"0".to_string(), &"0".to_string(), &"inactive".to_string()],
         )?;
         Ok(())

@@ -4,7 +4,7 @@ use clap::Parser;
 pub struct AlertData {
     /// Category name to create new or update new
     #[clap(short = 'c', long, help = "Category name to create new or update new")]
-    pub category: String,
+    pub category: Option<String>,
 
     /// Old category name to update it with a new one
     #[clap(
@@ -20,7 +20,7 @@ pub struct AlertData {
         long,
         help = "Frequency of notifications (e.g., hourly, daily, weekly, monthly)"
     )]
-    pub frequency: String,
+    pub frequency: Option<String>,
 
     /// Preferred method of notification [email or CLI] message
     #[clap(
@@ -28,27 +28,27 @@ pub struct AlertData {
         long,
         help = "Preferred method of notification [email or CLI] message"
     )]
-    pub method: String,
+    pub method: Option<String>,
 
     /// A day for notification
     #[clap(short = 'd', long, help = "A day for notification")]
-    pub day: String,
+    pub day: Option<String>,
 
     /// An Hour for notification
     #[clap(short = 'o', long, help = "An hour for notification")]
-    pub hour: String,
+    pub hour: Option<String>,
 
     /// A minute for notification
     #[clap(short = 'm', long, help = "A minute for notification")]
-    pub minute: String,
+    pub minute: Option<String>,
 
     /// A second for notification
     #[clap(short = 's', long, help = "A second for notification")]
-    pub second: String,
+    pub second: Option<String>,
 
     /// Write a weekday for notification
     #[clap(short = 'w', long, help = "Write a weekday for notification")]
-    pub weekday: String,
+    pub weekday: Option<String>,
 }
 
 #[derive(Debug, Parser)]

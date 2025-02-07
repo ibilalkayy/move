@@ -61,8 +61,14 @@ pub fn handle_budget(details: BudgetInfo) {
                 println!("Alert is successfully seen")
             }
 
-            AlertSubcommand::Update(_update_alert) => {
-                println!("Alert is successfully updated");
+            AlertSubcommand::Update(update) => {
+                let conn = connection().unwrap();
+                let result = update.update_alert(&conn);
+                match result {
+                    Ok(_) => println!("Alert data is successfully updated"),
+                    Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
+                Err(e) => println!("Database error: {:?}", e),
+                }
             }
 
             AlertSubcommand::Remove(_remove_alert) => {
