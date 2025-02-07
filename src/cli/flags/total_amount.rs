@@ -29,15 +29,15 @@ pub struct UpdateTotalAmount {
 pub struct UpdateTotalCategories {
     // Write the new category to update with
     #[clap(short, long)]
-    pub new_category: String,
+    pub new_category: Option<String>,
 
     // Write the old category to update
     #[clap(short, long)]
-    pub old_category: String,
+    pub old_category: Option<String>,
 
-    /// Write the label that you want to update
+    /// Write the label to update
     #[clap(short, long)]
-    pub label: String,
+    pub label: Option<String>,
 }
 
 #[derive(Debug, Parser)]

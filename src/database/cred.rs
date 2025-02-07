@@ -1,4 +1,4 @@
-use rusqlite::{Connection, Result};
+use rusqlite::{Connection, Result, ToSql};
 use crate::cli::flags::cred::{BlockchainCred, GmailCred};
 use rusqlite::params;
 use tabled::{Table, Tabled};
@@ -44,6 +44,35 @@ impl BlockchainCred {
         )?;
         Ok(())
     }
+
+    pub fn update_blockchain(&self, conn: &Connection) -> Result<()> {
+        let mut query = String::from("update blockchain set ");
+        let mut field = Vec::new();
+        let mut value: Vec<&dyn ToSql> = Vec::new();
+
+        if let Some(private_key) = &self.private_key {
+            field.push("private_key = ?");
+            value.push(private_key);
+        }
+
+        if let Some(alchemy_url) = &self.alchemy_url {
+            field.push("alchemy_url = ?");
+            value.push(alchemy_url);
+        }
+
+        if field.is_empty() {
+            return Err(rusqlite::Error::InvalidQuery);
+        }
+
+        query.push_str(&field.join(", "));
+
+        let affected_row = conn.execute(&query, rusqlite::params_from_iter(value))?;
+        if affected_row == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows);
+        }
+
+        Ok(())
+    }
 }
 
 impl GmailCred {
@@ -63,6 +92,40 @@ impl GmailCred {
             "insert into gmail(username, gmail_address, app_password) values(?1, ?2, ?3)",
             &[&self.username, &self.gmail_address, &self.app_password],
         )?;
+        Ok(())
+    }
+
+    pub fn update_gmail(&self, conn: &Connection) -> Result<()> {
+        let mut query = String::from("update gmail set ");
+        let mut field = Vec::new();
+        let mut value: Vec<&dyn ToSql> = Vec::new();
+
+        if let Some(username) = &self.username {
+            field.push("username = ?");
+            value.push(username);
+        }
+
+        if let Some(gmail_address) = &self.gmail_address {
+            field.push("gmail_address = ?");
+            value.push(gmail_address);
+        }
+
+        if let Some(app_password) = &self.app_password {
+            field.push("app_password = ?");
+            value.push(app_password);
+        }
+
+        if field.is_empty() {
+            return Err(rusqlite::Error::InvalidQuery);
+        }
+
+        query.push_str(&field.join(", "));
+
+        let affected_row = conn.execute(&query, rusqlite::params_from_iter(value))?;
+        if affected_row == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows);
+        }
+
         Ok(())
     }
 }

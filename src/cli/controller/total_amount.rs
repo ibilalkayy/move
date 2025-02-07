@@ -59,12 +59,23 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
         },
 
         TotalAmountSubcommand::Update(update) => match update.update_subcommand {
-            UpdateTotalSubcommand::Amount(_update_total) => {
-                println!("Total amount is successfully updated");
+            UpdateTotalSubcommand::Amount(total_amount) => {
+                let conn = connection().unwrap();
+                let result = total_amount.update_total_amount(&conn);
+                match result {
+                    Ok(_) => println!("Total amount data is successfully updated"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
 
-            UpdateTotalSubcommand::Categories(_update_category) => {
-                println!("Total amount is successfully updated");
+            UpdateTotalSubcommand::Categories(total_category) => {
+                let conn = connection().unwrap();
+                let result = total_category.update_total_category(&conn);
+                match result {
+                    Ok(_) => println!("Total amount category data is successfully updated"),
+                    Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
+                    Err(e) => println!("Database error: {:?}", e),
+                }
             }
         },
 

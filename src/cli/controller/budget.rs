@@ -30,8 +30,14 @@ pub fn handle_budget(details: BudgetInfo) {
             println!("Budget data is successfully stored in the CSV file");
         }
 
-        BudgetSubcommand::Update(_update_budget) => {
-            println!("Budget is successfully updated");
+        BudgetSubcommand::Update(budget) => {
+            let conn = connection().unwrap();
+            let result = budget.update_budget(&conn);
+            match result {
+                Ok(_) => println!("Budget data is successfully updated"),
+                Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
+                Err(e) => println!("Database error: {:?}", e),
+            }
         }
 
         BudgetSubcommand::Delete(_budget_data) => {
@@ -67,7 +73,7 @@ pub fn handle_budget(details: BudgetInfo) {
                 match result {
                     Ok(_) => println!("Alert data is successfully updated"),
                     Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
-                Err(e) => println!("Database error: {:?}", e),
+                    Err(e) => println!("Database error: {:?}", e),
                 }
             }
 

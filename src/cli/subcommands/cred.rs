@@ -15,6 +15,9 @@ pub enum CredSubcommand {
     /// View the blockchain or gmail credentials
     View(ViewCred),
 
+    /// Update the blockchain or gmail credentials
+    Update(UpdateCred),
+
     /// Get the blockchain data in a CSV file
     GetBlockchain(GetCred),
 
@@ -52,3 +55,17 @@ pub enum ViewSubcommand {
     Gmail,
 }
 
+#[derive(Debug, Parser)]
+pub struct UpdateCred {
+    #[clap(subcommand)]
+    pub update_subcommand: UpdateSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum UpdateSubcommand {
+    /// Update the blockchain credentials
+    Blockchain(BlockchainCred),
+
+    /// Update the gmail credentials
+    Gmail(GmailCred),
+}

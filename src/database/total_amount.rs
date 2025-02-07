@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Result};
-use crate::cli::flags::total_amount::AddTotalAmount;
+use crate::cli::flags::total_amount::{AddTotalAmount, UpdateTotalAmount};
 use tabled::{Table, Tabled};
 use rusqlite::params;
 
@@ -62,4 +62,11 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
     println!("{}", table);
     
     Ok(())
+}
+
+impl UpdateTotalAmount {
+    pub fn update_total_amount(&self, conn: &Connection) -> Result<()> {
+        conn.execute("update totalamount set total_amount=?", &[&self.amount])?;
+        Ok(())
+    }
 }
