@@ -45,6 +45,16 @@ impl BudgetData {
     
         Ok(())
     }
+
+    pub fn delete_budget(&self, conn: &Connection) -> Result<()> {
+        let affected_rows = conn.execute("DELETE FROM budget WHERE category = ?", &[&self.category])?;
+        
+        if affected_rows == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+        }
+        
+        Ok(())
+    }    
 }
 
 pub fn list_budget(conn: &Connection) -> Result<()> {

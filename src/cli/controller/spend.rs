@@ -17,8 +17,13 @@ pub fn handle_spending(details: SpendInfo) {
             let _ = spend.view_spending(&conn, &spend.category);
         }
 
-        SpendSubcommand::Remove => {
-            println!("remove command");
+        SpendSubcommand::Delete(spend) => {
+            let conn = connection().unwrap();
+            let result = spend.delete_spending(&conn);
+            match result {
+                Ok(_) => println!("The row(s) in spending is successfully deleted"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
 
         SpendSubcommand::Show => {

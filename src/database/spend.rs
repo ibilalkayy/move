@@ -45,4 +45,14 @@ impl SpendFinder {
         
         Ok(())
     }
+
+    pub fn delete_spending(&self, conn: &Connection) -> Result<()> {
+        let affected_rows = conn.execute("DELETE FROM spend WHERE category = ?", &[&self.category])?;
+        
+        if affected_rows == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+        }
+        
+        Ok(())
+    }
 }

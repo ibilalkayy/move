@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Result, ToSql};
-use crate::cli::flags::alert::AlertData;
+use crate::cli::flags::alert::{AlertData, AlertValues};
 use tabled::{Table, Tabled};
 use rusqlite::params;
 
@@ -129,4 +129,16 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
     println!("{}", table);
 
     Ok(())
+}
+
+impl AlertValues {
+    pub fn delete_alert(&self, conn: &Connection) -> Result<()> {
+        let affected_rows = conn.execute("DELETE FROM alert WHERE category = ?", &[&self.category])?;
+        
+        if affected_rows == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+        }
+        
+        Ok(())
+    }
 }

@@ -40,8 +40,13 @@ pub fn handle_budget(details: BudgetInfo) {
             }
         }
 
-        BudgetSubcommand::Delete(_budget_data) => {
-            println!("category data has been successfully deleted");
+        BudgetSubcommand::Delete(budget) => {
+            let conn = connection().unwrap();
+            let result = budget.delete_budget(&conn);
+            match result {
+                Ok(_) => println!("The row(s) in a budget is successfully deleted"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
 
         BudgetSubcommand::Alert(alert_budget) => match alert_budget.alert_subcommand {
@@ -77,8 +82,13 @@ pub fn handle_budget(details: BudgetInfo) {
                 }
             }
 
-            AlertSubcommand::Remove(_remove_alert) => {
-                println!("Alert data is successfully removed");
+            AlertSubcommand::Delete(alert) => {
+                let conn = connection().unwrap();
+                let result = alert.delete_alert(&conn);
+                match result {
+                    Ok(_) => println!("The row(s) in an alert is successfully deleted"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
 
             AlertSubcommand::Get(_remove_alert) => {

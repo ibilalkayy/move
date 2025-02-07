@@ -1,6 +1,6 @@
-use crate::cli::subcommands::cred::{CredInfo, CredSubcommand, AddSubcommand, ViewSubcommand, UpdateSubcommand};
+use crate::cli::subcommands::cred::{CredInfo, CredSubcommand, AddSubcommand, ViewSubcommand, UpdateSubcommand, DeleteSubcommand};
 use crate::database::db::connection;
-use crate::database::cred::{view_blockchain, view_gmail};
+use crate::database::cred::{view_blockchain, view_gmail, delete_blockchain, delete_gmail};
 
 pub fn handle_cred(details: CredInfo) {
     match details.cred_subcommand {
@@ -59,6 +59,26 @@ pub fn handle_cred(details: CredInfo) {
                 let result = gmail.update_gmail(&conn);
                 match result {
                     Ok(_) => println!("Gmail data is successfully updated"),
+                    Err(error) => println!("Err: {}", error),
+                }
+            }
+        }
+
+        CredSubcommand::Delete(delete) => match delete.delete_subcommand {
+            DeleteSubcommand::Blockchain => {
+                let conn = connection().unwrap();
+                let result = delete_blockchain(&conn);
+                match result {
+                    Ok(_) => println!("Blockchain data is successfully deleted"),
+                    Err(error) => println!("Err: {}", error),
+                }
+            }
+
+            DeleteSubcommand::Gmail => {
+                let conn = connection().unwrap();
+                let result = delete_gmail(&conn);
+                match result {
+                    Ok(_) => println!("Gmail data is successfully delete"),
                     Err(error) => println!("Err: {}", error),
                 }
             }

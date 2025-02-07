@@ -176,3 +176,23 @@ pub fn view_gmail(conn: &Connection) -> Result<()> {
     
     Ok(())
 }
+
+pub fn delete_blockchain(conn: &Connection) -> Result<()> {
+    let affected_rows = conn.execute("DELETE FROM blockchain", [])?;
+    
+    if affected_rows == 0 {
+        return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+    }
+    
+    Ok(())
+}
+
+pub fn delete_gmail(conn: &Connection) -> Result<()> {
+    let affected_rows = conn.execute("DELETE FROM gmail", [])?;
+    
+    if affected_rows == 0 {
+        return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+    }
+    
+    Ok(())
+}

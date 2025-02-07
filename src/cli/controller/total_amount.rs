@@ -6,7 +6,7 @@ use crate::cli::subcommands::total_amount::{
 use crate::database::db::connection;
 
 use crate::database::{
-    total_amount::view_total_amount,
+    total_amount::{view_total_amount, delete_total_amount},
     total_categories::view_total_categories,
 };
 
@@ -81,11 +81,21 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
 
         TotalAmountSubcommand::Remove(remove_total) => match remove_total.remove_subcommand {
             RemoveTotalSubcommand::Amount => {
-                println!("Total amount is successfully removed");
+                let conn = connection().unwrap();
+                let result = delete_total_amount(&conn);
+                match result {
+                    Ok(_) => println!("Total amount data is successfully deleted"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
 
-            RemoveTotalSubcommand::Category(_remove_category) => {
-                println!("Total amount category is successfully removed");
+            RemoveTotalSubcommand::Category(category) => {
+                let conn = connection().unwrap();
+                let result = category.delete_total_category(&conn);
+                match result {
+                    Ok(_) => println!("Total amount category is successfully deleted"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
         }
 

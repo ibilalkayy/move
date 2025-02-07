@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Result};
-use crate::cli::flags::total_amount::{AddTotalAmount, UpdateTotalAmount};
+use crate::cli::flags::total_amount::{AddTotalAmount, UpdateTotalAmount, RemoveTotalCategory};
 use tabled::{Table, Tabled};
 use rusqlite::params;
 
@@ -69,4 +69,26 @@ impl UpdateTotalAmount {
         conn.execute("update totalamount set total_amount=?", &[&self.amount])?;
         Ok(())
     }
+}
+
+impl RemoveTotalCategory {
+    pub fn delete_total_category(&self, conn: &Connection) -> Result<()> {
+        let affected_rows = conn.execute("DELETE FROM totalcategories where category=?", &[&self.category])?;
+        
+        if affected_rows == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+        }
+        
+        Ok(())
+    }
+}
+
+pub fn delete_total_amount(conn: &Connection) -> Result<()> {
+    let affected_rows = conn.execute("DELETE FROM totalamount", [])?;
+    
+    if affected_rows == 0 {
+        return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+    }
+    
+    Ok(())
 }

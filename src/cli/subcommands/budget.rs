@@ -57,8 +57,8 @@ pub enum AlertSubcommand {
     /// Update the alert data
     Update(AlertData),
 
-    /// Remove the alert data
-    Remove(AlertValues),
+    /// Delete the alert data
+    Delete(AlertValues),
 
     /// Get the alert data in a CSV file
     Get(GetAlert),

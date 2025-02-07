@@ -15,8 +15,8 @@ pub enum SpendSubcommand {
     /// Shows the spending based on various categories
     History(SpendFinder),
 
-    /// Removes the history data
-    Remove,
+    /// Delete the spend history data
+    Delete(SpendFinder),
 
     /// Show the history data
     Show,
