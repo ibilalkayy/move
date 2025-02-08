@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    alert::{AlertData, AlertValues, GetAlert},
+    alert::{AlertData, AlertValues},
     budget::{BudgetData, CreateBudget, GetBudget, UpdateBudget},
 };
 use clap::{Parser, Subcommand};
@@ -61,5 +61,5 @@ pub enum AlertSubcommand {
     Delete(AlertValues),
 
     /// Get the alert data in a CSV file
-    Get(GetAlert),
+    Get(AlertData),
 }

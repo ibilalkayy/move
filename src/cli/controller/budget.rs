@@ -91,8 +91,13 @@ pub fn handle_budget(details: BudgetInfo) {
                 }
             }
 
-            AlertSubcommand::Get(_remove_alert) => {
-                println!("Alert credentials in the CSV file");
+            AlertSubcommand::Get(alert) => {
+                let conn = connection().unwrap();
+                let result = alert.get_alert(&conn);
+                match result {
+                    Ok(_) => println!("The alert data is successfully saved in a file"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
         },
     }

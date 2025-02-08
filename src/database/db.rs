@@ -3,7 +3,11 @@ use std::{fs, path::Path};
 
 pub fn connection() -> rusqlite::Result<Connection> {
     let home_dir = dirs::home_dir().expect("failed to get the home directory");
-    let db_path = home_dir.join("move.db");
+    let data_dir = home_dir.join("move");
+
+    fs::create_dir_all(&data_dir).expect("Failed to create the move directory");
+
+    let db_path = data_dir.join("database.db");
 
     Connection::open(db_path)
 }
