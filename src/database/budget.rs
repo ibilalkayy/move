@@ -26,7 +26,6 @@ fn create_file(path: &str) -> File {
     return file_path;
 }
 
-
 impl BudgetData {
     pub fn insert_budget(&self, conn: &Connection) -> Result<()> {
         conn.execute(
@@ -37,7 +36,7 @@ impl BudgetData {
     }
 
     pub fn get_budget(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare( "SELECT category, amount FROM budget")?;
+        let mut stmt = conn.prepare( "select category, amount from budget")?;
         
         let rows = stmt.query_map(params![], |row| {
             Ok(BudgetRow {
@@ -73,7 +72,7 @@ impl BudgetData {
 impl BudgetCategory {
     pub fn view_budget(&self, conn: &Connection, category: &str) -> Result<()> {
         let mut stmt = conn.prepare(
-            "SELECT category, amount FROM budget WHERE category = ?",
+            "select category, amount from budget where category = ?",
         )?;
         
         let rows = stmt.query_map(params![category], |row| {
@@ -95,7 +94,7 @@ impl BudgetCategory {
     }
 
     pub fn delete_budget(&self, conn: &Connection) -> Result<()> {
-        let affected_rows = conn.execute("DELETE FROM budget WHERE category = ?", &[&self.category])?;
+        let affected_rows = conn.execute("delete from budget where category = ?", &[&self.category])?;
         
         if affected_rows == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
@@ -107,7 +106,7 @@ impl BudgetCategory {
 
 pub fn show_budget(conn: &Connection) -> Result<()> {
     let mut stmt = conn.prepare(
-        "SELECT category, amount FROM budget",
+        "select category, amount from budget",
     )?;
     
     let rows = stmt.query_map(params![], |row| {

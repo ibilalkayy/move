@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    alert::{AlertData, AlertValues},
+    alert::{AlertData, AlertCategory},
     budget::{BudgetCategory, BudgetData, UpdateBudget},
 };
 use clap::{Parser, Subcommand};
@@ -42,23 +42,23 @@ pub struct AlertBudget {
 
 #[derive(Debug, Subcommand)]
 pub enum AlertSubcommand {
-    /// Set the alert notification data
-    Set(AlertData),
+    /// Add the alert notification data
+    Add(AlertData),
 
     /// View the alert notification data
     View,
 
     /// See the alert notifications in your terminal
-    See(AlertValues),
+    See(AlertCategory),
 
     /// Get the alert notifications in your email
-    Email(AlertValues),
+    Email(AlertCategory),
 
     /// Update the alert data
     Update(AlertData),
 
     /// Delete the alert data
-    Delete(AlertValues),
+    Delete(AlertCategory),
 
     /// Get the alert data in a CSV file
     Get(AlertData),

@@ -59,7 +59,7 @@ pub fn handle_budget(info: BudgetInfo) {
         }
 
         BudgetSubcommand::Alert(budget) => match budget.alert_budget {
-            AlertSubcommand::Set(alert) => {
+            AlertSubcommand::Add(alert) => {
                 let conn = connection().unwrap();
                 let result = alert.insert_alert(&conn);
                 match result {

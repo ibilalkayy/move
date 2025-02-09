@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Result, ToSql};
-use crate::cli::flags::alert::{AlertData, AlertValues};
+use crate::cli::flags::alert::{AlertData, AlertCategory};
 use tabled::{Table, Tabled};
 use std::{fs, fs::File};
 use rusqlite::params;
@@ -32,6 +32,20 @@ pub struct AlertRow {
     pub weekday: String,
 }
 
+fn create_file(path: &str) -> File {
+    let home_dir = dirs::home_dir().expect("Failed to get the home directory");
+    let joined_dir = home_dir.join("move");
+
+    if !joined_dir.exists() {
+        fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+    }
+
+    let merge_path = joined_dir.join(path);
+    let file_path = File::create(merge_path).expect("Failed to create a file");
+    return file_path;
+}
+
+
 impl AlertData {
     pub fn insert_alert(&self, conn: &Connection) -> Result<()> {
         conn.execute(
@@ -43,7 +57,7 @@ impl AlertData {
 
     pub fn update_alert(&self, conn: &Connection) -> Result<()> {
         if let Some(old_category) = &self.old_category {
-            let mut query = String::from("UPDATE alert SET ");
+            let mut query = String::from("update alert set ");
             let mut fields = Vec::new();
             let mut values: Vec<&dyn ToSql> = Vec::new();
 
@@ -104,7 +118,7 @@ impl AlertData {
 
     pub fn get_alert(&self, conn: &Connection) -> Result<()> {
         let mut stmt = conn.prepare(
-            "SELECT category, frequency, method, dayz, hourz, minutez, secondz, weekdays FROM alert",
+            "select category, frequency, method, dayz, hourz, minutez, secondz, weekdays from alert",
         )?;
                
         let rows = stmt.query_map(params![], |row| {
@@ -125,15 +139,7 @@ impl AlertData {
             results.push(row?);
         }
 
-        let home_dir = dirs::home_dir().expect("failed to get the home directory");
-        let joined_dir = home_dir.join("move");
-
-        if !joined_dir.exists() {
-            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
-        }
-
-        let merge_path = joined_dir.join("alert_data.csv");
-        let file_path = File::create(merge_path).expect("failed to create a file");
+        let file_path = create_file("alert.csv");
 
         let mut wtr = Writer::from_writer(file_path);
 
@@ -160,7 +166,7 @@ impl AlertData {
 
 pub fn view_alert(conn: &Connection) -> Result<()> {
     let mut stmt = conn.prepare(
-        "SELECT category, frequency, method, dayz, hourz, minutez, secondz, weekdays FROM alert",
+        "select category, frequency, method, dayz, hourz, minutez, secondz, weekdays from alert",
     )?;
     
     let rows = stmt.query_map(params![], |row| {
@@ -187,9 +193,9 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-impl AlertValues {
+impl AlertCategory {
     pub fn delete_alert(&self, conn: &Connection) -> Result<()> {
-        let affected_rows = conn.execute("DELETE FROM alert WHERE category = ?", &[&self.category])?;
+        let affected_rows = conn.execute("delete from alert where category = ?", &[&self.category])?;
         
         if affected_rows == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted

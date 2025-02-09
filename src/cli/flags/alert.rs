@@ -14,7 +14,7 @@ pub struct AlertData {
     )]
     pub old_category: Option<String>,
 
-    /// Frequency of notifications (e.g., hourly, daily, weekly, monthly)
+    /// Frequency of notification (e.g., hourly, daily, weekly, monthly)
     #[clap(
         short = 'f',
         long,
@@ -22,7 +22,7 @@ pub struct AlertData {
     )]
     pub frequency: Option<String>,
 
-    /// Preferred method of notification [email or CLI] message
+    /// Preferred method for notification [email or CLI] message
     #[clap(
         short = 't',
         long,
@@ -47,13 +47,13 @@ pub struct AlertData {
     pub second: Option<String>,
 
     /// Write a weekday for notification
-    #[clap(short = 'w', long, help = "Write a weekday for notification")]
+    #[clap(short = 'w', long, help = "A weekday for notification")]
     pub weekday: Option<String>,
 }
 
 #[derive(Debug, Parser)]
-pub struct AlertValues {
-    /// Write a category to see, get, or remove the alert notification
+pub struct AlertCategory {
+    /// A category to see, get, or remove the alert notification
     #[clap(short, long)]
     pub category: String,
 }
