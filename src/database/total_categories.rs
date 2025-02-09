@@ -1,8 +1,8 @@
 use crate::cli::flags::total_amount::{TotalCategory, UpdateTotalCategory};
 use csv::Writer;
 use rusqlite::{params, Connection, Result, ToSql};
-use std::{fs, fs::File};
 use tabled::{Table, Tabled};
+use crate::common::common::create_file;
 
 #[derive(Tabled)]
 struct CategoryRow {
@@ -37,15 +37,7 @@ impl TotalCategory {
             result.push(row?)
         }
 
-        let home_dir = dirs::home_dir().expect("failed to get the home directory");
-        let joined_dir = home_dir.join("move");
-
-        if !joined_dir.exists() {
-            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
-        }
-
-        let merge_path = joined_dir.join("category_data.csv");
-        let file_path = File::create(merge_path).expect("failed to create a file");
+        let file_path = create_file("categories.csv");
 
         let mut wtr = Writer::from_writer(file_path);
 
