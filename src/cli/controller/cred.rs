@@ -84,12 +84,22 @@ pub fn handle_cred(details: CredInfo) {
             }
         }
 
-        CredSubcommand::GetBlockchain(_cred) => {
-            println!("Blockchain credentials in the CSV file");
+        CredSubcommand::GetBlockchain(blockchain) => {
+            let conn = connection().unwrap();
+            let result = blockchain.get_blockchain(&conn);
+            match result {
+                Ok(_) => println!("The blockchain data is successfully saved in a CSV file"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
 
-        CredSubcommand::GetGmail(_cred) => {
-            println!("Gmail credentials in the CSV file");
+        CredSubcommand::GetGmail(gmail) => {
+            let conn = connection().unwrap();
+            let result = gmail.get_gmail(&conn);
+            match result {
+                Ok(_) => println!("The gmail data is successfully saved in a CSV file"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
     }
 }

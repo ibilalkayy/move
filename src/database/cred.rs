@@ -1,7 +1,10 @@
 use rusqlite::{Connection, Result, ToSql};
 use crate::cli::flags::cred::{BlockchainCred, GmailCred};
-use rusqlite::params;
 use tabled::{Table, Tabled};
+use rusqlite::params;
+use std::{fs, fs::File};
+use csv::Writer;
+use std::process::exit;
 
 #[derive(Tabled)]
 struct BlockchainRow {
@@ -34,8 +37,8 @@ impl BlockchainCred {
         )?;
 
         if row_exists {
-            println!("The blockchain data is already inserted");
-            return Ok(());
+            println!("The blockchain credentials is already inserted");
+            exit(0);
         }
 
         conn.execute(
@@ -73,6 +76,47 @@ impl BlockchainCred {
 
         Ok(())
     }
+
+    pub fn get_blockchain(&self, conn: &Connection) -> Result<()> {
+        let mut stmt = conn.prepare("select private_key, alchemy_url from blockchain")?;
+
+        let rows = stmt.query_map(params![], |row| {
+            Ok(BlockchainRow {
+                private_key: row.get(0)?,
+                alchemy_url: row.get(1)?,
+            })
+        })?;
+
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?)
+        }
+
+        let home_dir = dirs::home_dir().expect("failed to get the home directory");
+        let joined_dir = home_dir.join("move");
+
+        if !joined_dir.exists() {
+            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+        }
+
+        let merge_path = joined_dir.join("blockchain_data.csv");
+        let file_path = File::create(merge_path).expect("failed to create a file");
+
+        let mut wtr = Writer::from_writer(file_path);
+
+        wtr.write_record(&["Private Key", "Alchemy URL"]).unwrap();
+
+        for blockchain in result {
+            wtr.write_record(&[
+                blockchain.private_key,
+                blockchain.alchemy_url,
+            ]).unwrap();
+        }
+
+        wtr.flush().unwrap();
+
+        Ok(())
+    }
 }
 
 impl GmailCred {
@@ -84,8 +128,8 @@ impl GmailCred {
         )?;
 
         if row_exists {
-            println!("The gmail data is already inserted");
-            return Ok(());
+            println!("The gmail credentials are already inserted");
+            exit(0);
         }
 
         conn.execute(
@@ -125,6 +169,49 @@ impl GmailCred {
         if affected_row == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows);
         }
+
+        Ok(())
+    }
+
+    pub fn get_gmail(&self, conn: &Connection) -> Result<()> {
+        let mut stmt = conn.prepare("select username, gmail_address, app_password from gmail")?;
+
+        let rows = stmt.query_map(params![], |row| {
+            Ok(GmailRow {
+                username: row.get(0)?,
+                gmail_address: row.get(1)?,
+                app_password: row.get(2)?,
+            })
+        })?;
+
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?)
+        }
+
+        let home_dir = dirs::home_dir().expect("failed to get the home directory");
+        let joined_dir = home_dir.join("move");
+
+        if !joined_dir.exists() {
+            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+        }
+
+        let merge_path = joined_dir.join("gmail_data.csv");
+        let file_path = File::create(merge_path).expect("failed to create a file");
+
+        let mut wtr = Writer::from_writer(file_path);
+
+        wtr.write_record(&["Username", "Gmail Address", "App Password"]).unwrap();
+
+        for gmail in result {
+            wtr.write_record(&[
+                gmail.username,
+                gmail.gmail_address,
+                gmail.app_password,
+            ]).unwrap();
+        }
+
+        wtr.flush().unwrap();
 
         Ok(())
     }

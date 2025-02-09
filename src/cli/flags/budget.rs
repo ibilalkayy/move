@@ -4,11 +4,11 @@ use clap::Parser;
 pub struct CreateBudget {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
-    pub category: String,
+    pub category: Option<String>,
 
     /// Write the total amount for the category
     #[clap(short, long)]
-    pub amount: String,
+    pub amount: Option<String>,
 }
 
 #[derive(Debug, Parser)]
@@ -16,21 +16,6 @@ pub struct BudgetData {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
     pub category: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct GetBudget {
-    /// CSV file name where the data will be stored
-    #[clap(
-        short = 'n',
-        long,
-        help = "CSV file name where the data will be stored"
-    )]
-    pub filename: String,
-
-    /// File path to store the data in
-    #[clap(short = 'p', long, help = "Filepath to store the data in")]
-    pub filepath: String,
 }
 
 #[derive(Debug, Parser)]

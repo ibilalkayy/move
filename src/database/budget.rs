@@ -1,7 +1,9 @@
 use rusqlite::{Connection, Result, ToSql};
 use crate::cli::flags::budget::{CreateBudget, BudgetData, UpdateBudget};
 use tabled::{Table, Tabled};
+use std::{fs, fs::File};
 use rusqlite::params;
+use csv::Writer;
 
 #[derive(Tabled)]
 struct BudgetRow {
@@ -20,6 +22,47 @@ impl CreateBudget {
         )?;
         Ok(())
     }
+
+    pub fn get_budget(&self, conn: &Connection) -> Result<()> {
+        let mut stmt = conn.prepare( "SELECT category, amount FROM budget")?;
+        
+        let rows = stmt.query_map(params![], |row| {
+            Ok(BudgetRow {
+                category: row.get(0)?,
+                amount: row.get(1)?,
+            })
+        })?;
+    
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+
+        let home_dir = dirs::home_dir().expect("failed to get the home directory");
+        let joined_dir = home_dir.join("move");
+
+        if !joined_dir.exists() {
+            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+        }
+
+        let merge_path = joined_dir.join("budget_data.csv");
+        let file_path = File::create(merge_path).expect("failed to create a file");
+
+        let mut wtr = Writer::from_writer(file_path);
+
+        wtr.write_record(&["Category", "Amount"]).unwrap();
+
+        for budget in results {
+            wtr.write_record(&[
+                budget.category,
+                budget.amount,
+            ]).unwrap();
+        }
+
+        wtr.flush().unwrap();
+        Ok(())
+    }
+
 }
 
 impl BudgetData {

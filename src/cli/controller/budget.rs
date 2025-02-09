@@ -26,8 +26,13 @@ pub fn handle_budget(details: BudgetInfo) {
             let _ = list_budget(&conn);
         }
 
-        BudgetSubcommand::Get(_get_budget) => {
-            println!("Budget data is successfully stored in the CSV file");
+        BudgetSubcommand::Get(budget) => {
+            let conn = connection().unwrap();
+            let result = budget.get_budget(&conn);
+            match result {
+                Ok(_) => println!("The budget data is successfully saved in a CSV file"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
 
         BudgetSubcommand::Update(budget) => {

@@ -1,4 +1,4 @@
-use crate::cli::flags::cred::{BlockchainCred, GmailCred, GetCred};
+use crate::cli::flags::cred::{BlockchainCred, GmailCred};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -22,10 +22,10 @@ pub enum CredSubcommand {
     Delete(DeleteCred),
 
     /// Get the blockchain data in a CSV file
-    GetBlockchain(GetCred),
+    GetBlockchain(BlockchainCred),
 
     /// Get the gmail data in a CSV file
-    GetGmail(GetCred),
+    GetGmail(GmailCred),
 }
 
 #[derive(Debug, Parser)]
