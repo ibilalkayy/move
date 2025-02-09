@@ -12,7 +12,7 @@ pub struct SpendData {
 }
 
 #[derive(Debug, Parser)]
-pub struct SpendFinder {
+pub struct SpendCategory {
     /// Write the category name to spend the money on
     #[clap(short, long)]
     pub category: String,

@@ -1,9 +1,9 @@
-use rusqlite::{Connection, Result, ToSql};
-use crate::cli::flags::alert::{AlertData, AlertCategory};
-use tabled::{Table, Tabled};
-use std::{fs, fs::File};
-use rusqlite::params;
+use crate::cli::flags::alert::{AlertCategory, AlertData};
 use csv::Writer;
+use rusqlite::params;
+use rusqlite::{Connection, Result, ToSql};
+use std::{fs, fs::File};
+use tabled::{Table, Tabled};
 
 #[derive(Tabled, Debug)]
 pub struct AlertRow {
@@ -44,7 +44,6 @@ fn create_file(path: &str) -> File {
     let file_path = File::create(merge_path).expect("Failed to create a file");
     return file_path;
 }
-
 
 impl AlertData {
     pub fn insert_alert(&self, conn: &Connection) -> Result<()> {
@@ -105,7 +104,7 @@ impl AlertData {
 
             // Execute query only once
             let affected_rows = conn.execute(&query, rusqlite::params_from_iter(values))?;
-            
+
             if affected_rows == 0 {
                 return Err(rusqlite::Error::QueryReturnedNoRows);
             }
@@ -120,7 +119,7 @@ impl AlertData {
         let mut stmt = conn.prepare(
             "select category, frequency, method, dayz, hourz, minutez, secondz, weekdays from alert",
         )?;
-               
+
         let rows = stmt.query_map(params![], |row| {
             Ok(AlertRow {
                 category: row.get(0)?,
@@ -133,7 +132,7 @@ impl AlertData {
                 weekday: row.get(7)?,
             })
         })?;
-    
+
         let mut results = Vec::new();
         for row in rows {
             results.push(row?);
@@ -143,7 +142,17 @@ impl AlertData {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Category", "Frequency", "Method", "Day", "Hour", "Minute", "Second", "Weekday"]).unwrap();
+        wtr.write_record(&[
+            "Category",
+            "Frequency",
+            "Method",
+            "Day",
+            "Hour",
+            "Minute",
+            "Second",
+            "Weekday",
+        ])
+        .unwrap();
 
         for alert in results {
             wtr.write_record(&[
@@ -155,20 +164,20 @@ impl AlertData {
                 alert.minute,
                 alert.second,
                 alert.weekday,
-            ]).unwrap();
+            ])
+            .unwrap();
         }
 
         wtr.flush().unwrap();
         Ok(())
     }
-
 }
 
 pub fn view_alert(conn: &Connection) -> Result<()> {
     let mut stmt = conn.prepare(
         "select category, frequency, method, dayz, hourz, minutez, secondz, weekdays from alert",
     )?;
-    
+
     let rows = stmt.query_map(params![], |row| {
         Ok(AlertRow {
             category: row.get(0)?,
@@ -195,12 +204,13 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
 
 impl AlertCategory {
     pub fn delete_alert(&self, conn: &Connection) -> Result<()> {
-        let affected_rows = conn.execute("delete from alert where category = ?", &[&self.category])?;
-        
+        let affected_rows =
+            conn.execute("delete from alert where category = ?", &[&self.category])?;
+
         if affected_rows == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
         }
-        
+
         Ok(())
     }
 }

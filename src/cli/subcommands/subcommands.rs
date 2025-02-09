@@ -1,8 +1,7 @@
 use clap::Subcommand;
 
 use crate::cli::subcommands::{
-    budget::BudgetInfo, cred::CredInfo,
-    spend::SpendInfo, total_amount::TotalAmountInfo,
+    budget::BudgetInfo, cred::CredInfo, spend::SpendInfo, total_amount::TotalAmountInfo,
 };
 
 #[derive(Debug, Subcommand)]

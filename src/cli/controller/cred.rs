@@ -1,11 +1,11 @@
 use crate::cli::subcommands::cred::{
-    CredInfo, CredSubcommand, AddSubcommand, ViewSubcommand,
-    UpdateSubcommand, DeleteSubcommand, GetSubcommand,
+    AddSubcommand, CredInfo, CredSubcommand, DeleteSubcommand, GetSubcommand, UpdateSubcommand,
+    ViewSubcommand,
 };
 
 use crate::database::{
-    db::connection, 
-    cred::{view_blockchain, view_gmail, delete_blockchain, delete_gmail},
+    cred::{delete_blockchain, delete_gmail, view_blockchain, view_gmail},
+    db::connection,
 };
 
 pub fn handle_cred(info: CredInfo) {
@@ -28,7 +28,7 @@ pub fn handle_cred(info: CredInfo) {
                     Err(error) => println!("Err: {}", error),
                 }
             }
-        }
+        },
 
         CredSubcommand::View(cred) => match cred.view_cred {
             ViewSubcommand::Blockchain => {
@@ -48,7 +48,7 @@ pub fn handle_cred(info: CredInfo) {
                     Err(error) => println!("Err: {}", error),
                 }
             }
-        }
+        },
 
         CredSubcommand::Update(cred) => match cred.update_cred {
             UpdateSubcommand::Blockchain(blockchain) => {
@@ -68,7 +68,7 @@ pub fn handle_cred(info: CredInfo) {
                     Err(error) => println!("Err: {}", error),
                 }
             }
-        }
+        },
 
         CredSubcommand::Delete(cred) => match cred.delete_cred {
             DeleteSubcommand::Blockchain => {
@@ -88,7 +88,7 @@ pub fn handle_cred(info: CredInfo) {
                     Err(error) => println!("Err: {}", error),
                 }
             }
-        }
+        },
 
         CredSubcommand::Get(cred) => match cred.get_cred {
             GetSubcommand::Blockchain(blockchain) => {
@@ -108,6 +108,6 @@ pub fn handle_cred(info: CredInfo) {
                     Err(error) => println!("Error: {}", error),
                 }
             }
-        }
+        },
     }
 }

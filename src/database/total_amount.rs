@@ -1,8 +1,8 @@
-use crate::cli::flags::total_amount::{TotalAmount, UpdateTotalAmount, RemoveTotalCategory};
-use rusqlite::{Connection, params, Result};
+use crate::cli::flags::total_amount::{RemoveTotalCategory, TotalAmount, UpdateTotalAmount};
+use csv::Writer;
+use rusqlite::{params, Connection, Result};
 use std::{fs, fs::File, process::exit};
 use tabled::{Table, Tabled};
-use csv::Writer;
 
 #[derive(Tabled)]
 struct TotalAmountRow {
@@ -44,7 +44,7 @@ impl TotalAmount {
             println!("Inserting the total amount multiple times is not allowed");
             exit(0);
         }
-        
+
         conn.execute(
             "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values(?1, ?2, ?3, ?4)",
             &[&self.amount, &Some("0".to_string()), &Some("0".to_string()), &Some("inactive".to_string())],
@@ -53,7 +53,9 @@ impl TotalAmount {
     }
 
     pub fn get_total_amount(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare("select total_amount, spent_amount, remaining_amount, statuss from totalamount")?;
+        let mut stmt = conn.prepare(
+            "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
+        )?;
 
         let rows = stmt.query_map(params![], |row| {
             Ok(TotalAmountRow {
@@ -73,7 +75,8 @@ impl TotalAmount {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount", "Status"]).unwrap();
+        wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount", "Status"])
+            .unwrap();
 
         for amount in result {
             wtr.write_record(&[
@@ -81,7 +84,8 @@ impl TotalAmount {
                 amount.spent_amount,
                 amount.remaining_amount,
                 amount.status,
-            ]).unwrap();
+            ])
+            .unwrap();
         }
 
         wtr.flush().unwrap();
@@ -91,9 +95,8 @@ impl TotalAmount {
 }
 
 pub fn view_total_amount(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare(
-        "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
-    )?;
+    let mut stmt = conn
+        .prepare("select total_amount, spent_amount, remaining_amount, statuss from totalamount")?;
 
     let rows = stmt.query_map(params![], |row| {
         Ok(TotalAmountRow {
@@ -111,7 +114,7 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
 
     let table = Table::new(results);
     println!("{}", table);
-    
+
     Ok(())
 }
 
@@ -124,23 +127,26 @@ impl UpdateTotalAmount {
 
 impl RemoveTotalCategory {
     pub fn delete_total_category(&self, conn: &Connection) -> Result<()> {
-        let affected_rows = conn.execute("delete from totalcategories where category=?", &[&self.category])?;
-        
+        let affected_rows = conn.execute(
+            "delete from totalcategories where category=?",
+            &[&self.category],
+        )?;
+
         if affected_rows == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
         }
-        
+
         Ok(())
     }
 }
 
 pub fn delete_total_amount(conn: &Connection) -> Result<()> {
     let affected_rows = conn.execute("delete from totalamount", [])?;
-    
+
     if affected_rows == 0 {
         return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
     }
-    
+
     Ok(())
 }
 

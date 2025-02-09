@@ -1,8 +1,8 @@
 use crate::cli::flags::cred::{BlockchainCred, GmailCred};
-use rusqlite::{Connection, params, Result, ToSql};
+use csv::Writer;
+use rusqlite::{params, Connection, Result, ToSql};
 use std::{fs, fs::File, process::exit};
 use tabled::{Table, Tabled};
-use csv::Writer;
 
 #[derive(Tabled)]
 struct BlockchainRow {
@@ -23,7 +23,6 @@ struct GmailRow {
 
     #[tabled(rename = "App Password")]
     app_password: String,
-
 }
 
 fn create_file(path: &str) -> File {
@@ -110,10 +109,8 @@ impl BlockchainCred {
         wtr.write_record(&["Private Key", "Alchemy URL"]).unwrap();
 
         for blockchain in result {
-            wtr.write_record(&[
-                blockchain.private_key,
-                blockchain.alchemy_url,
-            ]).unwrap();
+            wtr.write_record(&[blockchain.private_key, blockchain.alchemy_url])
+                .unwrap();
         }
 
         wtr.flush().unwrap();
@@ -124,11 +121,10 @@ impl BlockchainCred {
 
 impl GmailCred {
     pub fn insert_gmail(&self, conn: &Connection) -> Result<()> {
-        let row_exists: bool = conn.query_row(
-            "select exists (select 1 from gmail)",
-            params![],
-            |row| row.get(0),
-        )?;
+        let row_exists: bool =
+            conn.query_row("select exists (select 1 from gmail)", params![], |row| {
+                row.get(0)
+            })?;
 
         if row_exists {
             println!("Inserting the gmail credentials multiple times is not allowed");
@@ -196,14 +192,12 @@ impl GmailCred {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Username", "Gmail Address", "App Password"]).unwrap();
+        wtr.write_record(&["Username", "Gmail Address", "App Password"])
+            .unwrap();
 
         for gmail in result {
-            wtr.write_record(&[
-                gmail.username,
-                gmail.gmail_address,
-                gmail.app_password,
-            ]).unwrap();
+            wtr.write_record(&[gmail.username, gmail.gmail_address, gmail.app_password])
+                .unwrap();
         }
 
         wtr.flush().unwrap();
@@ -213,9 +207,7 @@ impl GmailCred {
 }
 
 pub fn view_blockchain(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare(
-        "select private_key, alchemy_url from blockchain",
-    )?;
+    let mut stmt = conn.prepare("select private_key, alchemy_url from blockchain")?;
 
     let rows = stmt.query_map(params![], |row| {
         Ok(BlockchainRow {
@@ -231,14 +223,12 @@ pub fn view_blockchain(conn: &Connection) -> Result<()> {
 
     let table = Table::new(results);
     println!("{}", table);
-    
+
     Ok(())
 }
 
 pub fn view_gmail(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare(
-        "select username, gmail_address, app_password from gmail",
-    )?;
+    let mut stmt = conn.prepare("select username, gmail_address, app_password from gmail")?;
 
     let rows = stmt.query_map(params![], |row| {
         Ok(GmailRow {
@@ -255,26 +245,26 @@ pub fn view_gmail(conn: &Connection) -> Result<()> {
 
     let table = Table::new(results);
     println!("{}", table);
-    
+
     Ok(())
 }
 
 pub fn delete_blockchain(conn: &Connection) -> Result<()> {
     let affected_rows = conn.execute("delete from blockchain", [])?;
-    
+
     if affected_rows == 0 {
         return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
     }
-    
+
     Ok(())
 }
 
 pub fn delete_gmail(conn: &Connection) -> Result<()> {
     let affected_rows = conn.execute("delete from gmail", [])?;
-    
+
     if affected_rows == 0 {
         return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
     }
-    
+
     Ok(())
 }

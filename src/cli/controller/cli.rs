@@ -4,9 +4,8 @@ use crate::database::db::create_table;
 use clap::Parser;
 
 use crate::cli::controller::{
-    budget::handle_budget, cred::handle_cred, 
+    budget::handle_budget, cred::handle_cred, spend::handle_spending,
     total_amount::handle_total_amount,
-    spend::handle_spending,
 };
 
 pub fn cli() {

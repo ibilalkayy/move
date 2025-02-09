@@ -1,8 +1,7 @@
 use clap::{Parser, Subcommand};
 
 use crate::cli::flags::total_amount::{
-    TotalAmount, TotalCategory, RemoveTotalCategory,
-    UpdateTotalAmount, UpdateTotalCategory,
+    RemoveTotalCategory, TotalAmount, TotalCategory, UpdateTotalAmount, UpdateTotalCategory,
 };
 
 #[derive(Debug, Parser)]

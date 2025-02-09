@@ -1,8 +1,8 @@
-use crate::cli::flags::budget::{BudgetData, BudgetCategory, UpdateBudget};
-use rusqlite::{Connection, params, Result, ToSql};
-use tabled::{Table, Tabled};
-use std::{fs, fs::File};
+use crate::cli::flags::budget::{BudgetCategory, BudgetData, UpdateBudget};
 use csv::Writer;
+use rusqlite::{params, Connection, Result, ToSql};
+use std::{fs, fs::File};
+use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
 struct BudgetRow {
@@ -36,15 +36,15 @@ impl BudgetData {
     }
 
     pub fn get_budget(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare( "select category, amount from budget")?;
-        
+        let mut stmt = conn.prepare("select category, amount from budget")?;
+
         let rows = stmt.query_map(params![], |row| {
             Ok(BudgetRow {
                 category: row.get(0)?,
                 amount: row.get(1)?,
             })
         })?;
-    
+
         let mut results = Vec::new();
         for row in rows {
             results.push(row?);
@@ -57,58 +57,51 @@ impl BudgetData {
         wtr.write_record(&["Category", "Amount"]).unwrap();
 
         for budget in results {
-            wtr.write_record(&[
-                budget.category,
-                budget.amount,
-            ]).unwrap();
+            wtr.write_record(&[budget.category, budget.amount]).unwrap();
         }
 
         wtr.flush().unwrap();
         Ok(())
     }
-
 }
 
 impl BudgetCategory {
     pub fn view_budget(&self, conn: &Connection, category: &str) -> Result<()> {
-        let mut stmt = conn.prepare(
-            "select category, amount from budget where category = ?",
-        )?;
-        
+        let mut stmt = conn.prepare("select category, amount from budget where category = ?")?;
+
         let rows = stmt.query_map(params![category], |row| {
             Ok(BudgetRow {
                 category: row.get(0)?,
                 amount: row.get(1)?,
             })
         })?;
-    
+
         let mut results = Vec::new();
         for row in rows {
             results.push(row?);
         }
-    
+
         let table = Table::new(results);
         println!("{}", table);
-    
+
         Ok(())
     }
 
     pub fn delete_budget(&self, conn: &Connection) -> Result<()> {
-        let affected_rows = conn.execute("delete from budget where category = ?", &[&self.category])?;
-        
+        let affected_rows =
+            conn.execute("delete from budget where category = ?", &[&self.category])?;
+
         if affected_rows == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
         }
-        
+
         Ok(())
-    }    
+    }
 }
 
 pub fn show_budget(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare(
-        "select category, amount from budget",
-    )?;
-    
+    let mut stmt = conn.prepare("select category, amount from budget")?;
+
     let rows = stmt.query_map(params![], |row| {
         Ok(BudgetRow {
             category: row.get(0)?,
@@ -154,7 +147,7 @@ impl UpdateBudget {
             value.push(old_category);
 
             let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-        
+
             if affected_rows == 0 {
                 return Err(rusqlite::Error::QueryReturnedNoRows);
             }

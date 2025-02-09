@@ -1,8 +1,8 @@
 use crate::cli::flags::total_amount::{TotalCategory, UpdateTotalCategory};
-use rusqlite::{Connection, params, Result, ToSql};
-use tabled::{Table, Tabled};
-use std::{fs, fs::File};
 use csv::Writer;
+use rusqlite::{params, Connection, Result, ToSql};
+use std::{fs, fs::File};
+use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
 struct CategoryRow {
@@ -52,10 +52,8 @@ impl TotalCategory {
         wtr.write_record(&["Category", "Label"]).unwrap();
 
         for categories in result {
-            wtr.write_record(&[
-                categories.category,
-                categories.label,
-            ]).unwrap();
+            wtr.write_record(&[categories.category, categories.label])
+                .unwrap();
         }
 
         wtr.flush().unwrap();
@@ -65,9 +63,7 @@ impl TotalCategory {
 }
 
 pub fn view_total_categories(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare(
-        "SELECT category, label FROM totalcategories",
-    )?;
+    let mut stmt = conn.prepare("SELECT category, label FROM totalcategories")?;
 
     let rows = stmt.query_map(params![], |row| {
         Ok(CategoryRow {
@@ -83,7 +79,7 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
 
     let table = Table::new(results);
     println!("{}", table);
-    
+
     Ok(())
 }
 
@@ -118,7 +114,7 @@ impl UpdateTotalCategory {
                 return Err(rusqlite::Error::QueryReturnedNoRows);
             }
 
-            Ok(()) 
+            Ok(())
         } else {
             Err(rusqlite::Error::InvalidQuery)
         }

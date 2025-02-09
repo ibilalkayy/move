@@ -1,5 +1,5 @@
 use crate::cli::flags::{
-    alert::{AlertData, AlertCategory},
+    alert::{AlertCategory, AlertData},
     budget::{BudgetCategory, BudgetData, UpdateBudget},
 };
 use clap::{Parser, Subcommand};

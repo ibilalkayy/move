@@ -1,5 +1,5 @@
 use crate::cli::subcommands::budget::{AlertSubcommand, BudgetInfo, BudgetSubcommand};
-use crate::database::{db::connection, budget::show_budget, alert::view_alert};
+use crate::database::{alert::view_alert, budget::show_budget, db::connection};
 
 pub fn handle_budget(info: BudgetInfo) {
     match info.budget_subcommand {
@@ -44,7 +44,9 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.update_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully updated"),
-                Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
+                Err(rusqlite::Error::QueryReturnedNoRows) => {
+                    println!("Error: No matching record found")
+                }
                 Err(e) => println!("Database error: {:?}", e),
             }
         }
@@ -90,7 +92,9 @@ pub fn handle_budget(info: BudgetInfo) {
                 let result = alert.update_alert(&conn);
                 match result {
                     Ok(_) => println!("Alert data is successfully updated"),
-                    Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
+                    Err(rusqlite::Error::QueryReturnedNoRows) => {
+                        println!("Error: No matching record found")
+                    }
                     Err(e) => println!("Database error: {:?}", e),
                 }
             }
