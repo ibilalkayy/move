@@ -1,36 +1,40 @@
 use crate::cli::subcommands::budget::{AlertSubcommand, BudgetInfo, BudgetSubcommand};
-use crate::database::db::connection;
-use crate::database::{
-    budget::list_budget,
-    alert::view_alert,
-};
+use crate::database::{db::connection, budget::show_budget, alert::view_alert};
 
-pub fn handle_budget(details: BudgetInfo) {
-    match details.budget_subcommand {
-        BudgetSubcommand::Set(budget) => {
+pub fn handle_budget(info: BudgetInfo) {
+    match info.budget_subcommand {
+        BudgetSubcommand::Add(budget) => {
             let conn = connection().unwrap();
             let result = budget.insert_budget(&conn);
             match result {
-                Ok(_) => println!("Budget is successfully created"),
+                Ok(_) => println!("Budget data is successfully saved"),
                 Err(error) => println!("Err: {}", error),
             }
         }
 
         BudgetSubcommand::View(budget) => {
             let conn = connection().unwrap();
-            let _ = budget.view_budget(&conn, &budget.category);
+            let result = budget.view_budget(&conn, &budget.category);
+            match result {
+                Ok(_) => (),
+                Err(error) => println!("Err: {}", error),
+            }
         }
 
-        BudgetSubcommand::List => {
+        BudgetSubcommand::Show => {
             let conn = connection().unwrap();
-            let _ = list_budget(&conn);
+            let result = show_budget(&conn);
+            match result {
+                Ok(_) => (),
+                Err(error) => println!("Err: {}", error),
+            }
         }
 
         BudgetSubcommand::Get(budget) => {
             let conn = connection().unwrap();
             let result = budget.get_budget(&conn);
             match result {
-                Ok(_) => println!("The budget data is successfully saved in a CSV file"),
+                Ok(_) => println!("Budget data is successfully saved in a CSV file"),
                 Err(error) => println!("Error: {}", error),
             }
         }
@@ -54,7 +58,7 @@ pub fn handle_budget(details: BudgetInfo) {
             }
         }
 
-        BudgetSubcommand::Alert(alert_budget) => match alert_budget.alert_subcommand {
+        BudgetSubcommand::Alert(budget) => match budget.alert_budget {
             AlertSubcommand::Set(alert) => {
                 let conn = connection().unwrap();
                 let result = alert.insert_alert(&conn);
@@ -73,17 +77,17 @@ pub fn handle_budget(details: BudgetInfo) {
                 }
             }
 
-            AlertSubcommand::Email(_email_alert) => {
+            AlertSubcommand::Email(_alert) => {
                 println!("Alert is successfully gotten")
             }
 
-            AlertSubcommand::See(_cli_alert) => {
+            AlertSubcommand::See(_alert) => {
                 println!("Alert is successfully seen")
             }
 
-            AlertSubcommand::Update(update) => {
+            AlertSubcommand::Update(alert) => {
                 let conn = connection().unwrap();
-                let result = update.update_alert(&conn);
+                let result = alert.update_alert(&conn);
                 match result {
                     Ok(_) => println!("Alert data is successfully updated"),
                     Err(rusqlite::Error::QueryReturnedNoRows) => println!("Error: No matching record found"),
@@ -104,7 +108,7 @@ pub fn handle_budget(details: BudgetInfo) {
                 let conn = connection().unwrap();
                 let result = alert.get_alert(&conn);
                 match result {
-                    Ok(_) => println!("The alert data is successfully saved in a file"),
+                    Ok(_) => println!("Alert data is successfully saved in a CSV file"),
                     Err(error) => println!("Error: {}", error),
                 }
             }

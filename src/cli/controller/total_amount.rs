@@ -9,8 +9,8 @@ use crate::database::{
     total_categories::view_total_categories,
 };
 
-pub fn handle_total_amount(details: TotalAmountInfo) {
-    match details.total_amount_subcommand {
+pub fn handle_total_amount(info: TotalAmountInfo) {
+    match info.total_amount_subcommand {
         TotalAmountSubcommand::Add(total) => match total.add_total {
             AddTotalSubcommand::Amount(total_amount) => {
                 let conn = connection().unwrap();

@@ -1,8 +1,7 @@
-use rusqlite::{Connection, Result, ToSql};
-use crate::cli::flags::budget::{CreateBudget, BudgetData, UpdateBudget};
+use crate::cli::flags::budget::{BudgetData, BudgetCategory, UpdateBudget};
+use rusqlite::{Connection, params, Result, ToSql};
 use tabled::{Table, Tabled};
 use std::{fs, fs::File};
-use rusqlite::params;
 use csv::Writer;
 
 #[derive(Tabled)]
@@ -14,7 +13,21 @@ struct BudgetRow {
     amount: String,
 }
 
-impl CreateBudget {
+fn create_file(path: &str) -> File {
+    let home_dir = dirs::home_dir().expect("Failed to get the home directory");
+    let joined_dir = home_dir.join("move");
+
+    if !joined_dir.exists() {
+        fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+    }
+
+    let merge_path = joined_dir.join(path);
+    let file_path = File::create(merge_path).expect("Failed to create a file");
+    return file_path;
+}
+
+
+impl BudgetData {
     pub fn insert_budget(&self, conn: &Connection) -> Result<()> {
         conn.execute(
             "insert into budget(category, amount) values(?1, ?2)",
@@ -38,15 +51,7 @@ impl CreateBudget {
             results.push(row?);
         }
 
-        let home_dir = dirs::home_dir().expect("failed to get the home directory");
-        let joined_dir = home_dir.join("move");
-
-        if !joined_dir.exists() {
-            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
-        }
-
-        let merge_path = joined_dir.join("budget_data.csv");
-        let file_path = File::create(merge_path).expect("failed to create a file");
+        let file_path = create_file("budget.csv");
 
         let mut wtr = Writer::from_writer(file_path);
 
@@ -65,7 +70,7 @@ impl CreateBudget {
 
 }
 
-impl BudgetData {
+impl BudgetCategory {
     pub fn view_budget(&self, conn: &Connection, category: &str) -> Result<()> {
         let mut stmt = conn.prepare(
             "SELECT category, amount FROM budget WHERE category = ?",
@@ -100,7 +105,7 @@ impl BudgetData {
     }    
 }
 
-pub fn list_budget(conn: &Connection) -> Result<()> {
+pub fn show_budget(conn: &Connection) -> Result<()> {
     let mut stmt = conn.prepare(
         "SELECT category, amount FROM budget",
     )?;

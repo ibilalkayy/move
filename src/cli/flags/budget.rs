@@ -1,18 +1,18 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-pub struct CreateBudget {
+pub struct BudgetData {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
     pub category: Option<String>,
 
-    /// Write the total amount for the category
+    /// Total amount for the category
     #[clap(short, long)]
     pub amount: Option<String>,
 }
 
 #[derive(Debug, Parser)]
-pub struct BudgetData {
+pub struct BudgetCategory {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
     pub category: String,
@@ -28,7 +28,7 @@ pub struct UpdateBudget {
     #[clap(short, long)]
     pub new_category: Option<String>,
 
-    /// New amount of the category to update
+    /// New amount of the category to update with
     #[clap(short, long)]
     pub amount: Option<String>,
 }
