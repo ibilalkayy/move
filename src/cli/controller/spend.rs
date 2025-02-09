@@ -26,10 +26,6 @@ pub fn handle_spending(details: SpendInfo) {
             }
         }
 
-        SpendSubcommand::Show => {
-            println!("show command");
-        }
-
         SpendSubcommand::Get(spending) => {
             let conn = connection().unwrap();
             let result = spending.get_spending(&conn);

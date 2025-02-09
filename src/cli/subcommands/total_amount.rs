@@ -74,9 +74,6 @@ pub enum StatusSubcommand {
 
     /// Make the total amount inactive
     Inactive,
-
-    /// Check the status of the total amount
-    Check,
 }
 
 #[derive(Debug, Parser)]

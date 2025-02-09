@@ -139,3 +139,8 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
     
     Ok(())
 }
+
+pub fn update_status(conn: &Connection, status: String) -> Result<()> {
+    conn.execute("update totalamount set statuss=?", &[&status])?;
+    Ok(())
+}

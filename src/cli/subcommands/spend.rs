@@ -12,14 +12,11 @@ pub enum SpendSubcommand {
     /// Where the money will be spent
     Money(SpendData),
 
-    /// Shows the spending based on various categories
+    /// Shows the spending history
     History(SpendFinder),
 
     /// Delete the spend history data
     Delete(SpendFinder),
-
-    /// Show the history data
-    Show,
 
     /// Get the spending data
     Get(SpendData),

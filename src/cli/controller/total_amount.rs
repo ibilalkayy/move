@@ -3,10 +3,9 @@ use crate::cli::subcommands::total_amount::{
     UpdateTotalSubcommand, ViewSubcommand, RemoveTotalSubcommand, GetTotalSubcommand,
 };
 
-use crate::database::db::connection;
-
 use crate::database::{
-    total_amount::{view_total_amount, delete_total_amount},
+    db::connection,
+    total_amount::{view_total_amount, delete_total_amount, update_status},
     total_categories::view_total_categories,
 };
 
@@ -35,26 +34,40 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
         TotalAmountSubcommand::View(view_total) => match view_total.view_subcommand {
             ViewSubcommand::Amount => {
                 let conn = connection().unwrap();
-                let _ = view_total_amount(&conn);
+                let result = view_total_amount(&conn);
+                match result {
+                    Ok(_) => (),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
 
             ViewSubcommand::Categories => {
                 let conn = connection().unwrap();
-                let _ = view_total_categories(&conn);
+                let result = view_total_categories(&conn);
+                match result {
+                    Ok(_) => (),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
         },
 
         TotalAmountSubcommand::Status(status_total) => match status_total.status_subcommand {
             StatusSubcommand::Active => {
-                println!("Total amount is activated");
+                let conn = connection().unwrap();
+                let result = update_status(&conn, "active".to_string());
+                match result {
+                    Ok(_) => println!("Total amount status is successfully updated"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
 
             StatusSubcommand::Inactive => {
-                println!("Total amount is now inactive");
-            }
-
-            StatusSubcommand::Check => {
-                println!("total amount status is checked out");
+                let conn = connection().unwrap();
+                let result = update_status(&conn, "inactive".to_string());
+                match result {
+                    Ok(_) => println!("Total amount status is successfully updated"),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
         },
 

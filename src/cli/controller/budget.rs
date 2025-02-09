@@ -66,7 +66,11 @@ pub fn handle_budget(details: BudgetInfo) {
 
             AlertSubcommand::View => {
                 let conn = connection().unwrap();
-                let _ = view_alert(&conn);
+                let result = view_alert(&conn);
+                match result {
+                    Ok(_) => (),
+                    Err(error) => println!("Error: {}", error),
+                }
             }
 
             AlertSubcommand::Email(_email_alert) => {
