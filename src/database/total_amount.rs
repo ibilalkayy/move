@@ -1,6 +1,6 @@
-use rusqlite::{Connection, Result};
 use crate::cli::flags::total_amount::{AddTotalAmount, UpdateTotalAmount, RemoveTotalCategory};
 use std::{fs, fs::File, process::exit};
+use rusqlite::{Connection, Result};
 use tabled::{Table, Tabled};
 use rusqlite::params;
 use csv::Writer;
@@ -20,16 +20,29 @@ struct TotalAmountRow {
     status: String,
 }
 
+fn create_file(path: &str) -> File {
+    let home_dir = dirs::home_dir().expect("Failed to get the home directory");
+    let joined_dir = home_dir.join("move");
+
+    if !joined_dir.exists() {
+        fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+    }
+
+    let merge_path = joined_dir.join(path);
+    let file_path = File::create(merge_path).expect("Failed to create a file");
+    return file_path;
+}
+
 impl AddTotalAmount {
     pub fn insert_total_amount(&self, conn: &Connection) -> Result<()> {
         let row_exists: bool = conn.query_row(
-            "SELECT EXISTS (SELECT 1 FROM totalamount)",
+            "select exists (select 1 from totalamount)",
             params![],
             |row| row.get(0),
         )?;
 
         if row_exists {
-            println!("The total amount data is already inserted");
+            println!("Inserting the total amount multiple times is not allowed");
             exit(0);
         }
         
@@ -57,15 +70,7 @@ impl AddTotalAmount {
             result.push(row?)
         }
 
-        let home_dir = dirs::home_dir().expect("failed to get the home directory");
-        let joined_dir = home_dir.join("move");
-
-        if !joined_dir.exists() {
-            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
-        }
-
-        let merge_path = joined_dir.join("total_amount_data.csv");
-        let file_path = File::create(merge_path).expect("failed to create a file");
+        let file_path = create_file("total_amount.csv");
 
         let mut wtr = Writer::from_writer(file_path);
 
@@ -88,7 +93,7 @@ impl AddTotalAmount {
 
 pub fn view_total_amount(conn: &Connection) -> Result<()> {
     let mut stmt = conn.prepare(
-        "SELECT total_amount, spent_amount, remaining_amount, statuss FROM totalamount",
+        "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
     )?;
 
     let rows = stmt.query_map(params![], |row| {
@@ -120,7 +125,7 @@ impl UpdateTotalAmount {
 
 impl RemoveTotalCategory {
     pub fn delete_total_category(&self, conn: &Connection) -> Result<()> {
-        let affected_rows = conn.execute("DELETE FROM totalcategories where category=?", &[&self.category])?;
+        let affected_rows = conn.execute("delete from totalcategories where category=?", &[&self.category])?;
         
         if affected_rows == 0 {
             return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
@@ -131,7 +136,7 @@ impl RemoveTotalCategory {
 }
 
 pub fn delete_total_amount(conn: &Connection) -> Result<()> {
-    let affected_rows = conn.execute("DELETE FROM totalamount", [])?;
+    let affected_rows = conn.execute("delete from totalamount", [])?;
     
     if affected_rows == 0 {
         return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
@@ -140,7 +145,7 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-pub fn update_status(conn: &Connection, status: String) -> Result<()> {
+pub fn update_total_status(conn: &Connection, status: String) -> Result<()> {
     conn.execute("update totalamount set statuss=?", &[&status])?;
     Ok(())
 }

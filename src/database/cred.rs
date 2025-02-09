@@ -1,8 +1,7 @@
 use crate::cli::flags::cred::{BlockchainCred, GmailCred};
 use rusqlite::{Connection, Result, ToSql};
+use std::{fs, fs::File, process::exit};
 use tabled::{Table, Tabled};
-use std::{fs, fs::File};
-use std::process::exit;
 use rusqlite::params;
 use csv::Writer;
 

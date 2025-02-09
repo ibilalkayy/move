@@ -1,13 +1,14 @@
-use crate::cli::flags::total_amount::{
-    AddTotalAmount, AddTotalCategory, RemoveTotalCategory, UpdateTotalAmount, UpdateTotalCategories,
-};
-
 use clap::{Parser, Subcommand};
+
+use crate::cli::flags::total_amount::{
+    AddTotalAmount, AddTotalCategory, RemoveTotalCategory,
+    UpdateTotalAmount, UpdateTotalCategories,
+};
 
 #[derive(Debug, Parser)]
 pub struct TotalAmountInfo {
     #[clap(subcommand)]
-    pub total_amount: TotalAmountSubcommand,
+    pub total_amount_subcommand: TotalAmountSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -27,14 +28,14 @@ pub enum TotalAmountSubcommand {
     /// Remove the total amount data
     Remove(RemoveTotal),
 
-    /// Get the total amount data in CSV file
+    /// Get the total amount in a CSV file
     Get(GetTotal),
 }
 
 #[derive(Debug, Parser)]
 pub struct AddTotal {
     #[clap(subcommand)]
-    pub add_subcommand: AddTotalSubcommand,
+    pub add_total: AddTotalSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -49,7 +50,7 @@ pub enum AddTotalSubcommand {
 #[derive(Debug, Parser)]
 pub struct ViewTotal {
     #[clap(subcommand)]
-    pub view_subcommand: ViewSubcommand,
+    pub view_total: ViewSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -64,7 +65,7 @@ pub enum ViewSubcommand {
 #[derive(Debug, Parser)]
 pub struct StatusTotal {
     #[clap(subcommand)]
-    pub status_subcommand: StatusSubcommand,
+    pub status_total: StatusSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -79,7 +80,7 @@ pub enum StatusSubcommand {
 #[derive(Debug, Parser)]
 pub struct UpdateTotal {
     #[clap(subcommand)]
-    pub update_subcommand: UpdateTotalSubcommand,
+    pub update_total: UpdateTotalSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -87,14 +88,14 @@ pub enum UpdateTotalSubcommand {
     /// Update the total amount
     Amount(UpdateTotalAmount),
 
-    /// Update the categories
+    /// Update the categories of total amount
     Categories(UpdateTotalCategories),
 }
 
 #[derive(Debug, Parser)]
 pub struct RemoveTotal {
     #[clap(subcommand)]
-    pub remove_subcommand: RemoveTotalSubcommand,
+    pub remove_total: RemoveTotalSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -109,7 +110,7 @@ pub enum RemoveTotalSubcommand {
 #[derive(Debug, Parser)]
 pub struct GetTotal {
     #[clap(subcommand)]
-    pub get_subcommand: GetTotalSubcommand,
+    pub get_total: GetTotalSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
