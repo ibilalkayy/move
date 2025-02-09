@@ -1,7 +1,9 @@
 use rusqlite::{Connection, Result, ToSql};
 use crate::cli::flags::total_amount::{AddTotalCategory, UpdateTotalCategories};
 use tabled::{Table, Tabled};
+use std::{fs, fs::File};
 use rusqlite::params;
+use csv::Writer;
 
 #[derive(Tabled)]
 struct CategoryRow {
@@ -18,6 +20,47 @@ impl AddTotalCategory {
             "insert into totalcategories(category, label) values(?1, ?2)",
             &[&self.category, &self.label],
         )?;
+        Ok(())
+    }
+
+    pub fn get_total_categories(&self, conn: &Connection) -> Result<()> {
+        let mut stmt = conn.prepare("select category, label from totalcategories")?;
+
+        let rows = stmt.query_map(params![], |row| {
+            Ok(CategoryRow {
+                category: row.get(0)?,
+                label: row.get(1)?,
+            })
+        })?;
+
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?)
+        }
+
+        let home_dir = dirs::home_dir().expect("failed to get the home directory");
+        let joined_dir = home_dir.join("move");
+
+        if !joined_dir.exists() {
+            fs::create_dir_all(&joined_dir).expect("Failed to create directory");
+        }
+
+        let merge_path = joined_dir.join("category_data.csv");
+        let file_path = File::create(merge_path).expect("failed to create a file");
+
+        let mut wtr = Writer::from_writer(file_path);
+
+        wtr.write_record(&["Category", "Label"]).unwrap();
+
+        for spending in result {
+            wtr.write_record(&[
+                spending.category,
+                spending.label,
+            ]).unwrap();
+        }
+
+        wtr.flush().unwrap();
+
         Ok(())
     }
 }

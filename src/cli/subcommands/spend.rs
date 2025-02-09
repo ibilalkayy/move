@@ -1,4 +1,4 @@
-use crate::cli::flags::spend::{SpendData, SpendFinder, GetSpending};
+use crate::cli::flags::spend::{SpendData, SpendFinder};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -22,5 +22,5 @@ pub enum SpendSubcommand {
     Show,
 
     /// Get the spending data
-    Get(GetSpending),
+    Get(SpendData),
 }

@@ -1,10 +1,10 @@
 use rusqlite::{Connection, Result, ToSql};
 use crate::cli::flags::cred::{BlockchainCred, GmailCred};
 use tabled::{Table, Tabled};
-use rusqlite::params;
 use std::{fs, fs::File};
-use csv::Writer;
 use std::process::exit;
+use rusqlite::params;
+use csv::Writer;
 
 #[derive(Tabled)]
 struct BlockchainRow {

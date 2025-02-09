@@ -99,8 +99,13 @@ pub fn handle_total_amount(details: TotalAmountInfo) {
             }
         }
 
-        TotalAmountSubcommand::Get(_get_total) => {
-            println!("Get the total amount")
+        TotalAmountSubcommand::Get(get) => {
+            let conn = connection().unwrap();
+            let result = get.get_total_categories(&conn);
+            match result {
+                Ok(_) => println!("The category data is successfully saved in a CSV file"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
 
 

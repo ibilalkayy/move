@@ -11,11 +11,11 @@ pub struct AddTotalAmount {
 pub struct AddTotalCategory {
     /// Write a category to include in the total amount
     #[clap(short, long)]
-    pub category: String,
+    pub category: Option<String>,
 
     /// Write a label to include in your total amount
     #[clap(short, long)]
-    pub label: String,
+    pub label: Option<String>,
 }
 
 #[derive(Debug, Parser)]
@@ -45,19 +45,4 @@ pub struct RemoveTotalCategory {
     /// Remove the total amount data
     #[clap(short, long)]
     pub category: String,
-}
-
-#[derive(Debug, Parser)]
-pub struct GetTotal {
-    /// CSV file name where the data will be stored
-    #[clap(
-        short = 'n',
-        long,
-        help = "CSV file name where the data will be stored"
-    )]
-    pub filename: String,
-
-    /// File path to store the data in
-    #[clap(short = 'p', long, help = "Filepath to store the data in")]
-    pub filepath: String,
 }

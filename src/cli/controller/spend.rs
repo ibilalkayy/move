@@ -30,8 +30,13 @@ pub fn handle_spending(details: SpendInfo) {
             println!("show command");
         }
 
-        SpendSubcommand::Get(_spending) => {
-            println!("get subcommand");
+        SpendSubcommand::Get(spending) => {
+            let conn = connection().unwrap();
+            let result = spending.get_spending(&conn);
+            match result {
+                Ok(_) => println!("The spending data is successfully saved in a CSV file"),
+                Err(error) => println!("Error: {}", error),
+            }
         }
     }
 }
