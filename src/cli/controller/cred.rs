@@ -1,10 +1,16 @@
-use crate::cli::subcommands::cred::{CredInfo, CredSubcommand, AddSubcommand, ViewSubcommand, UpdateSubcommand, DeleteSubcommand, GetSubcommand};
-use crate::database::db::connection;
-use crate::database::cred::{view_blockchain, view_gmail, delete_blockchain, delete_gmail};
+use crate::cli::subcommands::cred::{
+    CredInfo, CredSubcommand, AddSubcommand, ViewSubcommand,
+    UpdateSubcommand, DeleteSubcommand, GetSubcommand,
+};
 
-pub fn handle_cred(details: CredInfo) {
-    match details.cred_subcommand {
-        CredSubcommand::Add(add) => match add.add_subcommand {
+use crate::database::{
+    db::connection, 
+    cred::{view_blockchain, view_gmail, delete_blockchain, delete_gmail},
+};
+
+pub fn handle_cred(info: CredInfo) {
+    match info.cred_subcommand {
+        CredSubcommand::Add(cred) => match cred.add_cred {
             AddSubcommand::Blockchain(blockchain) => {
                 let conn = connection().unwrap();
                 let result = blockchain.insert_blockchain(&conn);
@@ -14,9 +20,9 @@ pub fn handle_cred(details: CredInfo) {
                 }
             }
 
-            AddSubcommand::Gmail(gmail) => {
+            AddSubcommand::Gmail(cred) => {
                 let conn = connection().unwrap();
-                let result = gmail.insert_gmail(&conn);
+                let result = cred.insert_gmail(&conn);
                 match result {
                     Ok(_) => println!("Gmail data is successfully saved"),
                     Err(error) => println!("Err: {}", error),
@@ -24,7 +30,7 @@ pub fn handle_cred(details: CredInfo) {
             }
         }
 
-        CredSubcommand::View(view) => match view.view_subcommand {
+        CredSubcommand::View(cred) => match cred.view_cred {
             ViewSubcommand::Blockchain => {
                 let conn = connection().unwrap();
                 let result = view_blockchain(&conn);
@@ -44,7 +50,7 @@ pub fn handle_cred(details: CredInfo) {
             }
         }
 
-        CredSubcommand::Update(update) => match update.update_subcommand {
+        CredSubcommand::Update(cred) => match cred.update_cred {
             UpdateSubcommand::Blockchain(blockchain) => {
                 let conn = connection().unwrap();
                 let result = blockchain.update_blockchain(&conn);
@@ -54,9 +60,9 @@ pub fn handle_cred(details: CredInfo) {
                 }
             }
 
-            UpdateSubcommand::Gmail(gmail) => {
+            UpdateSubcommand::Gmail(cred) => {
                 let conn = connection().unwrap();
-                let result = gmail.update_gmail(&conn);
+                let result = cred.update_gmail(&conn);
                 match result {
                     Ok(_) => println!("Gmail data is successfully updated"),
                     Err(error) => println!("Err: {}", error),
@@ -64,7 +70,7 @@ pub fn handle_cred(details: CredInfo) {
             }
         }
 
-        CredSubcommand::Delete(delete) => match delete.delete_subcommand {
+        CredSubcommand::Delete(cred) => match cred.delete_cred {
             DeleteSubcommand::Blockchain => {
                 let conn = connection().unwrap();
                 let result = delete_blockchain(&conn);
@@ -78,13 +84,13 @@ pub fn handle_cred(details: CredInfo) {
                 let conn = connection().unwrap();
                 let result = delete_gmail(&conn);
                 match result {
-                    Ok(_) => println!("Gmail data is successfully delete"),
+                    Ok(_) => println!("Gmail data is successfully deleted"),
                     Err(error) => println!("Err: {}", error),
                 }
             }
         }
 
-        CredSubcommand::Get(cred) => match cred.get_subcommand {
+        CredSubcommand::Get(cred) => match cred.get_cred {
             GetSubcommand::Blockchain(blockchain) => {
                 let conn = connection().unwrap();
                 let result = blockchain.get_blockchain(&conn);
@@ -94,9 +100,9 @@ pub fn handle_cred(details: CredInfo) {
                 }
             }
 
-            GetSubcommand::Gmail(gmail) => {
+            GetSubcommand::Gmail(cred) => {
                 let conn = connection().unwrap();
-                let result = gmail.get_gmail(&conn);
+                let result = cred.get_gmail(&conn);
                 match result {
                     Ok(_) => println!("The gmail data is successfully saved in a CSV file"),
                     Err(error) => println!("Error: {}", error),

@@ -28,7 +28,7 @@ pub enum CredSubcommand {
 #[derive(Debug, Parser)]
 pub struct AddCred {
     #[clap(subcommand)]
-    pub add_subcommand: AddSubcommand,
+    pub add_cred: AddSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -43,7 +43,7 @@ pub enum AddSubcommand {
 #[derive(Debug, Parser)]
 pub struct ViewCred {
     #[clap(subcommand)]
-    pub view_subcommand: ViewSubcommand,
+    pub view_cred: ViewSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -58,7 +58,7 @@ pub enum ViewSubcommand {
 #[derive(Debug, Parser)]
 pub struct UpdateCred {
     #[clap(subcommand)]
-    pub update_subcommand: UpdateSubcommand,
+    pub update_cred: UpdateSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -73,7 +73,7 @@ pub enum UpdateSubcommand {
 #[derive(Debug, Parser)]
 pub struct DeleteCred {
     #[clap(subcommand)]
-    pub delete_subcommand: DeleteSubcommand,
+    pub delete_cred: DeleteSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -88,7 +88,7 @@ pub enum DeleteSubcommand {
 #[derive(Debug, Parser)]
 pub struct GetCred {
     #[clap(subcommand)]
-    pub get_subcommand: GetSubcommand,
+    pub get_cred: GetSubcommand,
 }
 
 #[derive(Debug, Subcommand)]

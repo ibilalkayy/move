@@ -17,11 +17,11 @@ pub struct GmailCred {
     #[clap(short = 'u', long, help = "Your username")]
     pub username: Option<String>,
 
-    /// Your Gmail address for alert notifications
-    #[clap(short = 'g', long, help = "Your Gmail address")]
+    /// Your gmail address
+    #[clap(short = 'g', long, help = "Your gmail address")]
     pub gmail_address: Option<String>,
 
-    /// Write the app password of your gmail account
-    #[clap(short = 'a', long, help = "Your Gmail app password")]
+    /// Your gmail account's app password
+    #[clap(short = 'a', long, help = "Your gmail's app password")]
     pub app_password: Option<String>,
 }
