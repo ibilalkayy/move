@@ -52,10 +52,10 @@ impl AddTotalCategory {
 
         wtr.write_record(&["Category", "Label"]).unwrap();
 
-        for spending in result {
+        for categories in result {
             wtr.write_record(&[
-                spending.category,
-                spending.label,
+                categories.category,
+                categories.label,
             ]).unwrap();
         }
 

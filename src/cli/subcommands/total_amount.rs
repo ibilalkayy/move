@@ -28,7 +28,7 @@ pub enum TotalAmountSubcommand {
     Remove(RemoveTotal),
 
     /// Get the total amount data in CSV file
-    Get(AddTotalCategory),
+    Get(GetTotal),
 }
 
 #[derive(Debug, Parser)]
@@ -107,4 +107,19 @@ pub enum RemoveTotalSubcommand {
 
     /// Remove a specific category
     Category(RemoveTotalCategory),
+}
+
+#[derive(Debug, Parser)]
+pub struct GetTotal {
+    #[clap(subcommand)]
+    pub get_subcommand: GetTotalSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum GetTotalSubcommand {
+    /// Get the total amount data
+    Amount(AddTotalAmount),
+
+    /// Get the categories data
+    Category(AddTotalCategory),
 }

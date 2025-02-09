@@ -22,10 +22,7 @@ pub enum CredSubcommand {
     Delete(DeleteCred),
 
     /// Get the blockchain data in a CSV file
-    GetBlockchain(BlockchainCred),
-
-    /// Get the gmail data in a CSV file
-    GetGmail(GmailCred),
+    Get(GetCred),
 }
 
 #[derive(Debug, Parser)]
@@ -86,4 +83,19 @@ pub enum DeleteSubcommand {
 
     /// Delete the gmail credentials
     Gmail,
+}
+
+#[derive(Debug, Parser)]
+pub struct GetCred {
+    #[clap(subcommand)]
+    pub get_subcommand: GetSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum GetSubcommand {
+    /// Get the blockchain credentials
+    Blockchain(BlockchainCred),
+
+    /// Get the gmail credentials
+    Gmail(GmailCred),
 }

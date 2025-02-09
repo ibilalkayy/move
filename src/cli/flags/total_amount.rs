@@ -4,7 +4,7 @@ use clap::Parser;
 pub struct AddTotalAmount {
     /// Write the total amount to setup
     #[clap(short, long)]
-    pub amount: String,
+    pub amount: Option<String>,
 }
 
 #[derive(Debug, Parser)]
