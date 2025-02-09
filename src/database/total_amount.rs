@@ -1,8 +1,7 @@
-use crate::cli::flags::total_amount::{AddTotalAmount, UpdateTotalAmount, RemoveTotalCategory};
+use crate::cli::flags::total_amount::{TotalAmount, UpdateTotalAmount, RemoveTotalCategory};
+use rusqlite::{Connection, params, Result};
 use std::{fs, fs::File, process::exit};
-use rusqlite::{Connection, Result};
 use tabled::{Table, Tabled};
-use rusqlite::params;
 use csv::Writer;
 
 #[derive(Tabled)]
@@ -33,7 +32,7 @@ fn create_file(path: &str) -> File {
     return file_path;
 }
 
-impl AddTotalAmount {
+impl TotalAmount {
     pub fn insert_total_amount(&self, conn: &Connection) -> Result<()> {
         let row_exists: bool = conn.query_row(
             "select exists (select 1 from totalamount)",

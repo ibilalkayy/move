@@ -1,8 +1,7 @@
-use rusqlite::{Connection, Result, ToSql};
-use crate::cli::flags::total_amount::{AddTotalCategory, UpdateTotalCategories};
+use crate::cli::flags::total_amount::{TotalCategory, UpdateTotalCategory};
+use rusqlite::{Connection, params, Result, ToSql};
 use tabled::{Table, Tabled};
 use std::{fs, fs::File};
-use rusqlite::params;
 use csv::Writer;
 
 #[derive(Tabled)]
@@ -14,7 +13,7 @@ struct CategoryRow {
     label: String,
 }
 
-impl AddTotalCategory {
+impl TotalCategory {
     pub fn insert_total_category(&self, conn: &Connection) -> Result<()> {
         conn.execute(
             "insert into totalcategories(category, label) values(?1, ?2)",
@@ -88,7 +87,7 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-impl UpdateTotalCategories {
+impl UpdateTotalCategory {
     pub fn update_total_category(&self, conn: &Connection) -> Result<()> {
         if let Some(old_category) = &self.old_category {
             let mut query = String::from("update totalcategories set ");

@@ -1,14 +1,14 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-pub struct AddTotalAmount {
+pub struct TotalAmount {
     /// Write the total amount to setup
     #[clap(short, long)]
     pub amount: Option<String>,
 }
 
 #[derive(Debug, Parser)]
-pub struct AddTotalCategory {
+pub struct TotalCategory {
     /// Write a category to include in the total amount
     #[clap(short, long)]
     pub category: Option<String>,
@@ -26,7 +26,7 @@ pub struct UpdateTotalAmount {
 }
 
 #[derive(Debug, Parser)]
-pub struct UpdateTotalCategories {
+pub struct UpdateTotalCategory {
     // Write the new category to update with
     #[clap(short, long)]
     pub new_category: Option<String>,
