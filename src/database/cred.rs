@@ -94,14 +94,14 @@ impl BlockchainCred {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Private Key", "Alchemy URL"]).unwrap();
+        wtr.write_record(&["Private Key", "Alchemy URL"]).expect("failed to write the data in a CSV file");
 
         for blockchain in result {
             wtr.write_record(&[blockchain.private_key, blockchain.alchemy_url])
-                .unwrap();
+                .expect("failed to write the data in a CSV file");
         }
 
-        wtr.flush().unwrap();
+        wtr.flush().expect("failed to flush the content");
 
         Ok(())
     }
@@ -181,14 +181,14 @@ impl GmailCred {
         let mut wtr = Writer::from_writer(file_path);
 
         wtr.write_record(&["Username", "Gmail Address", "App Password"])
-            .unwrap();
+            .expect("failed to write the data in a CSV file");
 
         for gmail in result {
             wtr.write_record(&[gmail.username, gmail.gmail_address, gmail.app_password])
-                .unwrap();
+                .expect("failed to write the data in a CSV file");
         }
 
-        wtr.flush().unwrap();
+        wtr.flush().expect("failed to flush the content");
 
         Ok(())
     }

@@ -12,7 +12,7 @@ pub fn handle_cred(info: CredInfo) {
     match info.cred_subcommand {
         CredSubcommand::Add(cred) => match cred.add_cred {
             AddSubcommand::Blockchain(blockchain) => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = blockchain.insert_blockchain(&conn);
                 match result {
                     Ok(_) => println!("Blockchain data is successfully saved"),
@@ -21,7 +21,7 @@ pub fn handle_cred(info: CredInfo) {
             }
 
             AddSubcommand::Gmail(cred) => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = cred.insert_gmail(&conn);
                 match result {
                     Ok(_) => println!("Gmail data is successfully saved"),
@@ -32,7 +32,7 @@ pub fn handle_cred(info: CredInfo) {
 
         CredSubcommand::View(cred) => match cred.view_cred {
             ViewSubcommand::Blockchain => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = view_blockchain(&conn);
                 match result {
                     Ok(_) => (),
@@ -41,7 +41,7 @@ pub fn handle_cred(info: CredInfo) {
             }
 
             ViewSubcommand::Gmail => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = view_gmail(&conn);
                 match result {
                     Ok(_) => (),
@@ -52,7 +52,7 @@ pub fn handle_cred(info: CredInfo) {
 
         CredSubcommand::Update(cred) => match cred.update_cred {
             UpdateSubcommand::Blockchain(blockchain) => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = blockchain.update_blockchain(&conn);
                 match result {
                     Ok(_) => println!("Blockchain data is successfully updated"),
@@ -61,7 +61,7 @@ pub fn handle_cred(info: CredInfo) {
             }
 
             UpdateSubcommand::Gmail(cred) => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = cred.update_gmail(&conn);
                 match result {
                     Ok(_) => println!("Gmail data is successfully updated"),
@@ -72,7 +72,7 @@ pub fn handle_cred(info: CredInfo) {
 
         CredSubcommand::Delete(cred) => match cred.delete_cred {
             DeleteSubcommand::Blockchain => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = delete_blockchain(&conn);
                 match result {
                     Ok(_) => println!("Blockchain data is successfully deleted"),
@@ -81,7 +81,7 @@ pub fn handle_cred(info: CredInfo) {
             }
 
             DeleteSubcommand::Gmail => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = delete_gmail(&conn);
                 match result {
                     Ok(_) => println!("Gmail data is successfully deleted"),
@@ -92,7 +92,7 @@ pub fn handle_cred(info: CredInfo) {
 
         CredSubcommand::Get(cred) => match cred.get_cred {
             GetSubcommand::Blockchain(blockchain) => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = blockchain.get_blockchain(&conn);
                 match result {
                     Ok(_) => println!("The blockchain data is successfully saved in a CSV file"),
@@ -101,7 +101,7 @@ pub fn handle_cred(info: CredInfo) {
             }
 
             GetSubcommand::Gmail(cred) => {
-                let conn = connection().unwrap();
+                let conn = connection().expect("failed to connect to the database");
                 let result = cred.get_gmail(&conn);
                 match result {
                     Ok(_) => println!("The gmail data is successfully saved in a CSV file"),

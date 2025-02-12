@@ -139,7 +139,7 @@ impl AlertData {
             "Second",
             "Weekday",
         ])
-        .unwrap();
+        .expect("failed to write the data in a CSV file");
 
         for alert in results {
             wtr.write_record(&[
@@ -152,10 +152,10 @@ impl AlertData {
                 alert.second,
                 alert.weekday,
             ])
-            .unwrap();
+            .expect("failed to write the data in CSV file");
         }
 
-        wtr.flush().unwrap();
+        wtr.flush().expect("failed to flush the content");
         Ok(())
     }
 }

@@ -41,14 +41,14 @@ impl TotalCategory {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Category", "Label"]).unwrap();
+        wtr.write_record(&["Category", "Label"]).expect("failed to write the data in a CSV file");
 
         for categories in result {
             wtr.write_record(&[categories.category, categories.label])
-                .unwrap();
+                .expect("failed to write the data in a CSV file");
         }
 
-        wtr.flush().unwrap();
+        wtr.flush().expect("failed to flush the content");
 
         Ok(())
     }

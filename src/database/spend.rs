@@ -41,14 +41,14 @@ impl SpendData {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Category", "Amount"]).unwrap();
+        wtr.write_record(&["Category", "Amount"]).expect("failed to write the data in a CSV file");
 
         for spending in result {
             wtr.write_record(&[spending.category, spending.amount])
-                .unwrap();
+                .expect("failed to write the data in a CSV file");
         }
 
-        wtr.flush().unwrap();
+        wtr.flush().expect("failed to flush the content");
 
         Ok(())
     }

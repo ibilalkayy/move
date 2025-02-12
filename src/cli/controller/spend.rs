@@ -4,7 +4,7 @@ use crate::database::db::connection;
 pub fn handle_spending(info: SpendInfo) {
     match info.spend_subcommand {
         SpendSubcommand::Money(spend) => {
-            let conn = connection().unwrap();
+            let conn = connection().expect("failed to connect to the database");
             let result = spend.insert_spending(&conn);
             match result {
                 Ok(_) => println!("Spending data is successfully saved"),
@@ -13,7 +13,7 @@ pub fn handle_spending(info: SpendInfo) {
         }
 
         SpendSubcommand::History(spend) => {
-            let conn = connection().unwrap();
+            let conn = connection().expect("failed to connect to the database");
             let result = spend.view_spending(&conn, &spend.category);
             match result {
                 Ok(_) => (),
@@ -22,7 +22,7 @@ pub fn handle_spending(info: SpendInfo) {
         }
 
         SpendSubcommand::Delete(spend) => {
-            let conn = connection().unwrap();
+            let conn = connection().expect("failed to connect to the database");
             let result = spend.delete_spending(&conn);
             match result {
                 Ok(_) => println!("The row(s) in spending is successfully deleted"),
@@ -31,7 +31,7 @@ pub fn handle_spending(info: SpendInfo) {
         }
 
         SpendSubcommand::Get(spend) => {
-            let conn = connection().unwrap();
+            let conn = connection().expect("failed to connect to the database");
             let result = spend.get_spending(&conn);
             match result {
                 Ok(_) => println!("Spending data is successfully saved in a CSV file"),
