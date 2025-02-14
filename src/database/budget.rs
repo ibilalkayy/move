@@ -3,7 +3,7 @@ use csv::Writer;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
 use crate::common::common::create_file;
-use crate::usecases::budget::budget_total_equal;
+use crate::usecases::budget::{budget_total_equal, convert_to_u64};
 
 #[derive(Tabled)]
 struct BudgetRow {
@@ -16,14 +16,28 @@ struct BudgetRow {
 
 impl BudgetData {
     pub fn insert_budget(&self, conn: &Connection) -> Result<()> {
+        let amount: &str = self.amount.as_deref().unwrap_or("0");
+
         match budget_total_equal(conn) {
-            Ok(true) => {
-                conn.execute(
-                    "insert into budget(category, amount) values(?1, ?2)",
-                    &[&self.category, &self.amount],
-                )?;
+            Ok((total_amount, budget_amount_db, _)) => {
+                let given_amount = convert_to_u64(self.amount.clone());
+                let budget_amount = budget_amount_db + given_amount;
+
+                if budget_amount <= total_amount {
+                    conn.execute(
+                        "insert into budget(category, amount) values(?1, ?2)",
+                        &[
+                            &self.category.as_deref().unwrap_or(""),
+                            &amount,
+                        ],
+                    )?;
+                } else {
+                    panic!(
+                        "Budget amount exceeded the total amount: {} > {}",
+                        budget_amount, total_amount
+                    );
+                }
             },
-            Ok(false) => panic!("Budget amount exceeded the total amount"),
             Err(error) => panic!("Error: {}", error),
         }
         Ok(())
