@@ -3,7 +3,7 @@ use csv::Writer;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
 use crate::common::common::create_file;
-use crate::usecases::budget::{budget_total_equal, convert_to_u64};
+use crate::usecases::budget::{budget_total_equal, convert_to_u64, category_exists};
 
 #[derive(Tabled)]
 struct BudgetRow {
@@ -17,28 +17,30 @@ struct BudgetRow {
 impl BudgetData {
     pub fn insert_budget(&self, conn: &Connection) -> Result<()> {
         let amount: &str = self.amount.as_deref().unwrap_or("0");
+        let category: &str = self.category.as_deref().unwrap_or("");
 
-        match budget_total_equal(conn) {
-            Ok((total_amount, budget_amount_db, _)) => {
-                let given_amount = convert_to_u64(self.amount.clone());
-                let budget_amount = budget_amount_db + given_amount;
-
-                if budget_amount <= total_amount {
-                    conn.execute(
-                        "insert into budget(category, amount) values(?1, ?2)",
-                        &[
-                            &self.category.as_deref().unwrap_or(""),
-                            &amount,
-                        ],
-                    )?;
-                } else {
-                    panic!(
-                        "Budget amount exceeded the total amount: {} > {}",
-                        budget_amount, total_amount
-                    );
-                }
-            },
-            Err(error) => panic!("Error: {}", error),
+        if category_exists(conn, category)? {
+            panic!("Category {} is already present", category);
+        } else {
+            match budget_total_equal(conn, "") {
+                Ok((total_amount, budget_total_sum,_ , _)) => {
+                    let given_amount = convert_to_u64(self.amount.clone());
+                    let budget_amount = budget_total_sum + given_amount;
+    
+                    if budget_amount <= total_amount {
+                        conn.execute(
+                            "insert into budget(category, amount) values(?1, ?2)",
+                            &[&category, &amount],
+                        )?;
+                    } else {
+                        panic!(
+                            "Budget amount exceeded the total amount: {} > {}",
+                            budget_amount, total_amount
+                        );
+                    }
+                },
+                Err(error) => panic!("Error: {}", error),
+            }
         }
         Ok(())
     }
@@ -57,17 +59,14 @@ impl BudgetData {
         for row in rows {
             results.push(row?);
         }
-
         let file_path = create_file("budget.csv");
 
         let mut wtr = Writer::from_writer(file_path);
-
         wtr.write_record(&["Category", "Amount"]).expect("failed to write the data in a CSV file");
 
         for budget in results {
             wtr.write_record(&[budget.category, budget.amount]).expect("failed to write the data in a CSV file");
         }
-
         wtr.flush().expect("failed to flush the content");
         
         Ok(())
@@ -131,6 +130,8 @@ pub fn show_budget(conn: &Connection) -> Result<()> {
 
 impl UpdateBudget {
     pub fn update_budget(&self, conn: &Connection) -> Result<()> {
+        let new_category: &str = self.new_category.as_deref().unwrap_or("");
+
         if let Some(old_category) = &self.old_category {
             let mut query = String::from("update budget set ");
             let mut fields = Vec::new();
@@ -155,12 +156,30 @@ impl UpdateBudget {
 
             value.push(old_category);
 
-            let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+            if category_exists(conn, new_category)? {
+                panic!("Category {} is already present", new_category);
+            } else {
+                match budget_total_equal(conn, old_category) {
+                    Ok((total_amount, _, budget_except_sum, _)) => {
+                        let given_amount = convert_to_u64(self.amount.clone());
+                        let budget_amount = budget_except_sum + given_amount;
 
-            if affected_rows == 0 {
-                return Err(rusqlite::Error::QueryReturnedNoRows);
+                        if budget_amount <= total_amount {
+                            let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+
+                            if affected_rows == 0 {
+                                return Err(rusqlite::Error::QueryReturnedNoRows);
+                            }
+                        } else {
+                            panic!(
+                                "Budget amount exceeded the total amount: {} > {}",
+                                budget_amount, total_amount
+                            );
+                        }
+                    },
+                    Err(error) => panic!("Error: {}", error),
+                }
             }
-
             Ok(())
         } else {
             Err(rusqlite::Error::InvalidQuery) // If old_category is None
