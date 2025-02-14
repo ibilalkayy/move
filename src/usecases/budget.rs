@@ -20,7 +20,7 @@ pub fn budget_total_equal(conn: &Connection, category: &str) -> Result<(u64, u64
     Ok((total_amount, budget_total_sum, budget_except_sum.unwrap_or(0), budget_total_sum < total_amount))
 }
 
-pub fn category_exists(conn: &Connection, category: &str) -> Result<bool> {
+pub fn budget_category_exists(conn: &Connection, category: &str) -> Result<bool> {
     let mut stmt = conn.prepare("SELECT EXISTS(SELECT 1 FROM budget WHERE category = ?)")?;
     let exists: bool = stmt.query_row([category], |row| row.get(0))?;
     Ok(exists)
