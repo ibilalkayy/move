@@ -16,21 +16,18 @@ struct BudgetRow {
 
 impl BudgetData {
     pub fn insert_budget(&self, conn: &Connection) -> Result<()> {
-        let amount: &str = self.amount.as_deref().unwrap_or("0");
-        let category: &str = self.category.as_deref().unwrap_or("");
-
-        if category_exists(conn, category)? {
-            panic!("Category {} is already present", category);
+        if category_exists(conn, &self.category)? {
+            panic!("Category {} is already present", &self.category);
         } else {
             match budget_total_equal(conn, "") {
                 Ok((total_amount, budget_total_sum,_ , _)) => {
-                    let given_amount = convert_to_u64(self.amount.clone());
+                    let given_amount = self.amount.parse::<u64>().unwrap();
                     let budget_amount = budget_total_sum + given_amount;
     
                     if budget_amount <= total_amount {
                         conn.execute(
                             "insert into budget(category, amount) values(?1, ?2)",
-                            &[&category, &amount],
+                            &[&self.category, &self.amount],
                         )?;
                     } else {
                         panic!(
@@ -132,57 +129,53 @@ impl UpdateBudget {
     pub fn update_budget(&self, conn: &Connection) -> Result<()> {
         let new_category: &str = self.new_category.as_deref().unwrap_or("");
 
-        if let Some(old_category) = &self.old_category {
-            let mut query = String::from("update budget set ");
-            let mut fields = Vec::new();
-            let mut value: Vec<&dyn ToSql> = Vec::new();
+        let mut query = String::from("update budget set ");
+        let mut fields = Vec::new();
+        let mut value: Vec<&dyn ToSql> = Vec::new();
 
-            if let Some(new_category) = &self.new_category {
-                fields.push("category = ?");
-                value.push(new_category);
-            }
-
-            if let Some(amount) = &self.amount {
-                fields.push("amount = ?");
-                value.push(amount);
-            }
-
-            if fields.is_empty() {
-                return Err(rusqlite::Error::InvalidQuery);
-            }
-
-            query.push_str(&fields.join(", "));
-            query.push_str("where category = ?");
-
-            value.push(old_category);
-
-            if category_exists(conn, new_category)? {
-                panic!("Category {} is already present", new_category);
-            } else {
-                match budget_total_equal(conn, old_category) {
-                    Ok((total_amount, _, budget_except_sum, _)) => {
-                        let given_amount = convert_to_u64(self.amount.clone());
-                        let budget_amount = budget_except_sum + given_amount;
-
-                        if budget_amount <= total_amount {
-                            let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-
-                            if affected_rows == 0 {
-                                return Err(rusqlite::Error::QueryReturnedNoRows);
-                            }
-                        } else {
-                            panic!(
-                                "Budget amount exceeded the total amount: {} > {}",
-                                budget_amount, total_amount
-                            );
-                        }
-                    },
-                    Err(error) => panic!("Error: {}", error),
-                }
-            }
-            Ok(())
-        } else {
-            Err(rusqlite::Error::InvalidQuery) // If old_category is None
+        if let Some(new_category) = &self.new_category {
+            fields.push("category = ?");
+            value.push(new_category);
         }
+
+        if let Some(amount) = &self.amount {
+            fields.push("amount = ?");
+            value.push(amount);
+        }
+
+        if fields.is_empty() {
+            return Err(rusqlite::Error::InvalidQuery);
+        }
+
+        query.push_str(&fields.join(", "));
+        query.push_str("where category = ?");
+
+        value.push(&self.old_category);
+
+        if category_exists(conn, new_category)? {
+            panic!("Category {} is already present", new_category);
+        } else {
+            match budget_total_equal(conn, &self.old_category) {
+                Ok((total_amount, _, budget_except_sum, _)) => {
+                    let given_amount = convert_to_u64(self.amount.clone());
+                    let budget_amount = budget_except_sum + given_amount;
+
+                    if budget_amount <= total_amount {
+                        let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+
+                        if affected_rows == 0 {
+                            return Err(rusqlite::Error::QueryReturnedNoRows);
+                        }
+                    } else {
+                        panic!(
+                            "Budget amount exceeded the total amount: {} > {}",
+                            budget_amount, total_amount
+                        );
+                    }
+                },
+                Err(error) => panic!("Error: {}", error),
+            }
+        }
+        Ok(())
     }
 }

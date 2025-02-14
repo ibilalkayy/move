@@ -4,11 +4,11 @@ use clap::Parser;
 pub struct BudgetData {
     /// Category name (e.g., groceries, utilities, etc.)
     #[clap(short, long)]
-    pub category: Option<String>,
+    pub category: String,
 
     /// Total amount for the category
     #[clap(short, long)]
-    pub amount: Option<String>,
+    pub amount: String,
 }
 
 #[derive(Debug, Parser)]
@@ -22,7 +22,7 @@ pub struct BudgetCategory {
 pub struct UpdateBudget {
     /// Old category name to find
     #[clap(short, long)]
-    pub old_category: Option<String>,
+    pub old_category: String,
 
     /// New category name to update
     #[clap(short, long)]
