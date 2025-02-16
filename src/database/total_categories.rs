@@ -77,38 +77,34 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
 
 impl UpdateTotalCategory {
     pub fn update_total_category(&self, conn: &Connection) -> Result<()> {
-        if let Some(old_category) = &self.old_category {
-            let mut query = String::from("update totalcategories set ");
-            let mut fields = Vec::new();
-            let mut value: Vec<&dyn ToSql> = Vec::new();
+        let mut query = String::from("update totalcategories set ");
+        let mut fields = Vec::new();
+        let mut value: Vec<&dyn ToSql> = Vec::new();
 
-            if let Some(new_category) = &self.new_category {
-                fields.push("category = ?");
-                value.push(new_category);
-            }
-
-            if let Some(label) = &self.label {
-                fields.push("label = ?");
-                value.push(label);
-            }
-
-            if fields.is_empty() {
-                return Err(rusqlite::Error::InvalidQuery);
-            }
-
-            query.push_str(&fields.join(", "));
-            query.push_str("where category = ?");
-
-            value.push(old_category);
-
-            let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-            if affected_rows == 0 {
-                return Err(rusqlite::Error::QueryReturnedNoRows);
-            }
-
-            Ok(())
-        } else {
-            Err(rusqlite::Error::InvalidQuery)
+        if let Some(new_category) = &self.new_category {
+            fields.push("category = ?");
+            value.push(new_category);
         }
+
+        if let Some(label) = &self.label {
+            fields.push("label = ?");
+            value.push(label);
+        }
+
+        if fields.is_empty() {
+            return Err(rusqlite::Error::InvalidQuery);
+        }
+
+        query.push_str(&fields.join(", "));
+        query.push_str("where category = ?");
+
+        value.push(&self.old_category);
+
+        let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+        if affected_rows == 0 {
+            return Err(rusqlite::Error::QueryReturnedNoRows);
+        }
+
+        Ok(())
     }
 }
