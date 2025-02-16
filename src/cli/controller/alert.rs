@@ -1,5 +1,5 @@
-use crate::cli::subcommands::alert::{AlertSubcommand, AlertInfo};
-use crate::database::{db::connection, alert::view_alert};
+use crate::cli::subcommands::alert::{AlertInfo, AlertSubcommand};
+use crate::database::{alert::view_alert, db::connection};
 
 pub fn handle_alert(info: AlertInfo) {
     match info.alert_subcommand {

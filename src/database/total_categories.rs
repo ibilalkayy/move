@@ -1,8 +1,9 @@
-use crate::cli::flags::total_amount::{TotalCategory, UpdateTotalCategory};
+use crate::cli::flags::total_categories::{TotalCategory, UpdateTotalCategory};
+use crate::common::common::create_file;
+use crate::usecases::total_categories::total_category_exists;
 use csv::Writer;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
-use crate::common::common::create_file;
 
 #[derive(Tabled)]
 struct CategoryRow {
@@ -15,10 +16,17 @@ struct CategoryRow {
 
 impl TotalCategory {
     pub fn insert_total_category(&self, conn: &Connection) -> Result<()> {
-        conn.execute(
-            "insert into totalcategories(category, label) values(?1, ?2)",
-            &[&self.category, &self.label],
-        )?;
+        if total_category_exists(conn, &self.category)? {
+            panic!(
+                "Category {} is already present in the record",
+                &self.category
+            );
+        } else {
+            conn.execute(
+                "insert into totalcategories(category, label) values(?1, ?2)",
+                &[&self.category, &self.label],
+            )?;
+        }
         Ok(())
     }
 
@@ -41,7 +49,8 @@ impl TotalCategory {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Category", "Label"]).expect("failed to write the data in a CSV file");
+        wtr.write_record(&["Category", "Label"])
+            .expect("failed to write the data in a CSV file");
 
         for categories in result {
             wtr.write_record(&[categories.category, categories.label])

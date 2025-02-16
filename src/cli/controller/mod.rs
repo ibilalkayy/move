@@ -1,5 +1,5 @@
-pub mod budget;
 pub mod alert;
+pub mod budget;
 pub mod cli;
 pub mod cred;
 pub mod spend;

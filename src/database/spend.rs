@@ -1,8 +1,8 @@
 use crate::cli::flags::spend::{SpendCategory, SpendData};
+use crate::common::common::create_file;
 use csv::Writer;
 use rusqlite::{params, Connection, Result};
 use tabled::{Table, Tabled};
-use crate::common::common::create_file;
 
 #[derive(Tabled)]
 struct SpendingRow {
@@ -41,7 +41,8 @@ impl SpendData {
 
         let mut wtr = Writer::from_writer(file_path);
 
-        wtr.write_record(&["Category", "Amount"]).expect("failed to write the data in a CSV file");
+        wtr.write_record(&["Category", "Amount"])
+            .expect("failed to write the data in a CSV file");
 
         for spending in result {
             wtr.write_record(&[spending.category, spending.amount])

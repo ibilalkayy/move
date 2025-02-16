@@ -1,9 +1,12 @@
-use crate::cli::flags::total_amount::{RemoveTotalCategory, TotalAmount, UpdateTotalAmount};
+use crate::cli::flags::{
+    total_amount::{TotalAmount, UpdateTotalAmount},
+    total_categories::RemoveTotalCategory,
+};
+use crate::common::common::create_file;
 use csv::Writer;
 use rusqlite::{params, Connection, Result};
 use std::process::exit;
 use tabled::{Table, Tabled};
-use crate::common::common::create_file;
 
 #[derive(Tabled)]
 struct TotalAmountRow {

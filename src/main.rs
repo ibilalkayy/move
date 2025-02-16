@@ -1,7 +1,7 @@
 mod cli;
+mod common;
 mod database;
 mod usecases;
-mod common;
 
 use crate::cli::controller::cli::cli;
 

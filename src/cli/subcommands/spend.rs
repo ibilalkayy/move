@@ -1,5 +1,5 @@
-use clap::{Parser, Subcommand};
 use crate::cli::flags::spend::{SpendCategory, SpendData};
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 pub struct SpendInfo {

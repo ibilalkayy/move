@@ -1,12 +1,13 @@
 use crate::cli::flags::budget::{BudgetCategory, BudgetData, UpdateBudget};
+use crate::common::common::create_file;
+use crate::usecases::{
+    budget::{budget_category_exists, budget_total_equal, convert_to_u64},
+    total_amount::total_amount_exists,
+    total_categories::total_category_exists,
+};
 use csv::Writer;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
-use crate::common::common::create_file;
-use crate::usecases::{
-    budget::{budget_total_equal, convert_to_u64, budget_category_exists},
-    total_amount::{total_category_exists, total_amount_exists},
-};
 
 #[derive(Tabled)]
 struct BudgetRow {
@@ -25,10 +26,10 @@ impl BudgetData {
                     panic!("Category {} is already present", &self.category);
                 } else {
                     match budget_total_equal(conn, "") {
-                        Ok((total_amount, budget_total_sum,_ , _)) => {
+                        Ok((total_amount, budget_total_sum, _, _)) => {
                             let given_amount = self.amount.parse::<u64>().unwrap();
                             let budget_amount = budget_total_sum + given_amount;
-            
+
                             if budget_amount <= total_amount {
                                 conn.execute(
                                     "insert into budget(category, amount) values(?1, ?2)",
@@ -40,7 +41,7 @@ impl BudgetData {
                                     budget_amount, total_amount
                                 );
                             }
-                        },
+                        }
                         Err(error) => panic!("Err: {}", error),
                     }
                 }
@@ -48,7 +49,10 @@ impl BudgetData {
                 panic!("Total amount is not present in the list");
             }
         } else {
-            panic!("Category {} is not present in the total categories list", self.category);
+            panic!(
+                "Category {} is not present in the total categories list",
+                self.category
+            );
         }
         Ok(())
     }
@@ -70,13 +74,15 @@ impl BudgetData {
         let file_path = create_file("budget.csv");
 
         let mut wtr = Writer::from_writer(file_path);
-        wtr.write_record(&["Category", "Amount"]).expect("failed to write the data in a CSV file");
+        wtr.write_record(&["Category", "Amount"])
+            .expect("failed to write the data in a CSV file");
 
         for budget in results {
-            wtr.write_record(&[budget.category, budget.amount]).expect("failed to write the data in a CSV file");
+            wtr.write_record(&[budget.category, budget.amount])
+                .expect("failed to write the data in a CSV file");
         }
         wtr.flush().expect("failed to flush the content");
-        
+
         Ok(())
     }
 }
@@ -171,10 +177,11 @@ impl UpdateBudget {
                             Ok((total_amount, _, budget_except_sum, _)) => {
                                 let given_amount = convert_to_u64(self.amount.clone());
                                 let budget_amount = budget_except_sum + given_amount;
-        
+
                                 if budget_amount <= total_amount {
-                                    let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-        
+                                    let affected_rows =
+                                        conn.execute(&query, rusqlite::params_from_iter(value))?;
+
                                     if affected_rows == 0 {
                                         return Err(rusqlite::Error::QueryReturnedNoRows);
                                     }
@@ -184,20 +191,29 @@ impl UpdateBudget {
                                         budget_amount, total_amount,
                                     );
                                 }
-                            },
+                            }
                             Err(error) => panic!("Err: {}", error),
                         }
                     } else {
-                        panic!("Category {} is not present in the budget record. First add a budget", &self.old_category);
-                    }  
+                        panic!(
+                            "Category {} is not present in the budget record. First add a budget",
+                            &self.old_category
+                        );
+                    }
                 } else {
                     panic!("Total amount is not present in the record");
                 }
             } else {
-                panic!("Category {} is not present in the total categories list", &self.old_category);
+                panic!(
+                    "Category {} is not present in the total categories list",
+                    &self.old_category
+                );
             }
         } else {
-            panic!("Category {} is not present in the total categories list. First add one", new_category);
+            panic!(
+                "Category {} is not present in the total categories list. First add one",
+                new_category
+            );
         }
         Ok(())
     }

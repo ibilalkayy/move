@@ -1,9 +1,9 @@
 use crate::cli::flags::alert::{AlertCategory, AlertData};
+use crate::common::common::create_file;
 use csv::Writer;
 use rusqlite::params;
 use rusqlite::{Connection, Result, ToSql};
 use tabled::{Table, Tabled};
-use crate::common::common::create_file;
 
 #[derive(Tabled, Debug)]
 pub struct AlertRow {
