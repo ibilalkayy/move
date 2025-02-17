@@ -1,6 +1,6 @@
 use crate::cli::flags::total_categories::{TotalCategory, UpdateTotalCategory};
 use crate::common::common::create_file;
-use crate::usecases::total_categories::total_category_exists;
+use crate::usecases::total_categories::{total_categories_exist, total_category_exists};
 use csv::Writer;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
@@ -16,71 +16,83 @@ struct CategoryRow {
 
 impl TotalCategory {
     pub fn insert_total_category(&self, conn: &Connection) -> Result<()> {
-        if total_category_exists(conn, &self.category)? {
-            panic!(
-                "Category {} is already present in the record",
-                &self.category
-            );
-        } else {
-            conn.execute(
-                "insert into totalcategories(category, label) values(?1, ?2)",
-                &[&self.category, &self.label],
-            )?;
+        let find_category = total_category_exists(conn, &self.category);
+        match find_category {
+            Ok(true) => panic!("Category {} is already present in the record", &self.category),
+            Ok(false) => {
+                conn.execute(
+                    "insert into totalcategories(category, label) values(?1, ?2)",
+                    &[&self.category, &self.label],
+                )?;
+            }
+            Err(error) => println!("Err: {}", error),
         }
         Ok(())
     }
 
     pub fn get_total_categories(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare("select category, label from totalcategories")?;
+        let find_category = total_categories_exist(conn);
+        match find_category {
+            Ok(true) => {
+                let mut stmt = conn.prepare("select category, label from totalcategories")?;
 
-        let rows = stmt.query_map(params![], |row| {
-            Ok(CategoryRow {
-                category: row.get(0)?,
-                label: row.get(1)?,
-            })
-        })?;
+                let rows = stmt.query_map(params![], |row| {
+                    Ok(CategoryRow {
+                        category: row.get(0)?,
+                        label: row.get(1)?,
+                    })
+                })?;
 
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?)
+                let mut result = Vec::new();
+                for row in rows {
+                    result.push(row?)
+                }
+
+                let file_path = create_file("categories.csv");
+
+                let mut wtr = Writer::from_writer(file_path);
+
+                wtr.write_record(&["Category", "Label"])
+                    .expect("failed to write the data in a CSV file");
+
+                for categories in result {
+                    wtr.write_record(&[categories.category, categories.label])
+                        .expect("failed to write the data in a CSV file");
+                }
+
+                wtr.flush().expect("failed to flush the content");
+            }
+            Ok(false) => panic!("No category exists to get"),
+            Err(error) => println!("Err: {}", error),
         }
-
-        let file_path = create_file("categories.csv");
-
-        let mut wtr = Writer::from_writer(file_path);
-
-        wtr.write_record(&["Category", "Label"])
-            .expect("failed to write the data in a CSV file");
-
-        for categories in result {
-            wtr.write_record(&[categories.category, categories.label])
-                .expect("failed to write the data in a CSV file");
-        }
-
-        wtr.flush().expect("failed to flush the content");
-
         Ok(())
     }
 }
 
 pub fn view_total_categories(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare("SELECT category, label FROM totalcategories")?;
+    let find_category = total_categories_exist(conn);
+    match find_category {
+        Ok(true) => {
+            let mut stmt = conn.prepare("SELECT category, label FROM totalcategories")?;
 
-    let rows = stmt.query_map(params![], |row| {
-        Ok(CategoryRow {
-            category: row.get(0)?,
-            label: row.get(1)?,
-        })
-    })?;
-
-    let mut results = Vec::new();
-    for row in rows {
-        results.push(row?);
+            let rows = stmt.query_map(params![], |row| {
+                Ok(CategoryRow {
+                    category: row.get(0)?,
+                    label: row.get(1)?,
+                })
+            })?;
+        
+            let mut results = Vec::new();
+            for row in rows {
+                results.push(row?);
+            }
+        
+            let table = Table::new(results);
+            println!("{}", table);
+        }
+        Ok(false) => panic!("No category exists to view"),
+        Err(error) => println!("Err: {}", error),
     }
-
-    let table = Table::new(results);
-    println!("{}", table);
-
     Ok(())
 }
 
@@ -111,14 +123,17 @@ impl UpdateTotalCategory {
 
         value.push(&self.old_category);
 
-        if !total_category_exists(conn, new_category)? {
-            if total_category_exists(conn, &self.old_category)? {
-                let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-                if affected_rows == 0 {
-                    return Err(rusqlite::Error::QueryReturnedNoRows);
+        if !total_category_exists(conn, new_category)? { // if the new category name is already present
+            let find_category = total_category_exists(conn, &self.old_category);
+            match find_category {
+                Ok(true) => {
+                    let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+                    if affected_rows == 0 {
+                        return Err(rusqlite::Error::QueryReturnedNoRows);
+                    }
                 }
-            } else {
-                panic!("Category {} is not present in the old categories list", &self.old_category);
+                Ok(false) => panic!("Category {} is not present in the old categories list", &self.old_category),
+                Err(error) => println!("Err: {}", error),
             }
         } else {
             panic!("Category {} is already present in the new categories list", new_category);
