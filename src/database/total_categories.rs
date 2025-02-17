@@ -1,4 +1,4 @@
-use crate::cli::flags::total_categories::{TotalCategory, UpdateTotalCategory};
+use crate::cli::flags::total_categories::{TotalCategory, UpdateTotalCategory, RemoveTotalCategory};
 use crate::common::common::create_file;
 use crate::usecases::total_categories::{total_categories_exist, total_category_exists};
 use csv::Writer;
@@ -62,7 +62,7 @@ impl TotalCategory {
 
                 wtr.flush().expect("failed to flush the content");
             }
-            Ok(false) => panic!("No category exists to get"),
+            Ok(false) => panic!("No category present to get"),
             Err(error) => println!("Err: {}", error),
         }
         Ok(())
@@ -90,7 +90,7 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("No category exists to view"),
+        Ok(false) => panic!("No category is present to be viewed"),
         Err(error) => println!("Err: {}", error),
     }
     Ok(())
@@ -139,6 +139,27 @@ impl UpdateTotalCategory {
             panic!("Category {} is already present in the new categories list", new_category);
         }
 
+        Ok(())
+    }
+}
+
+impl RemoveTotalCategory {
+    pub fn delete_total_category(&self, conn: &Connection) -> Result<()> {
+        let find_category = total_category_exists(conn, &self.category);
+        match find_category {
+            Ok(true) => {
+                let affected_rows = conn.execute(
+                    "delete from totalcategories where category=?",
+                    &[&self.category],
+                )?;
+        
+                if affected_rows == 0 {
+                    return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+                }        
+            }
+            Ok(false) => panic!("No category is present to be removed"),
+            Err(error) => println!("Err: {}", error),
+        }
         Ok(())
     }
 }

@@ -123,7 +123,7 @@ impl BudgetCategory {
                 let table = Table::new(results);
                 println!("{}", table);
             }
-            Ok(false) => panic!("No category is present to view"),
+            Ok(false) => panic!("No category is present to be viewed"),
             Err(error) => println!("Err: {}", error),
         }
 
@@ -141,7 +141,7 @@ impl BudgetCategory {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                 }
             }
-            Ok(false) => panic!("No category is present to delete"),
+            Ok(false) => panic!("No category is present to be deleted"),
             Err(error) => println!("Err: {}", error),
         }
 
@@ -170,7 +170,7 @@ pub fn show_budget(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("No category is present to show"),
+        Ok(false) => panic!("No category is present to be shown"),
         Err(error) => println!("Err: {}", error),
     }
     Ok(())
