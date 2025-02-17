@@ -86,6 +86,8 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
 
 impl UpdateTotalCategory {
     pub fn update_total_category(&self, conn: &Connection) -> Result<()> {
+        let new_category: &str = self.new_category.as_deref().unwrap_or("");
+
         let mut query = String::from("update totalcategories set ");
         let mut fields = Vec::new();
         let mut value: Vec<&dyn ToSql> = Vec::new();
@@ -109,9 +111,17 @@ impl UpdateTotalCategory {
 
         value.push(&self.old_category);
 
-        let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-        if affected_rows == 0 {
-            return Err(rusqlite::Error::QueryReturnedNoRows);
+        if !total_category_exists(conn, new_category)? {
+            if total_category_exists(conn, &self.old_category)? {
+                let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+                if affected_rows == 0 {
+                    return Err(rusqlite::Error::QueryReturnedNoRows);
+                }
+            } else {
+                panic!("Category {} is not present in the old categories list", &self.old_category);
+            }
+        } else {
+            panic!("Category {} is already present in the new categories list", new_category);
         }
 
         Ok(())

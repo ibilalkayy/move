@@ -46,7 +46,7 @@ impl BudgetData {
                     }
                 }
             } else {
-                panic!("Total amount is not present in the list");
+                panic!("Total amount is not present in the record");
             }
         } else {
             panic!(
@@ -179,9 +179,7 @@ impl UpdateBudget {
                                 let budget_amount = budget_except_sum + given_amount;
 
                                 if budget_amount <= total_amount {
-                                    let affected_rows =
-                                        conn.execute(&query, rusqlite::params_from_iter(value))?;
-
+                                    let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
                                     if affected_rows == 0 {
                                         return Err(rusqlite::Error::QueryReturnedNoRows);
                                     }
@@ -205,13 +203,13 @@ impl UpdateBudget {
                 }
             } else {
                 panic!(
-                    "Category {} is not present in the total categories list",
+                    "Category {} is not present in the old categories list",
                     &self.old_category
                 );
             }
         } else {
             panic!(
-                "Category {} is not present in the total categories list. First add one",
+                "Category {} is not present in the new categories list. First add one",
                 new_category
             );
         }
