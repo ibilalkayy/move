@@ -35,3 +35,10 @@ pub fn budget_category_exists(conn: &Connection, category: &str) -> Result<bool>
     let exists: bool = stmt.query_row([category], |row| row.get(0))?;
     Ok(exists)
 }
+
+pub fn budget_amount(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
+    let mut stmt = conn.prepare("SELECT CAST(amount AS INTEGER) FROM budget WHERE category = ?")?;
+    let amount = stmt.query_row([category], |row| row.get::<_, u64>(0))?;
+    Ok(amount)
+}
+

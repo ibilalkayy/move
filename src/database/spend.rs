@@ -3,6 +3,12 @@ use crate::common::common::create_file;
 use csv::Writer;
 use rusqlite::{params, Connection, Result};
 use tabled::{Table, Tabled};
+use crate::usecases::{
+    budget::{budget_category_exists, budget_amount},
+    total_amount::total_amount_exists,
+    total_categories::total_category_exists,
+};
+
 
 #[derive(Tabled)]
 struct SpendingRow {
@@ -15,41 +21,103 @@ struct SpendingRow {
 
 impl SpendData {
     pub fn insert_spending(&self, conn: &Connection) -> Result<()> {
-        conn.execute(
-            "insert into spend(category, amount) values(?1, ?2)",
-            &[&self.category, &self.amount],
-        )?;
+        let category = self.category.as_deref().unwrap_or("");
+        let find_total_category = total_category_exists(conn, category);
+        let find_total_amount = total_amount_exists(conn);
+        let find_budget_category = budget_category_exists(conn, category);
+        let budget_amount_data= budget_amount(conn, category);
+        let spending_amount: Option<u64> = self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
+
+        match find_total_category {
+            Ok(true) => {
+                match find_total_amount {
+                    Ok(true) => {
+                        match find_budget_category {
+                            Ok(true) => {
+                                match budget_amount_data {
+                                    Ok(budget_amount) => {
+                                        match spending_amount {
+                                            Some(spend_amount) => {
+                                                if spend_amount <= budget_amount {
+                                                    conn.execute(
+                                                        "insert into spend(category, amount) values(?1, ?2)",
+                                                        &[&self.category, &self.amount],
+                                                    )?;
+                                                } else {
+                                                    panic!("Category is not present in the budget record");
+                                                }
+                                            },
+                                            None => panic!("No option is present"),
+                                        }
+                                    },
+                                    Err(error) => println!("Erree: {}", error),
+                                } 
+                            }
+                            Ok(false) => panic!("Category {} is not present in the budget list", category),
+                            Err(error) => println!("Err: {}", error),
+                        }
+                    }
+                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Err(error) => println!("Err: {}", error),
+                }
+            }
+            Ok(false) => panic!("Category {} is not present in the total categories list", category),
+            Err(error) => println!("Err: {}", error),
+        }
         Ok(())
     }
 
     pub fn get_spending(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare("select category, amount from spend")?;
+        let category = self.category.as_deref().unwrap_or("");
+        let find_total_category = total_category_exists(conn, category);
+        let find_total_amount = total_amount_exists(conn);
+        let find_budget_category = budget_category_exists(conn, category);
 
-        let rows = stmt.query_map(params![], |row| {
-            Ok(SpendingRow {
-                category: row.get(0)?,
-                amount: row.get(1)?,
-            })
-        })?;
+        match find_total_category {
+            Ok(true) => {
+                match find_total_amount {
+                    Ok(true) => {
+                        match find_budget_category {
+                            Ok(true) => {
+                                let mut stmt = conn.prepare("select category, amount from spend")?;
 
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?)
+                                let rows = stmt.query_map(params![], |row| {
+                                    Ok(SpendingRow {
+                                        category: row.get(0)?,
+                                        amount: row.get(1)?,
+                                    })
+                                })?;
+                        
+                                let mut result = Vec::new();
+                                for row in rows {
+                                    result.push(row?)
+                                }
+                        
+                                let file_path = create_file("spend.csv");
+                        
+                                let mut wtr = Writer::from_writer(file_path);
+                        
+                                wtr.write_record(&["Category", "Amount"])
+                                    .expect("failed to write the data in a CSV file");
+                        
+                                for spending in result {
+                                    wtr.write_record(&[spending.category, spending.amount])
+                                        .expect("failed to write the data in a CSV file");
+                                }
+                        
+                                wtr.flush().expect("failed to flush the content");
+                            }
+                            Ok(false) => panic!("Category {} is not present in the budget list", category),
+                            Err(error) => println!("Err: {}", error),
+                        }
+                    }
+                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Err(error) => println!("Err: {}", error),
+                }
+            }
+            Ok(false) => panic!("Category {} is not present in the total categories list", category),
+            Err(error) => println!("Err: {}", error),
         }
-
-        let file_path = create_file("spend.csv");
-
-        let mut wtr = Writer::from_writer(file_path);
-
-        wtr.write_record(&["Category", "Amount"])
-            .expect("failed to write the data in a CSV file");
-
-        for spending in result {
-            wtr.write_record(&[spending.category, spending.amount])
-                .expect("failed to write the data in a CSV file");
-        }
-
-        wtr.flush().expect("failed to flush the content");
 
         Ok(())
     }
@@ -57,32 +125,76 @@ impl SpendData {
 
 impl SpendCategory {
     pub fn view_spending(&self, conn: &Connection, category: &str) -> Result<()> {
-        let mut stmt = conn.prepare("select category, amount from spend where category=?")?;
+        let find_total_category = total_category_exists(conn, category);
+        let find_total_amount = total_amount_exists(conn);
+        let find_budget_category = budget_category_exists(conn, category);
 
-        let rows = stmt.query_map(params![&category], |row| {
-            Ok(SpendingRow {
-                category: row.get(0)?,
-                amount: row.get(1)?,
-            })
-        })?;
+        match find_total_category {
+            Ok(true) => {
+                match find_total_amount {
+                    Ok(true) => {
+                        match find_budget_category {
+                            Ok(true) => {
+                                let mut stmt = conn.prepare("select category, amount from spend where category=?")?;
 
-        let mut results = Vec::new();
-        for row in rows {
-            results.push(row?);
+                                let rows = stmt.query_map(params![&category], |row| {
+                                    Ok(SpendingRow {
+                                        category: row.get(0)?,
+                                        amount: row.get(1)?,
+                                    })
+                                })?;
+                        
+                                let mut results = Vec::new();
+                                for row in rows {
+                                    results.push(row?);
+                                }
+                        
+                                let table = Table::new(results);
+                                println!("{}", table);
+                            }
+                            Ok(false) => panic!("Category {} is not present in the budget list", category),
+                            Err(error) => println!("Err: {}", error),
+                        }
+                    }
+                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Err(error) => println!("Err: {}", error),
+                }
+            }
+            Ok(false) => panic!("Category {} is not present in the total categories list", category),
+            Err(error) => println!("Err: {}", error),
         }
-
-        let table = Table::new(results);
-        println!("{}", table);
 
         Ok(())
     }
 
     pub fn delete_spending(&self, conn: &Connection) -> Result<()> {
-        let affected_rows =
-            conn.execute("delete from spend where category = ?", &[&self.category])?;
+        let find_total_category = total_category_exists(conn, &self.category.as_str());
+        let find_total_amount = total_amount_exists(conn);
+        let find_budget_category = budget_category_exists(conn, &self.category.as_str());
 
-        if affected_rows == 0 {
-            return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+        match find_total_category {
+            Ok(true) => {
+                match find_total_amount {
+                    Ok(true) => {
+                        match find_budget_category {
+                            Ok(true) => {
+                                let affected_rows =
+                                conn.execute("delete from spend where category = ?", &[&self.category])?;
+                    
+                                if affected_rows == 0 {
+                                    return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+                                }
+                            }
+                            Ok(false) => panic!("Category {} is not present in the budget list", &self.category.as_str()),
+                            Err(error) => println!("Err: {}", error),
+                        }
+                    }
+                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Err(error) => println!("Err: {}", error),
+                }
+            }
+            Ok(false) => panic!("Category {} is not present in the total categories list", &self.category.as_str()),
+            Err(error) => println!("Err: {}", error),
         }
 
         Ok(())
