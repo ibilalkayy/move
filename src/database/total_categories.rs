@@ -62,7 +62,7 @@ impl TotalCategory {
 
                 wtr.flush().expect("failed to flush the content");
             }
-            Ok(false) => panic!("No category present to get"),
+            Ok(false) => panic!("No category is present to get"),
             Err(error) => println!("Err: {}", error),
         }
         Ok(())
