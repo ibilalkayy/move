@@ -7,7 +7,7 @@ pub fn handle_spending(info: SpendInfo) {
             let conn = connection().expect("failed to connect to the database");
             let result = spend.insert_spending(&conn);
             match result {
-                Ok(_) => println!("Spending data is successfully saved"),
+                Ok(_) => println!("Money is successfully spent on a particular category"),
                 Err(error) => panic!("Err: {}", error),
             }
         }

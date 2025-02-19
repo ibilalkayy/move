@@ -4,11 +4,10 @@ use csv::Writer;
 use rusqlite::{params, Connection, Result};
 use tabled::{Table, Tabled};
 use crate::usecases::{
-    budget::{budget_category_exists, budget_amount},
+    budget::{budget_category_exists, budget_amount, spend_sum, get_budget_amount},
     total_amount::total_amount_exists,
     total_categories::total_category_exists,
 };
-
 
 #[derive(Tabled)]
 struct SpendingRow {
@@ -27,6 +26,8 @@ impl SpendData {
         let find_budget_category = budget_category_exists(conn, category);
         let budget_amount_data= budget_amount(conn, category);
         let spending_amount: Option<u64> = self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
+        let spend_sum = spend_sum(conn, category);
+        let budgetamount = get_budget_amount(conn, category);
 
         match find_total_category {
             Ok(true) => {
@@ -39,10 +40,25 @@ impl SpendData {
                                         match spending_amount {
                                             Some(spend_amount) => {
                                                 if spend_amount <= budget_amount {
-                                                    conn.execute(
-                                                        "insert into spend(category, amount) values(?1, ?2)",
-                                                        &[&self.category, &self.amount],
-                                                    )?;
+                                                    match spend_sum {
+                                                        Ok(sum_of_spend) => {
+                                                            let added_spend_amount = sum_of_spend+spend_amount;
+                                                            match budgetamount {
+                                                                Ok(amount_of_budget) => {
+                                                                    if added_spend_amount <= amount_of_budget {
+                                                                        conn.execute(
+                                                                            "insert into spend(category, amount) values(?1, ?2)",
+                                                                            &[&self.category, &self.amount],
+                                                                        )?;
+                                                                    } else {
+                                                                        panic!("Spending amount exceeded the budget amount");
+                                                                    }
+                                                                }
+                                                                Err(error) => panic!("Err: {}", error),
+                                                            } 
+                                                        }
+                                                        Err(error) => panic!("Err: {}", error),
+                                                    }
                                                 } else {
                                                     panic!("Category is not present in the budget record");
                                                 }
@@ -96,7 +112,6 @@ impl SpendData {
                                 let file_path = create_file("spend.csv");
                         
                                 let mut wtr = Writer::from_writer(file_path);
-                        
                                 wtr.write_record(&["Category", "Amount"])
                                     .expect("failed to write the data in a CSV file");
                         
