@@ -52,11 +52,11 @@ impl AlertData {
                             &[&self.category, &self.frequency, &self.method, &self.day, &self.hour, &self.minute, &self.second, &self.weekday],
                         )?;
                     }
-                    Ok(false) => panic!("Budget is not having a data of the given category for alert insertion"),
-                    Err(error) => println!("Err: {}", error),
+                    Ok(false) => panic!("Budget is not having a data of the {} category for alert insertion", category_name),
+                    Err(error) => panic!("Err: {}", error),
                 }
             },
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -129,18 +129,18 @@ impl AlertData {
                                     }
                                 }
                                 Ok(false) => panic!("Budget is not having the data of new category {}", new_category),
-                                Err(error) => println!("Err: {}", error),
+                                Err(error) => panic!("Err: {}", error),
                             }
                         },
                         Ok(false) => panic!("Budget is not having a data of the old category {}", old_category),
-                        Err(error) => println!("Err: {}", error),
+                        Err(error) => panic!("Err: {}", error),
                     }
                 }
-                Ok(false) => panic!("Category {} is not added to the alert record", old_category),
-                Err(error) => println!("Err: {}", error),
+                Ok(false) => panic!("Category {} is not added to the alert record", self.category.as_deref().unwrap_or("")),
+                Err(error) => panic!("Err: {}", error),
             }
         } else {
-            panic!("Alert data is already having {} category", new_category);
+            panic!("Alert data already has a {} category", new_category);
         }
 
         Ok(())
@@ -205,7 +205,7 @@ impl AlertData {
                 wtr.flush().expect("failed to flush the content");
             },
             Ok(false) => panic!("No alert data is present to get"),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -242,7 +242,7 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
         
         },
         Ok(false) => panic!("No alert data is present to be viewed"),
-        Err(error) => println!("Err: {}", error),
+        Err(error) => panic!("Err: {}", error),
     }
 
     Ok(())
@@ -261,7 +261,7 @@ impl AlertCategory {
                 }
             },
             Ok(false) => panic!("Alert data is not having {} category", &self.category),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }

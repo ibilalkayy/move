@@ -8,7 +8,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.insert_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully saved"),
-                Err(error) => println!("Err: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -17,7 +17,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.view_budget(&conn, &budget.category);
             match result {
                 Ok(_) => (),
-                Err(error) => println!("Err: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -26,7 +26,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = show_budget(&conn);
             match result {
                 Ok(_) => (),
-                Err(error) => println!("Err: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -35,7 +35,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.get_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully saved in a CSV file"),
-                Err(error) => println!("Error: {}", error),
+                Err(error) => panic!("Err:: {}", error),
             }
         }
 
@@ -45,7 +45,7 @@ pub fn handle_budget(info: BudgetInfo) {
             match result {
                 Ok(_) => println!("Budget data is successfully updated"),
                 Err(rusqlite::Error::QueryReturnedNoRows) => {
-                    println!("Error: No matching record found")
+                    panic!("Err:: No matching record found")
                 }
                 Err(e) => println!("Database error: {:?}", e),
             }
@@ -56,7 +56,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.delete_budget(&conn);
             match result {
                 Ok(_) => println!("The row(s) in a budget is successfully deleted"),
-                Err(error) => println!("Error: {}", error),
+                Err(error) => panic!("Err:: {}", error),
             }
         }
     }

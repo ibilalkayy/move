@@ -12,7 +12,7 @@ pub fn cli() {
     let result = create_table();
     match result {
         Ok(_) => (),
-        Err(error) => println!("Err: {}", error),
+        Err(error) => panic!("Err: {}", error),
     }
     let moves = Move::parse();
     match moves.command {

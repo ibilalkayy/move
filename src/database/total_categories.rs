@@ -25,7 +25,7 @@ impl TotalCategory {
                     &[&self.category, &self.label],
                 )?;
             }
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -63,7 +63,7 @@ impl TotalCategory {
                 wtr.flush().expect("failed to flush the content");
             }
             Ok(false) => panic!("No category is present to get"),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -91,7 +91,7 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
             println!("{}", table);
         }
         Ok(false) => panic!("No category is present to be viewed"),
-        Err(error) => println!("Err: {}", error),
+        Err(error) => panic!("Err: {}", error),
     }
     Ok(())
 }
@@ -133,7 +133,7 @@ impl UpdateTotalCategory {
                     }
                 }
                 Ok(false) => panic!("Category {} is not present in the old categories list", &self.old_category),
-                Err(error) => println!("Err: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         } else {
             panic!("Category {} is already present in the new categories list", new_category);
@@ -158,7 +158,7 @@ impl RemoveTotalCategory {
                 }        
             }
             Ok(false) => panic!("No category is present to be removed"),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }

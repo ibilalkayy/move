@@ -60,7 +60,7 @@ impl BudgetData {
                 }
             }
             Ok(false) => panic!("Category {} is not present in the total categories list. First add one.", self.category),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -95,7 +95,7 @@ impl BudgetData {
                 wtr.flush().expect("failed to flush the content");
             }
             Ok(false) => panic!("No category is present to get"),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -124,7 +124,7 @@ impl BudgetCategory {
                 println!("{}", table);
             }
             Ok(false) => panic!("No category is present to be viewed"),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
 
         Ok(())
@@ -142,7 +142,7 @@ impl BudgetCategory {
                 }
             }
             Ok(false) => panic!("No category is present to be deleted"),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
 
         Ok(())
@@ -171,7 +171,7 @@ pub fn show_budget(conn: &Connection) -> Result<()> {
             println!("{}", table);
         }
         Ok(false) => panic!("No category is present to be shown"),
-        Err(error) => println!("Err: {}", error),
+        Err(error) => panic!("Err: {}", error),
     }
     Ok(())
 }
@@ -241,26 +241,26 @@ impl UpdateBudget {
                                                     Err(error) => panic!("Err: {}", error),
                                                 }                                                
                                             },
-                                            Err(error) => println!("Err: {}", error),
+                                            Err(error) => panic!("Err: {}", error),
                                         }
                                     }
                                     Ok(false) => panic!(
                                         "Category {} is not present in the budget record. First add it to a budget",
                                         &self.old_category
                                     ),
-                                    Err(error) =>  println!("Err: {}", error),
+                                    Err(error) =>  panic!("Err: {}", error),
                                 }
                             }
                             Ok(false) => panic!("Total amount is not present in the record"),
-                            Err(error) =>  println!("Err: {}", error),
+                            Err(error) =>  panic!("Err: {}", error),
                         }
                     }
                     Ok(false) => panic!("Category {} is not present in the old categories list", self.old_category),
-                    Err(error) => println!("Err: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
             Ok(false) => panic!("Category {} is not present in the new categories list. First add one", new_category),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }

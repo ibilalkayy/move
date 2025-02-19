@@ -47,22 +47,22 @@ impl SpendData {
                                                     panic!("Category is not present in the budget record");
                                                 }
                                             },
-                                            None => panic!("No option is present"),
+                                            None => panic!("Spending amount is not given"),
                                         }
                                     },
-                                    Err(error) => println!("Erree: {}", error),
+                                    Err(error) => panic!("Err: {}", error),
                                 } 
                             }
                             Ok(false) => panic!("Category {} is not present in the budget list", category),
-                            Err(error) => println!("Err: {}", error),
+                            Err(error) => panic!("Err: {}", error),
                         }
                     }
                     Ok(false) => panic!("Amount is not present in the total amount list"),
-                    Err(error) => println!("Err: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
             Ok(false) => panic!("Category {} is not present in the total categories list", category),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
         Ok(())
     }
@@ -108,15 +108,15 @@ impl SpendData {
                                 wtr.flush().expect("failed to flush the content");
                             }
                             Ok(false) => panic!("Category {} is not present in the budget list", category),
-                            Err(error) => println!("Err: {}", error),
+                            Err(error) => panic!("Err: {}", error),
                         }
                     }
                     Ok(false) => panic!("Amount is not present in the total amount list"),
-                    Err(error) => println!("Err: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
             Ok(false) => panic!("Category {} is not present in the total categories list", category),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
 
         Ok(())
@@ -153,15 +153,15 @@ impl SpendCategory {
                                 println!("{}", table);
                             }
                             Ok(false) => panic!("Category {} is not present in the budget list", category),
-                            Err(error) => println!("Err: {}", error),
+                            Err(error) => panic!("Err: {}", error),
                         }
                     }
                     Ok(false) => panic!("Amount is not present in the total amount list"),
-                    Err(error) => println!("Err: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
             Ok(false) => panic!("Category {} is not present in the total categories list", category),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
 
         Ok(())
@@ -186,15 +186,15 @@ impl SpendCategory {
                                 }
                             }
                             Ok(false) => panic!("Category {} is not present in the budget list", &self.category.as_str()),
-                            Err(error) => println!("Err: {}", error),
+                            Err(error) => panic!("Err: {}", error),
                         }
                     }
                     Ok(false) => panic!("Amount is not present in the total amount list"),
-                    Err(error) => println!("Err: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
             Ok(false) => panic!("Category {} is not present in the total categories list", &self.category.as_str()),
-            Err(error) => println!("Err: {}", error),
+            Err(error) => panic!("Err: {}", error),
         }
 
         Ok(())

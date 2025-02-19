@@ -25,7 +25,7 @@ impl TotalAmount {
         let find_amount = total_amount_exists(conn);
 
         match find_amount {
-            Ok(true) => panic!("Total amount {} is already present in the record", &self.amount.as_deref().unwrap_or("")),
+            Ok(true) => panic!("Total amount is already given"),
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values(?1, ?2, ?3, ?4)",
