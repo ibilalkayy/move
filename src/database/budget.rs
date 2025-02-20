@@ -1,7 +1,7 @@
 use crate::cli::flags::budget::{BudgetCategory, BudgetData, UpdateBudget};
-use crate::common::common::create_file;
+use crate::common::common::{create_file, convert_to_u64};
 use crate::usecases::{
-    budget::{budget_category_exists, budget_total_equal, convert_to_u64},
+    budget::{budget_category_exists, budget_total_equal},
     total_amount::total_amount_exists,
     total_categories::{total_category_exists, total_categories_exist},
 };
@@ -102,13 +102,13 @@ impl BudgetData {
 }
 
 impl BudgetCategory {
-    pub fn view_budget(&self, conn: &Connection, category: &str) -> Result<()> {
+    pub fn view_budget(&self, conn: &Connection) -> Result<()> {
         let find_category = total_category_exists(conn, &self.category);
         match find_category {
             Ok(true) => {
                 let mut stmt = conn.prepare("select category, amount from budget where category = ?")?;
 
-                let rows = stmt.query_map(params![category], |row| {
+                let rows = stmt.query_map(params![self.category], |row| {
                     Ok(BudgetRow {
                         category: row.get(0)?,
                         amount: row.get(1)?,
@@ -123,7 +123,7 @@ impl BudgetCategory {
                 let table = Table::new(results);
                 println!("{}", table);
             }
-            Ok(false) => panic!("No category is present to be viewed"),
+            Ok(false) => panic!("{} category is present to be viewed", self.category),
             Err(error) => panic!("Err: {}", error),
         }
 

@@ -15,7 +15,7 @@ pub enum SpendSubcommand {
     /// See the spending history
     History(SpendCategory),
 
-    /// Delete the spend history
+    /// Delete the spending data
     Delete(SpendCategory),
 
     /// Get the spending data

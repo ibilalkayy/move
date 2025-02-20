@@ -14,7 +14,7 @@ pub fn handle_spending(info: SpendInfo) {
 
         SpendSubcommand::History(spend) => {
             let conn = connection().expect("failed to connect to the database");
-            let result = spend.view_spending(&conn, &spend.category);
+            let result = spend.view_spending(&conn);
             match result {
                 Ok(_) => (),
                 Err(error) => panic!("Err: {}", error),

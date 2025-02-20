@@ -12,3 +12,7 @@ pub fn create_file(path: &str) -> File {
     let file_path = File::create(merge_path).expect("Failed to create a file");
     return file_path;
 }
+
+pub fn convert_to_u64(opt: Option<String>) -> u64 {
+    opt.and_then(|s| s.parse::<u64>().ok()).unwrap_or(0)
+}

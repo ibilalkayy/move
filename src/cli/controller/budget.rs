@@ -14,7 +14,7 @@ pub fn handle_budget(info: BudgetInfo) {
 
         BudgetSubcommand::View(budget) => {
             let conn = connection().expect("failed to connect to the database");
-            let result = budget.view_budget(&conn, &budget.category);
+            let result = budget.view_budget(&conn);
             match result {
                 Ok(_) => (),
                 Err(error) => panic!("Err: {}", error),

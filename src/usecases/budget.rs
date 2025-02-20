@@ -1,9 +1,5 @@
 use rusqlite::{Connection, Result};
 
-pub fn convert_to_u64(opt: Option<String>) -> u64 {
-    opt.and_then(|s| s.parse::<u64>().ok()).unwrap_or(0)
-}
-
 pub fn budget_total_equal(
     conn: &Connection,
     category: &str,

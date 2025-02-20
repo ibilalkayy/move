@@ -139,10 +139,10 @@ impl SpendData {
 }
 
 impl SpendCategory {
-    pub fn view_spending(&self, conn: &Connection, category: &str) -> Result<()> {
-        let find_total_category = total_category_exists(conn, category);
+    pub fn view_spending(&self, conn: &Connection) -> Result<()> {
+        let find_total_category = total_category_exists(conn, &self.category);
         let find_total_amount = total_amount_exists(conn);
-        let find_budget_category = budget_category_exists(conn, category);
+        let find_budget_category = budget_category_exists(conn, &self.category);
 
         match find_total_category {
             Ok(true) => {
@@ -152,7 +152,7 @@ impl SpendCategory {
                             Ok(true) => {
                                 let mut stmt = conn.prepare("select category, amount from spend where category=?")?;
 
-                                let rows = stmt.query_map(params![&category], |row| {
+                                let rows = stmt.query_map(params![&self.category], |row| {
                                     Ok(SpendingRow {
                                         category: row.get(0)?,
                                         amount: row.get(1)?,
@@ -167,7 +167,7 @@ impl SpendCategory {
                                 let table = Table::new(results);
                                 println!("{}", table);
                             }
-                            Ok(false) => panic!("Category {} is not present in the budget list", category),
+                            Ok(false) => panic!("Category {} is not present in the budget list", self.category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
@@ -175,7 +175,7 @@ impl SpendCategory {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the total categories list", category),
+            Ok(false) => panic!("Category {} is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
 
