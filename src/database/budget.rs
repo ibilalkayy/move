@@ -30,7 +30,7 @@ impl BudgetData {
                 match find_amount {
                     Ok(true) => {
                         match find_budget_category {
-                            Ok(true) => panic!("Category {} is already present in the record", &self.category),
+                            Ok(true) => panic!("{} category is already present in the record", &self.category),
                             Ok(false) => {
                                 match is_budget_total_equal {
                                     Ok((total_amount, budget_total_sum, _, _)) => {
@@ -59,7 +59,7 @@ impl BudgetData {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the total categories list. First add one.", self.category),
+            Ok(false) => panic!("{} category is not present in the total categories list. First add one.", self.category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -94,7 +94,7 @@ impl BudgetData {
                 }
                 wtr.flush().expect("failed to flush the content");
             }
-            Ok(false) => panic!("No category is present to get"),
+            Ok(false) => panic!("{} category is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -123,7 +123,7 @@ impl BudgetCategory {
                 let table = Table::new(results);
                 println!("{}", table);
             }
-            Ok(false) => panic!("{} category is present to be viewed", self.category),
+            Ok(false) => panic!("{} category is not present in the total categories list", self.category),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -141,7 +141,7 @@ impl BudgetCategory {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                 }
             }
-            Ok(false) => panic!("No category is present to be deleted"),
+            Ok(false) => panic!("{} category is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -219,7 +219,7 @@ impl UpdateBudget {
                                 match find_budget_old_category {
                                     Ok(true) => {
                                         match find_budget_new_category {
-                                            Ok(true) => panic!("Category {} is already present in the record", new_category),
+                                            Ok(true) => panic!("{} category is already present in the record", new_category),
                                             Ok(false) => {
                                                 match is_budget_total_equal {
                                                     Ok((total_amount, _, budget_except_sum, _)) => {
@@ -245,7 +245,7 @@ impl UpdateBudget {
                                         }
                                     }
                                     Ok(false) => panic!(
-                                        "Category {} is not present in the budget record. First add it to a budget",
+                                        "{} category is not present in the budget record. First add it to a budget",
                                         &self.old_category
                                     ),
                                     Err(error) =>  panic!("Err: {}", error),
@@ -255,11 +255,11 @@ impl UpdateBudget {
                             Err(error) =>  panic!("Err: {}", error),
                         }
                     }
-                    Ok(false) => panic!("Category {} is not present in the old categories list", self.old_category),
+                    Ok(false) => panic!("{} category is not present in the old categories list", self.old_category),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the new categories list. First add one", new_category),
+            Ok(false) => panic!("{} category is not present in the new categories list. First add one", new_category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())

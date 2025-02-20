@@ -52,7 +52,7 @@ impl AlertData {
                             &[&self.category, &self.frequency, &self.method, &self.day, &self.hour, &self.minute, &self.second, &self.weekday],
                         )?;
                     }
-                    Ok(false) => panic!("Budget is not having a data of the {} category for alert insertion", category_name),
+                    Ok(false) => panic!("{} category doesn't have budget data for alert insertion", category_name),
                     Err(error) => panic!("Err: {}", error),
                 }
             },
@@ -136,7 +136,7 @@ impl AlertData {
                         Err(error) => panic!("Err: {}", error),
                     }
                 }
-                Ok(false) => panic!("Category {} is not added to the alert record", self.category.as_deref().unwrap_or("")),
+                Ok(false) => panic!("{} category is not added to the alert record", self.category.as_deref().unwrap_or("")),
                 Err(error) => panic!("Err: {}", error),
             }
         } else {
@@ -260,7 +260,7 @@ impl AlertCategory {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                 }
             },
-            Ok(false) => panic!("Alert data is not having {} category", &self.category),
+            Ok(false) => panic!("Alert data doesn't have {} category", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())

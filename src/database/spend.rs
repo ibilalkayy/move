@@ -69,7 +69,7 @@ impl SpendData {
                                     Err(error) => panic!("Err: {}", error),
                                 } 
                             }
-                            Ok(false) => panic!("Category {} is not present in the budget list", category),
+                            Ok(false) => panic!("{} category is not present in the budget list", category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
@@ -77,7 +77,7 @@ impl SpendData {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the total categories list", category),
+            Ok(false) => panic!("{} category is not present in the total categories list", category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -122,7 +122,7 @@ impl SpendData {
                         
                                 wtr.flush().expect("failed to flush the content");
                             }
-                            Ok(false) => panic!("Category {} is not present in the budget list", category),
+                            Ok(false) => panic!("{} category is not present in the budget list", category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
@@ -130,7 +130,7 @@ impl SpendData {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the total categories list", category),
+            Ok(false) => panic!("{} category is not present in the total categories list", category),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -167,7 +167,7 @@ impl SpendCategory {
                                 let table = Table::new(results);
                                 println!("{}", table);
                             }
-                            Ok(false) => panic!("Category {} is not present in the budget list", self.category),
+                            Ok(false) => panic!("{} category is not present in the budget list", self.category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
@@ -175,7 +175,7 @@ impl SpendCategory {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the total categories list", &self.category),
+            Ok(false) => panic!("{} category is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -200,7 +200,7 @@ impl SpendCategory {
                                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                                 }
                             }
-                            Ok(false) => panic!("Category {} is not present in the budget list", &self.category.as_str()),
+                            Ok(false) => panic!("{} category is not present in the budget list", &self.category.as_str()),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
@@ -208,7 +208,7 @@ impl SpendCategory {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("Category {} is not present in the total categories list", &self.category.as_str()),
+            Ok(false) => panic!("{} category is not present in the total categories list", &self.category.as_str()),
             Err(error) => panic!("Err: {}", error),
         }
 

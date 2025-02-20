@@ -18,7 +18,7 @@ impl TotalCategory {
     pub fn insert_total_category(&self, conn: &Connection) -> Result<()> {
         let find_category = total_category_exists(conn, &self.category);
         match find_category {
-            Ok(true) => panic!("Category {} is already present in the record", &self.category),
+            Ok(true) => panic!("{} category is already present in the record", &self.category),
             Ok(false) => {
                 conn.execute(
                     "insert into totalcategories(category, label) values(?1, ?2)",
@@ -62,7 +62,7 @@ impl TotalCategory {
 
                 wtr.flush().expect("failed to flush the content");
             }
-            Ok(false) => panic!("No category is present to get"),
+            Ok(false) => panic!("{} category is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -132,11 +132,11 @@ impl UpdateTotalCategory {
                         return Err(rusqlite::Error::QueryReturnedNoRows);
                     }
                 }
-                Ok(false) => panic!("Category {} is not present in the old categories list", &self.old_category),
+                Ok(false) => panic!("{} category is not present in the old categories list", &self.old_category),
                 Err(error) => panic!("Err: {}", error),
             }
         } else {
-            panic!("Category {} is already present in the new categories list", new_category);
+            panic!("{} category is already present in the new categories list", new_category);
         }
 
         Ok(())
@@ -157,7 +157,7 @@ impl RemoveTotalCategory {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                 }        
             }
-            Ok(false) => panic!("No category is present to be removed"),
+            Ok(false) => panic!("{} category is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
