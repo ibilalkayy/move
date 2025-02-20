@@ -37,7 +37,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = view_total_amount(&conn);
                 match result {
                     Ok(_) => (),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
 
@@ -46,7 +46,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = view_total_categories(&conn);
                 match result {
                     Ok(_) => (),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
         },
@@ -54,19 +54,19 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
         TotalAmountSubcommand::Status(total) => match total.status_total {
             StatusSubcommand::Active => {
                 let conn = connection().expect("failed to connect to the database");
-                let result = update_total_status(&conn, "active".to_string());
+                let result = update_total_status(&conn, "active");
                 match result {
                     Ok(_) => println!("The total amount status is successfully updated"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
 
             StatusSubcommand::Inactive => {
                 let conn = connection().expect("failed to connect to the database");
-                let result = update_total_status(&conn, "inactive".to_string());
+                let result = update_total_status(&conn, "inactive");
                 match result {
                     Ok(_) => println!("The total amount status is successfully updated"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
         },
@@ -77,7 +77,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = total_amount.update_total_amount(&conn);
                 match result {
                     Ok(_) => println!("The total amount data is successfully updated"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
 
@@ -87,9 +87,9 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 match result {
                     Ok(_) => println!("The total amount category data is successfully updated"),
                     Err(rusqlite::Error::QueryReturnedNoRows) => {
-                        panic!("Err:: No matching record found")
+                        panic!("Err: No matching record found")
                     }
-                    Err(e) => println!("Database error: {:?}", e),
+                    Err(error) => panic!("Err: {:?}", error),
                 }
             }
         },
@@ -100,7 +100,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = delete_total_amount(&conn);
                 match result {
                     Ok(_) => println!("The total amount data is successfully deleted"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
 
@@ -109,7 +109,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = category.delete_total_category(&conn);
                 match result {
                     Ok(_) => println!("The total amount category is successfully deleted"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
         },
@@ -120,7 +120,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = total_amount.get_total_amount(&conn);
                 match result {
                     Ok(_) => println!("The total amount data is successfully saved in a CSV file"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
             GetTotalSubcommand::Category(total_amount) => {
@@ -128,7 +128,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = total_amount.get_total_categories(&conn);
                 match result {
                     Ok(_) => println!("The category data is successfully saved in a CSV file"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
         },

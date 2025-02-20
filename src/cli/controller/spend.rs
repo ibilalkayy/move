@@ -26,7 +26,7 @@ pub fn handle_spending(info: SpendInfo) {
             let result = spend.delete_spending(&conn);
             match result {
                 Ok(_) => println!("The row(s) in spending is successfully deleted"),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -35,7 +35,7 @@ pub fn handle_spending(info: SpendInfo) {
             let result = spend.get_spending(&conn);
             match result {
                 Ok(_) => println!("Spending data is successfully saved in a CSV file"),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
     }

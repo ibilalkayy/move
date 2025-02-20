@@ -17,7 +17,7 @@ pub fn handle_alert(info: AlertInfo) {
             let result = view_alert(&conn);
             match result {
                 Ok(_) => (),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -35,7 +35,7 @@ pub fn handle_alert(info: AlertInfo) {
             match result {
                 Ok(_) => println!("Alert data is successfully updated"),
                 Err(rusqlite::Error::QueryReturnedNoRows) => {
-                    panic!("Err:: No matching record found")
+                    panic!("Err: No matching record found")
                 }
                 Err(e) => println!("Err: {:?}", e),
             }
@@ -46,7 +46,7 @@ pub fn handle_alert(info: AlertInfo) {
             let result = alert.delete_alert(&conn);
             match result {
                 Ok(_) => println!("The row(s) in an alert is successfully deleted"),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -55,7 +55,7 @@ pub fn handle_alert(info: AlertInfo) {
             let result = alert.get_alert(&conn);
             match result {
                 Ok(_) => println!("Alert data is successfully saved in a CSV file"),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
     }

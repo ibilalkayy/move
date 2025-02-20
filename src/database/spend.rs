@@ -5,7 +5,7 @@ use rusqlite::{params, Connection, Result};
 use tabled::{Table, Tabled};
 use crate::usecases::{
     budget::{budget_category_exists, budget_amount, spend_sum, get_budget_amount},
-    total_amount::total_amount_exists,
+    total_amount::{total_amount_exists, total_amount_status},
     total_categories::total_category_exists,
 };
 
@@ -28,6 +28,7 @@ impl SpendData {
         let spending_amount: Option<u64> = self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
         let spend_sum = spend_sum(conn, category);
         let budgetamount = get_budget_amount(conn, category);
+        let amount_status = total_amount_status(conn);
 
         match find_total_category {
             Ok(true) => {
@@ -46,12 +47,21 @@ impl SpendData {
                                                             match budgetamount {
                                                                 Ok(amount_of_budget) => {
                                                                     if added_spend_amount <= amount_of_budget {
-                                                                        conn.execute(
-                                                                            "insert into spend(category, amount) values(?1, ?2)",
-                                                                            &[&self.category, &self.amount],
-                                                                        )?;
+                                                                        match amount_status {
+                                                                            Ok(status) => {
+                                                                                if status == "active" {
+                                                                                    conn.execute(
+                                                                                        "insert into spend(category, amount) values(?1, ?2)",
+                                                                                        &[&self.category, &self.amount],
+                                                                                    )?;
+                                                                                } else {
+                                                                                    panic!("Err: Total amount status is not active yet");
+                                                                                }
+                                                                            }
+                                                                            Err(error) => panic!("Err: {}", error),
+                                                                        }
                                                                     } else {
-                                                                        panic!("Spending amount exceeded the budget amount");
+                                                                        panic!("Err: Spending amount exceeded the budget amount");
                                                                     }
                                                                 }
                                                                 Err(error) => panic!("Err: {}", error),
@@ -60,24 +70,24 @@ impl SpendData {
                                                         Err(error) => panic!("Err: {}", error),
                                                     }
                                                 } else {
-                                                    panic!("Category is not present in the budget record");
+                                                    panic!("Err: Spending amount exceeded the budget amount");
                                                 }
                                             },
-                                            None => panic!("Spending amount is not given"),
+                                            None => panic!("Err: Spending amount is not given"),
                                         }
                                     },
                                     Err(error) => panic!("Err: {}", error),
                                 } 
                             }
-                            Ok(false) => panic!("{} category is not present in the budget list", category),
+                            Ok(false) => panic!("Err: {} category is not present in the budget list", category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
-                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Ok(false) => panic!("Err: Amount is not present in the total amount list"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("{} category is not present in the total categories list", category),
+            Ok(false) => panic!("Err: {} category is not present in the total categories list", category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -122,15 +132,15 @@ impl SpendData {
                         
                                 wtr.flush().expect("failed to flush the content");
                             }
-                            Ok(false) => panic!("{} category is not present in the budget list", category),
+                            Ok(false) => panic!("Err: {} category is not present in the budget list", category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
-                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Ok(false) => panic!("Err: Amount is not present in the total amount list"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("{} category is not present in the total categories list", category),
+            Ok(false) => panic!("Err: {} category is not present in the total categories list", category),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -167,15 +177,15 @@ impl SpendCategory {
                                 let table = Table::new(results);
                                 println!("{}", table);
                             }
-                            Ok(false) => panic!("{} category is not present in the budget list", self.category),
+                            Ok(false) => panic!("Err: {} category is not present in the budget list", self.category),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
-                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Ok(false) => panic!("Err: Amount is not present in the total amount list"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("{} category is not present in the total categories list", &self.category),
+            Ok(false) => panic!("Err: {} category is not present in the total categories list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -200,15 +210,15 @@ impl SpendCategory {
                                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                                 }
                             }
-                            Ok(false) => panic!("{} category is not present in the budget list", &self.category.as_str()),
+                            Ok(false) => panic!("Err: {} category is not present in the budget list", &self.category.as_str()),
                             Err(error) => panic!("Err: {}", error),
                         }
                     }
-                    Ok(false) => panic!("Amount is not present in the total amount list"),
+                    Ok(false) => panic!("Err: Amount is not present in the total amount list"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-            Ok(false) => panic!("{} category is not present in the total categories list", &self.category.as_str()),
+            Ok(false) => panic!("Err: {} category is not present in the total categories list", &self.category.as_str()),
             Err(error) => panic!("Err: {}", error),
         }
 

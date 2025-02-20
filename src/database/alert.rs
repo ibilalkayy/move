@@ -43,7 +43,7 @@ impl AlertData {
         let find_budget_category = budget_category_exists(conn, category_name);
 
         match find_alert {
-            Ok(true) => panic!("Alert data is already having {} category", category_name),
+            Ok(true) => panic!("Err: Alert data already has a {} category", category_name),
             Ok(false) => {
                 match find_budget_category {
                     Ok(true) => {
@@ -52,7 +52,7 @@ impl AlertData {
                             &[&self.category, &self.frequency, &self.method, &self.day, &self.hour, &self.minute, &self.second, &self.weekday],
                         )?;
                     }
-                    Ok(false) => panic!("{} category doesn't have budget data for alert insertion", category_name),
+                    Ok(false) => panic!("Err: {} category is not present into the budget list", category_name),
                     Err(error) => panic!("Err: {}", error),
                 }
             },
@@ -128,19 +128,19 @@ impl AlertData {
                                         return Err(rusqlite::Error::QueryReturnedNoRows);
                                     }
                                 }
-                                Ok(false) => panic!("Budget is not having the data of new category {}", new_category),
+                                Ok(false) => panic!("Err: Budget doesn't have a new category {}", new_category),
                                 Err(error) => panic!("Err: {}", error),
                             }
                         },
-                        Ok(false) => panic!("Budget is not having a data of the old category {}", old_category),
+                        Ok(false) => panic!("Err: Budget doesn't have old category {}", old_category),
                         Err(error) => panic!("Err: {}", error),
                     }
                 }
-                Ok(false) => panic!("{} category is not added to the alert record", self.category.as_deref().unwrap_or("")),
+                Ok(false) => panic!("Err: {} category is not added into the alert list", self.category.as_deref().unwrap_or("")),
                 Err(error) => panic!("Err: {}", error),
             }
         } else {
-            panic!("Alert data already has a {} category", new_category);
+            panic!("Err: Alert data already has a {} category", new_category);
         }
 
         Ok(())
@@ -204,7 +204,7 @@ impl AlertData {
         
                 wtr.flush().expect("failed to flush the content");
             },
-            Ok(false) => panic!("No alert data is present to get"),
+            Ok(false) => panic!("Err: Alert data is not present in the alert list"),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -241,7 +241,7 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
             println!("{}", table);
         
         },
-        Ok(false) => panic!("No alert data is present to be viewed"),
+        Ok(false) => panic!("Err: Alert data is not present in the alert list"),
         Err(error) => panic!("Err: {}", error),
     }
 
@@ -260,7 +260,7 @@ impl AlertCategory {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                 }
             },
-            Ok(false) => panic!("Alert data doesn't have {} category", &self.category),
+            Ok(false) => panic!("Err: category {} is not present in the alert list", &self.category),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())

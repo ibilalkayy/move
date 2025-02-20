@@ -25,7 +25,7 @@ impl TotalAmount {
         let find_amount = total_amount_exists(conn);
 
         match find_amount {
-            Ok(true) => panic!("Total amount is already given"),
+            Ok(true) => panic!("Err: Total amount is already given"),
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values(?1, ?2, ?3, ?4)",
@@ -38,8 +38,8 @@ impl TotalAmount {
     }
 
     pub fn get_total_amount(&self, conn: &Connection) -> Result<()> {
-        let find_amount = total_amount_exists(conn);
-        match find_amount {
+        let find_total_amount = total_amount_exists(conn);
+        match find_total_amount {
             Ok(true) => {
                 let mut stmt = conn.prepare(
                     "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
@@ -78,7 +78,7 @@ impl TotalAmount {
         
                 wtr.flush().expect("failed to flush the content");
             }
-            Ok(false) => panic!("Total amount data is not present in the record"),
+            Ok(false) => panic!("Err: Amount is not present in the total amount list"),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -87,8 +87,8 @@ impl TotalAmount {
 }
 
 pub fn view_total_amount(conn: &Connection) -> Result<()> {
-    let find_amount = total_amount_exists(conn);
-    match find_amount {
+    let find_total_amount = total_amount_exists(conn);
+    match find_total_amount {
         Ok(true) => {
             let mut stmt = conn
             .prepare("select total_amount, spent_amount, remaining_amount, statuss from totalamount")?;
@@ -110,7 +110,7 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("Total amount data is not present in the record"),
+        Ok(false) => panic!("Err: Amount is not present in the total amount list"),
         Err(error) => panic!("Err: {}", error),
     }
 
@@ -119,12 +119,12 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
 
 impl UpdateTotalAmount {
     pub fn update_total_amount(&self, conn: &Connection) -> Result<()> {
-        let find_amount = total_amount_exists(conn);
-        match find_amount {
+        let find_total_amount = total_amount_exists(conn);
+        match find_total_amount {
             Ok(true) => {
                 conn.execute("update totalamount set total_amount=?", &[&self.amount])?;
             },
-            Ok(false) => panic!("Total amount data is not present in the record"),
+            Ok(false) => panic!("Err: Amount is not present in the total amount list"),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -132,8 +132,8 @@ impl UpdateTotalAmount {
 }
 
 pub fn delete_total_amount(conn: &Connection) -> Result<()> {
-    let find_amount = total_amount_exists(conn);
-    match find_amount {
+    let find_total_amount = total_amount_exists(conn);
+    match find_total_amount {
         Ok(true) => {
             let affected_rows = conn.execute("delete from totalamount", [])?;
 
@@ -141,20 +141,20 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
                 return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
             }
         }
-        Ok(false) => panic!("Total amount data is not present in the record"),
+        Ok(false) => panic!("Err: Amount is not present in the total amount list"),
         Err(error) => panic!("Err: {}", error),
     }
 
     Ok(())
 }
 
-pub fn update_total_status(conn: &Connection, status: String) -> Result<()> {
-    let find_amount = total_amount_exists(conn);
-    match find_amount {
+pub fn update_total_status(conn: &Connection, status: &str) -> Result<()> {
+    let find_total_amount = total_amount_exists(conn);
+    match find_total_amount {
         Ok(true) => {
             conn.execute("update totalamount set statuss=?", &[&status])?;
         },
-        Ok(false) => panic!("Total amount data is not present in the record"),
+        Ok(false) => panic!("Err: Amount is not present in the total amount list"),
         Err(error) => panic!("Err: {}", error),
     }
     Ok(())

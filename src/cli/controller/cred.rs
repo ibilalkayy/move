@@ -96,7 +96,7 @@ pub fn handle_cred(info: CredInfo) {
                 let result = blockchain.get_blockchain(&conn);
                 match result {
                     Ok(_) => println!("The blockchain data is successfully saved in a CSV file"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
 
@@ -105,7 +105,7 @@ pub fn handle_cred(info: CredInfo) {
                 let result = cred.get_gmail(&conn);
                 match result {
                     Ok(_) => println!("The gmail data is successfully saved in a CSV file"),
-                    Err(error) => panic!("Err:: {}", error),
+                    Err(error) => panic!("Err: {}", error),
                 }
             }
         },

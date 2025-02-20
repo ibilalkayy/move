@@ -35,7 +35,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.get_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully saved in a CSV file"),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
 
@@ -45,9 +45,9 @@ pub fn handle_budget(info: BudgetInfo) {
             match result {
                 Ok(_) => println!("Budget data is successfully updated"),
                 Err(rusqlite::Error::QueryReturnedNoRows) => {
-                    panic!("Err:: No matching record found")
+                    panic!("Err: No matching record found")
                 }
-                Err(e) => println!("Database error: {:?}", e),
+                Err(error) => panic!("Err: {:?}", error),
             }
         }
 
@@ -56,7 +56,7 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.delete_budget(&conn);
             match result {
                 Ok(_) => println!("The row(s) in a budget is successfully deleted"),
-                Err(error) => panic!("Err:: {}", error),
+                Err(error) => panic!("Err: {}", error),
             }
         }
     }
