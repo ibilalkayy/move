@@ -8,8 +8,7 @@ pub fn total_category_exists(conn: &Connection, category: &str) -> Result<bool> 
 }
 
 pub fn total_categories_exist(conn: &Connection) -> Result<bool> {
-    let mut stmt =
-        conn.prepare("select exists(select 1 from totalcategories)")?;
+    let mut stmt = conn.prepare("select exists(select 1 from totalcategories)")?;
     let exists: bool = stmt.query_row([], |row| row.get(0))?;
     Ok(exists)
 }

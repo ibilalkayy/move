@@ -44,17 +44,18 @@ impl AlertData {
 
         match find_alert {
             Ok(true) => panic!("Err: Alert data already has a {} category", category_name),
-            Ok(false) => {
-                match find_budget_category {
-                    Ok(true) => {
-                        conn.execute(
+            Ok(false) => match find_budget_category {
+                Ok(true) => {
+                    conn.execute(
                             "insert into alert(category, frequency, method, dayz, hourz, minutez, secondz, weekdays) values(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
                             &[&self.category, &self.frequency, &self.method, &self.day, &self.hour, &self.minute, &self.second, &self.weekday],
                         )?;
-                    }
-                    Ok(false) => panic!("Err: {} category is not present into the budget list", category_name),
-                    Err(error) => panic!("Err: {}", error),
                 }
+                Ok(false) => panic!(
+                    "Err: {} category is not present into the budget list",
+                    category_name
+                ),
+                Err(error) => panic!("Err: {}", error),
             },
             Err(error) => panic!("Err: {}", error),
         }
@@ -67,7 +68,7 @@ impl AlertData {
         let find_alert = alert_exists(conn, old_category);
         let find_budget_old_category = budget_category_exists(conn, old_category);
         let find_budget_new_category = budget_category_exists(conn, new_category);
-        
+
         if !alert_exists(conn, new_category)? {
             match find_alert {
                 Ok(true) => {
@@ -78,7 +79,7 @@ impl AlertData {
                                     let mut query = String::from("update alert set ");
                                     let mut fields = Vec::new();
                                     let mut values: Vec<&dyn ToSql> = Vec::new();
-                            
+
                                     if let Some(category) = &self.category {
                                         fields.push("category = ?");
                                         values.push(category);
@@ -111,32 +112,42 @@ impl AlertData {
                                         fields.push("weekdays = ?");
                                         values.push(weekday);
                                     }
-                            
+
                                     if fields.is_empty() {
-                                        return Err(rusqlite::Error::InvalidQuery); // No fields to update
+                                        return Err(rusqlite::Error::InvalidQuery);
+                                        // No fields to update
                                     }
-                            
+
                                     query.push_str(&fields.join(", "));
                                     query.push_str(" WHERE category = ?");
-                            
+
                                     values.push(&self.old_category); // WHERE condition
-                            
+
                                     // Execute query only once
-                                    let affected_rows = conn.execute(&query, rusqlite::params_from_iter(values))?;
-                            
+                                    let affected_rows =
+                                        conn.execute(&query, rusqlite::params_from_iter(values))?;
+
                                     if affected_rows == 0 {
                                         return Err(rusqlite::Error::QueryReturnedNoRows);
                                     }
                                 }
-                                Ok(false) => panic!("Err: Budget doesn't have a new category {}", new_category),
+                                Ok(false) => panic!(
+                                    "Err: Budget doesn't have a new category {}",
+                                    new_category
+                                ),
                                 Err(error) => panic!("Err: {}", error),
                             }
-                        },
-                        Ok(false) => panic!("Err: Budget doesn't have old category {}", old_category),
+                        }
+                        Ok(false) => {
+                            panic!("Err: Budget doesn't have old category {}", old_category)
+                        }
                         Err(error) => panic!("Err: {}", error),
                     }
                 }
-                Ok(false) => panic!("Err: {} category is not added into the alert list", self.category.as_deref().unwrap_or("")),
+                Ok(false) => panic!(
+                    "Err: {} category is not added into the alert list",
+                    self.category.as_deref().unwrap_or("")
+                ),
                 Err(error) => panic!("Err: {}", error),
             }
         } else {
@@ -153,7 +164,7 @@ impl AlertData {
                 let mut stmt = conn.prepare(
                     "select category, frequency, method, dayz, hourz, minutez, secondz, weekdays from alert",
                 )?;
-        
+
                 let rows = stmt.query_map(params![], |row| {
                     Ok(AlertRow {
                         category: row.get(0)?,
@@ -166,16 +177,16 @@ impl AlertData {
                         weekday: row.get(7)?,
                     })
                 })?;
-        
+
                 let mut results = Vec::new();
                 for row in rows {
                     results.push(row?);
                 }
-        
+
                 let file_path = create_file("alert.csv");
-        
+
                 let mut wtr = Writer::from_writer(file_path);
-        
+
                 wtr.write_record(&[
                     "Category",
                     "Frequency",
@@ -187,7 +198,7 @@ impl AlertData {
                     "Weekday",
                 ])
                 .expect("failed to write the data in a CSV file");
-        
+
                 for alert in results {
                     wtr.write_record(&[
                         alert.category,
@@ -201,9 +212,9 @@ impl AlertData {
                     ])
                     .expect("failed to write the data in CSV file");
                 }
-        
+
                 wtr.flush().expect("failed to flush the content");
-            },
+            }
             Ok(false) => panic!("Err: Alert data is not present in the alert list"),
             Err(error) => panic!("Err: {}", error),
         }
@@ -218,7 +229,7 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
             let mut stmt = conn.prepare(
                 "select category, frequency, method, dayz, hourz, minutez, secondz, weekdays from alert",
             )?;
-        
+
             let rows = stmt.query_map(params![], |row| {
                 Ok(AlertRow {
                     category: row.get(0)?,
@@ -231,16 +242,15 @@ pub fn view_alert(conn: &Connection) -> Result<()> {
                     weekday: row.get(7)?,
                 })
             })?;
-        
+
             let mut results = Vec::new();
             for row in rows {
                 results.push(row?);
             }
-        
+
             let table = Table::new(results);
             println!("{}", table);
-        
-        },
+        }
         Ok(false) => panic!("Err: Alert data is not present in the alert list"),
         Err(error) => panic!("Err: {}", error),
     }
@@ -254,13 +264,16 @@ impl AlertCategory {
         match find_alert {
             Ok(true) => {
                 let affected_rows =
-                conn.execute("delete from alert where category = ?", &[&self.category])?;
+                    conn.execute("delete from alert where category = ?", &[&self.category])?;
 
                 if affected_rows == 0 {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
                 }
-            },
-            Ok(false) => panic!("Err: category {} is not present in the alert list", &self.category),
+            }
+            Ok(false) => panic!(
+                "Err: category {} is not present in the alert list",
+                &self.category
+            ),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())

@@ -1,9 +1,9 @@
 use crate::cli::flags::total_amount::{TotalAmount, UpdateTotalAmount};
 use crate::common::common::create_file;
+use crate::usecases::total_amount::total_amount_exists;
 use csv::Writer;
 use rusqlite::{params, Connection, Result};
 use tabled::{Table, Tabled};
-use crate::usecases::total_amount::total_amount_exists;
 
 #[derive(Tabled)]
 struct TotalAmountRow {
@@ -29,9 +29,9 @@ impl TotalAmount {
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values(?1, ?2, ?3, ?4)",
-                    &[&self.amount, &Some("0".to_string()), &Some("0".to_string()), &Some("inactive".to_string())],
+                    &[&self.amount, &Some("0".to_string()), &self.amount, &Some("inactive".to_string())],
                 )?;
-            },
+            }
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -44,7 +44,7 @@ impl TotalAmount {
                 let mut stmt = conn.prepare(
                     "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
                 )?;
-        
+
                 let rows = stmt.query_map(params![], |row| {
                     Ok(TotalAmountRow {
                         total_amount: row.get(0)?,
@@ -53,19 +53,19 @@ impl TotalAmount {
                         status: row.get(3)?,
                     })
                 })?;
-        
+
                 let mut result = Vec::new();
                 for row in rows {
                     result.push(row?)
                 }
-        
+
                 let file_path = create_file("total_amount.csv");
-        
+
                 let mut wtr = Writer::from_writer(file_path);
-        
+
                 wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount", "Status"])
                     .expect("failed to write the data in a CSV file");
-        
+
                 for amount in result {
                     wtr.write_record(&[
                         amount.total_amount,
@@ -75,7 +75,7 @@ impl TotalAmount {
                     ])
                     .expect("failed to write the data in a CSV file");
                 }
-        
+
                 wtr.flush().expect("failed to flush the content");
             }
             Ok(false) => panic!("Err: Amount is not present in the total amount list"),
@@ -90,9 +90,10 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
     let find_total_amount = total_amount_exists(conn);
     match find_total_amount {
         Ok(true) => {
-            let mut stmt = conn
-            .prepare("select total_amount, spent_amount, remaining_amount, statuss from totalamount")?;
-        
+            let mut stmt = conn.prepare(
+                "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
+            )?;
+
             let rows = stmt.query_map(params![], |row| {
                 Ok(TotalAmountRow {
                     total_amount: row.get(0)?,
@@ -101,12 +102,12 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
                     status: row.get(3)?,
                 })
             })?;
-        
+
             let mut results = Vec::new();
             for row in rows {
                 results.push(row?);
             }
-        
+
             let table = Table::new(results);
             println!("{}", table);
         }
@@ -122,8 +123,11 @@ impl UpdateTotalAmount {
         let find_total_amount = total_amount_exists(conn);
         match find_total_amount {
             Ok(true) => {
-                conn.execute("update totalamount set total_amount=?", &[&self.amount])?;
-            },
+                conn.execute(
+                    "update totalamount set total_amount=?, remaining_amount = ?",
+                    &[&self.amount, &self.amount],
+                )?;
+            }
             Ok(false) => panic!("Err: Amount is not present in the total amount list"),
             Err(error) => panic!("Err: {}", error),
         }
@@ -153,7 +157,7 @@ pub fn update_total_status(conn: &Connection, status: &str) -> Result<()> {
     match find_total_amount {
         Ok(true) => {
             conn.execute("update totalamount set statuss=?", &[&status])?;
-        },
+        }
         Ok(false) => panic!("Err: Amount is not present in the total amount list"),
         Err(error) => panic!("Err: {}", error),
     }

@@ -1,4 +1,6 @@
-use crate::cli::flags::total_categories::{TotalCategory, UpdateTotalCategory, RemoveTotalCategory};
+use crate::cli::flags::total_categories::{
+    RemoveTotalCategory, TotalCategory, UpdateTotalCategory,
+};
 use crate::common::common::create_file;
 use crate::usecases::total_categories::{total_categories_exist, total_category_exists};
 use csv::Writer;
@@ -18,7 +20,10 @@ impl TotalCategory {
     pub fn insert_total_category(&self, conn: &Connection) -> Result<()> {
         let find_category = total_category_exists(conn, &self.category);
         match find_category {
-            Ok(true) => panic!("Err: {} category is already present in the total categories list", &self.category),
+            Ok(true) => panic!(
+                "Err: {} category is already present in the total categories list",
+                &self.category
+            ),
             Ok(false) => {
                 conn.execute(
                     "insert into totalcategories(category, label) values(?1, ?2)",
@@ -62,7 +67,10 @@ impl TotalCategory {
 
                 wtr.flush().expect("failed to flush the content");
             }
-            Ok(false) => panic!("Err: {} category is not present in the total categories list", &self.category),
+            Ok(false) => panic!(
+                "Err: {} category is not present in the total categories list",
+                &self.category
+            ),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -81,12 +89,12 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
                     label: row.get(1)?,
                 })
             })?;
-        
+
             let mut results = Vec::new();
             for row in rows {
                 results.push(row?);
             }
-        
+
             let table = Table::new(results);
             println!("{}", table);
         }
@@ -123,7 +131,8 @@ impl UpdateTotalCategory {
 
         value.push(&self.old_category);
 
-        if !total_category_exists(conn, new_category)? { // if the new category name is already present
+        if !total_category_exists(conn, new_category)? {
+            // if the new category name is already present
             let find_category = total_category_exists(conn, &self.old_category);
             match find_category {
                 Ok(true) => {
@@ -132,11 +141,17 @@ impl UpdateTotalCategory {
                         return Err(rusqlite::Error::QueryReturnedNoRows);
                     }
                 }
-                Ok(false) => panic!("Err: {} category is not present in the old categories list", &self.old_category),
+                Ok(false) => panic!(
+                    "Err: {} category is not present in the total categories list",
+                    &self.old_category
+                ),
                 Err(error) => panic!("Err: {}", error),
             }
         } else {
-            panic!("Err: {} category is already present in the new categories list", new_category);
+            panic!(
+                "Err: {} category is already present in the total categories list",
+                new_category
+            );
         }
 
         Ok(())
@@ -152,12 +167,15 @@ impl RemoveTotalCategory {
                     "delete from totalcategories where category=?",
                     &[&self.category],
                 )?;
-        
+
                 if affected_rows == 0 {
                     return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
-                }        
+                }
             }
-            Ok(false) => panic!("Err: {} category is not present in the total categories list", &self.category),
+            Ok(false) => panic!(
+                "Err: {} category is not present in the total categories list",
+                &self.category
+            ),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())

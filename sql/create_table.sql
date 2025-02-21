@@ -28,7 +28,9 @@ create table if not exists totalcategories (
 create table if not exists budget (
     id serial primary key,
     category text not null,
-    amount text not null
+    amount text not null,
+    spent_amount text not null,
+    remaining_amount text not null
 );
 
 create table if not exists alert (
