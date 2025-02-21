@@ -1,6 +1,7 @@
 use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::usecases::{
+    alert::alerts_exist,
     budget::{budget_amount, budget_category_exists, get_budget_amount, spend_sum},
     total_amount::{total_amount_exists, total_amount_status},
     total_categories::total_category_exists,
@@ -25,11 +26,11 @@ impl SpendData {
         let find_total_amount = total_amount_exists(conn);
         let find_budget_category = budget_category_exists(conn, category);
         let budget_amount_data = budget_amount(conn, category);
-        let spending_amount: Option<u64> =
-            self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
+        let spending_amount: Option<u64> = self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
         let spend_sum = spend_sum(conn, category);
         let budgetamount = get_budget_amount(conn, category);
         let amount_status = total_amount_status(conn);
+        let find_alert = alerts_exist(conn);
 
         match find_total_category {
             Ok(true) => match find_total_amount {
@@ -44,17 +45,23 @@ impl SpendData {
                                             match budgetamount {
                                                 Ok(amount_of_budget) => {
                                                     if added_spend_amount <= amount_of_budget {
-                                                        match amount_status {
-                                                            Ok(status) => {
-                                                                if status == "active" {
-                                                                    conn.execute(
-                                                                                        "insert into spend(category, amount) values(?1, ?2)",
-                                                                                        &[&self.category, &self.amount],
-                                                                                    )?;
-                                                                } else {
-                                                                    panic!("Err: Total amount status is not active yet");
+                                                        match find_alert {
+                                                            Ok(true) => {
+                                                                match amount_status {
+                                                                    Ok(status) => {
+                                                                        if status == "active" {
+                                                                            conn.execute(
+                                                                                "insert into spend(category, amount) values(?1, ?2)",
+                                                                                &[&self.category, &self.amount],
+                                                                            )?;
+                                                                        } else {
+                                                                            panic!("Err: Total amount status is not active yet");
+                                                                        }
+                                                                    }
+                                                                    Err(error) => panic!("Err: {}", error),
                                                                 }
                                                             }
+                                                            Ok(false) => panic!("Alert data is not found. First set the alert"),
                                                             Err(error) => panic!("Err: {}", error),
                                                         }
                                                     } else {

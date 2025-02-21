@@ -45,9 +45,9 @@ impl BudgetData {
 
                             if budget_amount <= total_amount {
                                 conn.execute(
-                                                "insert into budget(category, amount, spent_amount, remaining_amount) values(?1, ?2, ?3, ?4)",
-                                                &[&self.category, &self.amount, &"0".to_string(), &self.amount],
-                                            )?;
+                                    "insert into budget(category, amount, spent_amount, remaining_amount) values(?1, ?2, ?3, ?4)",
+                                    &[&self.category, &self.amount, &"0".to_string(), &self.amount],
+                                )?;
                             } else {
                                 panic!(
                                     "Err: Budget amount exceeded the total amount: {} > {}",
