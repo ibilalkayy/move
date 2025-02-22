@@ -5,7 +5,7 @@ use clap::Parser;
 
 use crate::cli::controller::{
     alert::handle_alert, budget::handle_budget, cred::handle_cred, spend::handle_spending,
-    total_amount::handle_total_amount,
+    total_amount::handle_total_amount, status::handle_status,
 };
 
 pub fn cli() {
@@ -21,5 +21,6 @@ pub fn cli() {
         Command::Budget(details) => handle_budget(details),
         Command::Alert(details) => handle_alert(details),
         Command::Spend(details) => handle_spending(details),
+        Command::Status(details) => handle_status(details),
     }
 }

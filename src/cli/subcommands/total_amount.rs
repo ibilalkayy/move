@@ -19,9 +19,6 @@ pub enum TotalAmountSubcommand {
     /// View the total amount data
     View(ViewTotal),
 
-    /// Handle the total amount status
-    Status(StatusTotal),
-
     /// Update the total amount data
     Update(UpdateTotal),
 
@@ -60,21 +57,6 @@ pub enum ViewSubcommand {
 
     /// View the categories of total amount
     Categories,
-}
-
-#[derive(Debug, Parser)]
-pub struct StatusTotal {
-    #[clap(subcommand)]
-    pub status_total: StatusSubcommand,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum StatusSubcommand {
-    /// Make the total amount active
-    Active,
-
-    /// Make the total amount inactive
-    Inactive,
 }
 
 #[derive(Debug, Parser)]

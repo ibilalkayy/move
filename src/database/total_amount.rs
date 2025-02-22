@@ -15,9 +15,6 @@ struct TotalAmountRow {
 
     #[tabled(rename = "Remaining Amount")]
     remaining_amount: String,
-
-    #[tabled(rename = "Status")]
-    status: String,
 }
 
 impl TotalAmount {
@@ -28,8 +25,8 @@ impl TotalAmount {
             Ok(true) => panic!("Err: Total amount is already given"),
             Ok(false) => {
                 conn.execute(
-                    "insert into totalamount(total_amount, spent_amount, remaining_amount, statuss) values(?1, ?2, ?3, ?4)",
-                    &[&self.amount, &Some("0".to_string()), &self.amount, &Some("inactive".to_string())],
+                    "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
+                    &[&self.amount, &Some("0".to_string()), &self.amount],
                 )?;
             }
             Err(error) => panic!("Err: {}", error),
@@ -42,7 +39,7 @@ impl TotalAmount {
         match find_total_amount {
             Ok(true) => {
                 let mut stmt = conn.prepare(
-                    "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
+                    "select total_amount, spent_amount, remaining_amount from totalamount",
                 )?;
 
                 let rows = stmt.query_map(params![], |row| {
@@ -50,7 +47,6 @@ impl TotalAmount {
                         total_amount: row.get(0)?,
                         spent_amount: row.get(1)?,
                         remaining_amount: row.get(2)?,
-                        status: row.get(3)?,
                     })
                 })?;
 
@@ -63,7 +59,7 @@ impl TotalAmount {
 
                 let mut wtr = Writer::from_writer(file_path);
 
-                wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount", "Status"])
+                wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount"])
                     .expect("failed to write the data in a CSV file");
 
                 for amount in result {
@@ -71,7 +67,6 @@ impl TotalAmount {
                         amount.total_amount,
                         amount.spent_amount,
                         amount.remaining_amount,
-                        amount.status,
                     ])
                     .expect("failed to write the data in a CSV file");
                 }
@@ -91,7 +86,7 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
     match find_total_amount {
         Ok(true) => {
             let mut stmt = conn.prepare(
-                "select total_amount, spent_amount, remaining_amount, statuss from totalamount",
+                "select total_amount, spent_amount, remaining_amount from totalamount",
             )?;
 
             let rows = stmt.query_map(params![], |row| {
@@ -99,7 +94,6 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
                     total_amount: row.get(0)?,
                     spent_amount: row.get(1)?,
                     remaining_amount: row.get(2)?,
-                    status: row.get(3)?,
                 })
             })?;
 
@@ -149,17 +143,5 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
         Err(error) => panic!("Err: {}", error),
     }
 
-    Ok(())
-}
-
-pub fn update_total_status(conn: &Connection, status: &str) -> Result<()> {
-    let find_total_amount = total_amount_exists(conn);
-    match find_total_amount {
-        Ok(true) => {
-            conn.execute("update totalamount set statuss=?", &[&status])?;
-        }
-        Ok(false) => panic!("Err: Amount is not present in the total amount list"),
-        Err(error) => panic!("Err: {}", error),
-    }
     Ok(())
 }

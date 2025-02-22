@@ -2,7 +2,7 @@ use clap::Subcommand;
 
 use crate::cli::subcommands::{
     alert::AlertInfo, budget::BudgetInfo, cred::CredInfo, spend::SpendInfo,
-    total_amount::TotalAmountInfo,
+    total_amount::TotalAmountInfo, status::StatusInfo,
 };
 
 #[derive(Debug, Subcommand)]
@@ -21,4 +21,7 @@ pub enum Command {
 
     /// Provides spending services on various categories
     Spend(SpendInfo),
+
+    /// Allows users to handle the status of the spending
+    Status(StatusInfo),
 }

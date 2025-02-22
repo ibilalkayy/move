@@ -15,7 +15,11 @@ create table if not exists totalamount (
     id serial primary key,
     total_amount text not null,
     spent_amount text not null,
-    remaining_amount text not null,
+    remaining_amount text not null
+);
+
+create table if not exists statuss (
+    id serial primary key,
     statuss text not null
 );
 

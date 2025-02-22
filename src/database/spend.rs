@@ -3,8 +3,9 @@ use crate::common::common::create_file;
 use crate::usecases::{
     alert::alerts_exist,
     budget::{budget_amount, budget_category_exists, get_budget_amount, spend_sum},
-    total_amount::{total_amount_exists, total_amount_status},
+    total_amount::total_amount_exists,
     total_categories::total_category_exists,
+    status::status,
 };
 use csv::Writer;
 use rusqlite::{params, Connection, Result};
@@ -21,6 +22,7 @@ struct SpendingRow {
 
 impl SpendData {
     pub fn insert_spending(&self, conn: &Connection) -> Result<()> {
+        // limiting the expenditure options
         let category = self.category.as_deref().unwrap_or("");
         let find_total_category = total_category_exists(conn, category);
         let find_total_amount = total_amount_exists(conn);
@@ -29,8 +31,13 @@ impl SpendData {
         let spending_amount: Option<u64> = self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
         let spend_sum = spend_sum(conn, category);
         let budgetamount = get_budget_amount(conn, category);
-        let amount_status = total_amount_status(conn);
+        let status = status(conn);
         let find_alert = alerts_exist(conn);
+
+        // calculating the total, remaining and spent amounts
+        // let string_spent_amount = self.amount.clone().unwrap_or_else(|| "0".to_string());
+
+        // update_total_spent(conn, string_spent_amount, category);
 
         match find_total_category {
             Ok(true) => match find_total_amount {
@@ -47,21 +54,22 @@ impl SpendData {
                                                     if added_spend_amount <= amount_of_budget {
                                                         match find_alert {
                                                             Ok(true) => {
-                                                                match amount_status {
+                                                                match status {
                                                                     Ok(status) => {
                                                                         if status == "active" {
                                                                             conn.execute(
                                                                                 "insert into spend(category, amount) values(?1, ?2)",
                                                                                 &[&self.category, &self.amount],
                                                                             )?;
+                                                                            println!("Money is spent successfully on the {} category", category);
                                                                         } else {
-                                                                            panic!("Err: Total amount status is not active yet");
+                                                                            panic!("Err: The status is not active yet");
                                                                         }
                                                                     }
                                                                     Err(error) => panic!("Err: {}", error),
                                                                 }
                                                             }
-                                                            Ok(false) => panic!("Alert data is not found. First set the alert"),
+                                                            Ok(false) => panic!("Err: Alert data is not found. First set the alert"),
                                                             Err(error) => panic!("Err: {}", error),
                                                         }
                                                     } else {
@@ -221,7 +229,6 @@ impl SpendCategory {
 
                                 if affected_rows == 0 {
                                     return Err(rusqlite::Error::QueryReturnedNoRows);
-                                    // No rows were deleted
                                 }
                             }
                             Ok(false) => panic!(

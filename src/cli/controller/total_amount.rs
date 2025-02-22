@@ -1,12 +1,13 @@
 use crate::cli::subcommands::total_amount::{
-    AddTotalSubcommand, GetTotalSubcommand, RemoveTotalSubcommand, StatusSubcommand,
+    AddTotalSubcommand, GetTotalSubcommand, RemoveTotalSubcommand,
     TotalAmountInfo, TotalAmountSubcommand, UpdateTotalSubcommand, ViewSubcommand,
 };
 
 use crate::database::{
     db::connection,
-    total_amount::{delete_total_amount, update_total_status, view_total_amount},
+    total_amount::{delete_total_amount, view_total_amount},
     total_categories::view_total_categories,
+    status::insert_status,
 };
 
 pub fn handle_total_amount(info: TotalAmountInfo) {
@@ -14,9 +15,12 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
         TotalAmountSubcommand::Add(total) => match total.add_total {
             AddTotalSubcommand::Amount(total_amount) => {
                 let conn = connection().expect("failed to connect to the database");
-                let result = total_amount.insert_total_amount(&conn);
-                match result {
-                    Ok(_) => println!("Total amount is successfully saved"),
+                let total_data = total_amount.insert_total_amount(&conn);
+                match total_data {
+                    Ok(_) => {
+                        insert_status(&conn);
+                        println!("Total amount is successfully saved");
+                    }
                     Err(error) => panic!("Err: {}", error),
                 }
             }
@@ -46,26 +50,6 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let result = view_total_categories(&conn);
                 match result {
                     Ok(_) => (),
-                    Err(error) => panic!("Err: {}", error),
-                }
-            }
-        },
-
-        TotalAmountSubcommand::Status(total) => match total.status_total {
-            StatusSubcommand::Active => {
-                let conn = connection().expect("failed to connect to the database");
-                let result = update_total_status(&conn, "active");
-                match result {
-                    Ok(_) => println!("The total amount status is successfully updated"),
-                    Err(error) => panic!("Err: {}", error),
-                }
-            }
-
-            StatusSubcommand::Inactive => {
-                let conn = connection().expect("failed to connect to the database");
-                let result = update_total_status(&conn, "inactive");
-                match result {
-                    Ok(_) => println!("The total amount status is successfully updated"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
