@@ -8,7 +8,7 @@ pub struct BudgetData {
 
     /// Total amount for the category
     #[clap(short, long)]
-    pub amount: String,
+    pub amount: u64,
 }
 
 #[derive(Debug, Parser)]
@@ -30,5 +30,5 @@ pub struct UpdateBudget {
 
     /// New amount of the category to update with
     #[clap(short, long)]
-    pub amount: Option<String>,
+    pub amount: Option<u64>,
 }

@@ -1,5 +1,5 @@
 use crate::cli::flags::budget::{BudgetCategory, BudgetData, UpdateBudget};
-use crate::common::common::{convert_to_u64, create_file};
+use crate::common::common::create_file;
 use crate::usecases::{
     budget::{budget_category_exists, budget_total_equal},
     total_amount::total_amount_exists,
@@ -15,13 +15,13 @@ struct BudgetRow {
     category: String,
 
     #[tabled(rename = "Amount")]
-    amount: String,
+    amount: u64,
 
     #[tabled[rename = "Spent Amount"]]
-    spent_amount: String,
+    spent_amount: u64,
 
     #[tabled[rename = "Remaining Amount"]]
-    remaining_amount: String,
+    remaining_amount: u64,
 }
 
 impl BudgetData {
@@ -40,13 +40,12 @@ impl BudgetData {
                     ),
                     Ok(false) => match is_budget_total_equal {
                         Ok((total_amount, budget_total_sum, _, _)) => {
-                            let given_amount = self.amount.parse::<u64>().unwrap();
-                            let budget_amount = budget_total_sum + given_amount;
+                            let budget_amount = budget_total_sum + self.amount;
 
                             if budget_amount <= total_amount {
                                 conn.execute(
-                                    "insert into budget(category, amount, spent_amount, remaining_amount) values(?1, ?2, ?3, ?4)",
-                                    &[&self.category, &self.amount, &"0".to_string(), &self.amount],
+                                    "INSERT INTO budget (category, amount, spent_amount, remaining_amount) VALUES (?1, ?2, ?3, ?4)",
+                                    (&self.category, self.amount, 0, self.amount),
                                 )?;
                             } else {
                                 panic!(
@@ -99,7 +98,7 @@ impl BudgetData {
                     .expect("failed to write the data in a CSV file");
 
                 for budget in results {
-                    wtr.write_record(&[budget.category, budget.amount])
+                    wtr.write_record(&[budget.category, budget.amount.to_string()])
                         .expect("failed to write the data in a CSV file");
                 }
                 wtr.flush().expect("failed to flush the content");
@@ -262,9 +261,13 @@ impl UpdateBudget {
                             ),
                             Ok(false) => match is_budget_total_equal {
                                 Ok((total_amount, _, budget_except_sum, _)) => {
-                                    let given_amount = convert_to_u64(self.amount.clone());
-                                    let budget_amount = budget_except_sum + given_amount;
-
+                                    let mut budget_amount = 0;
+                                    match self.amount {
+                                        Some(amount) => {
+                                            budget_amount = budget_except_sum + amount
+                                        },
+                                        None => {},
+                                    }
                                     if budget_amount <= total_amount {
                                         let affected_rows = conn
                                             .execute(&query, rusqlite::params_from_iter(value))?;

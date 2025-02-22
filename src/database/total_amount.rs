@@ -26,7 +26,7 @@ impl TotalAmount {
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
-                    &[&self.amount, &Some("0".to_string()), &self.amount],
+                    &[&self.amount, &Some(0), &self.amount],
                 )?;
             }
             Err(error) => panic!("Err: {}", error),

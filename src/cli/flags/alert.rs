@@ -32,19 +32,19 @@ pub struct AlertData {
 
     /// A day for notification
     #[clap(short = 'd', long, help = "A day for notification")]
-    pub day: Option<String>,
+    pub day: Option<u64>,
 
     /// An Hour for notification
     #[clap(short = 'o', long, help = "An hour for notification")]
-    pub hour: Option<String>,
+    pub hour: Option<u64>,
 
     /// A minute for notification
     #[clap(short = 'm', long, help = "A minute for notification")]
-    pub minute: Option<String>,
+    pub minute: Option<u64>,
 
     /// A second for notification
     #[clap(short = 's', long, help = "A second for notification")]
-    pub second: Option<String>,
+    pub second: Option<u64>,
 
     /// Write a weekday for notification
     #[clap(short = 'w', long, help = "A weekday for notification")]

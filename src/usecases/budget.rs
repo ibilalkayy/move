@@ -6,9 +6,7 @@ pub fn budget_total_equal(
 ) -> Result<(u64, u64, u64, bool), rusqlite::Error> {
     let mut stmt = conn.prepare("SELECT total_amount FROM totalamount")?;
     let total_amount: u64 = stmt
-        .query_row([], |row| row.get::<_, String>(0))?
-        .parse::<u64>()
-        .unwrap_or(0);
+        .query_row([], |row| row.get::<_, u64>(0))?;
 
     let mut stmt = conn.prepare("SELECT SUM(amount) FROM budget")?;
     let budget_total_sum: u64 = stmt

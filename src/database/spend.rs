@@ -28,7 +28,6 @@ impl SpendData {
         let find_total_amount = total_amount_exists(conn);
         let find_budget_category = budget_category_exists(conn, category);
         let budget_amount_data = budget_amount(conn, category);
-        let spending_amount: Option<u64> = self.amount.as_deref().and_then(|s| s.parse::<u64>().ok());
         let spend_sum = spend_sum(conn, category);
         let budgetamount = get_budget_amount(conn, category);
         let status = status(conn);
@@ -43,12 +42,12 @@ impl SpendData {
             Ok(true) => match find_total_amount {
                 Ok(true) => match find_budget_category {
                     Ok(true) => match budget_amount_data {
-                        Ok(budget_amount) => match spending_amount {
-                            Some(spend_amount) => {
-                                if spend_amount <= budget_amount {
+                        Ok(budget_amount) => match self.amount {
+                            Some(spending_amount) => {
+                                if spending_amount <= budget_amount {
                                     match spend_sum {
                                         Ok(sum_of_spend) => {
-                                            let added_spend_amount = sum_of_spend + spend_amount;
+                                            let added_spend_amount = sum_of_spend + spending_amount;
                                             match budgetamount {
                                                 Ok(amount_of_budget) => {
                                                     if added_spend_amount <= amount_of_budget {
@@ -59,7 +58,7 @@ impl SpendData {
                                                                         if status == "active" {
                                                                             conn.execute(
                                                                                 "insert into spend(category, amount) values(?1, ?2)",
-                                                                                &[&self.category, &self.amount],
+                                                                                (&self.category, spending_amount),
                                                                             )?;
                                                                             println!("Money is spent successfully on the {} category", category);
                                                                         } else {

@@ -48,7 +48,7 @@ impl AlertData {
                 Ok(true) => {
                     conn.execute(
                             "insert into alert(category, frequency, method, dayz, hourz, minutez, secondz, weekdays) values(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
-                            &[&self.category, &self.frequency, &self.method, &self.day, &self.hour, &self.minute, &self.second, &self.weekday],
+                            (&self.category, &self.frequency, &self.method, &self.day, &self.hour, &self.minute, &self.second, &self.weekday),
                         )?;
                 }
                 Ok(false) => panic!(
