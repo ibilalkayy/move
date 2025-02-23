@@ -19,5 +19,5 @@ pub enum SpendSubcommand {
     Delete(SpendCategory),
 
     /// Get the spending data
-    Get(SpendData),
+    Get(SpendCategory),
 }

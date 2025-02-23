@@ -12,7 +12,7 @@ pub fn remaining_amount(conn: &Connection) -> Result<u64> {
     Ok(remaining)
 }
 
-pub fn calculate_total(conn: &Connection, spent_amount: u64, total_spent_amount: u64) -> Result<()> {
+pub fn calculate_total(conn: &Connection, spent_amount: u64, total_spent_amount: u64) {
     let result = remaining_amount(conn);
     match result {
         Ok(remaining) => {
@@ -20,9 +20,8 @@ pub fn calculate_total(conn: &Connection, spent_amount: u64, total_spent_amount:
             conn.execute(
                 "update totalamount set spent_amount = ?, remaining_amount = ?",
                 &[&total_spent_amount, &remaining_amount],
-            )?;
+            ).expect("Err: failed to calculate the total amount");
         }
         Err(error) => panic!("Err: {}", error),
     }
-    Ok(())
 }

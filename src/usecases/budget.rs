@@ -31,12 +31,12 @@ pub fn budget_category_exists(conn: &Connection, category: &str) -> Result<bool>
 }
 
 pub fn budget_amount(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
-    let mut stmt = conn.prepare("SELECT CAST(amount AS INTEGER) FROM budget WHERE category = ?")?;
+    let mut stmt = conn.prepare("SELECT amount FROM budget WHERE category = ?")?;
     let amount = stmt.query_row([category], |row| row.get::<_, u64>(0))?;
     Ok(amount)
 }
 
-pub fn spend_sum(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
+pub fn category_spend_sum(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
     let mut stmt = conn.prepare("SELECT SUM(amount) FROM spend where category =?")?;
     let spend_sum: u64 = stmt
         .query_row([category], |row| row.get::<_, Option<u64>>(0))?
@@ -55,7 +55,7 @@ pub fn total_spend_sum(conn: &Connection) -> Result<u64, rusqlite::Error> {
 }
 
 pub fn get_budget_amount(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
-    let mut stmt = conn.prepare("SELECT CAST(amount AS INTEGER) FROM budget where category =?")?;
+    let mut stmt = conn.prepare("SELECT amount FROM budget where category = ?")?;
     let budget_amount: u64 = stmt
         .query_row([category], |row| row.get::<_, Option<u64>>(0))?
         .unwrap_or(0);

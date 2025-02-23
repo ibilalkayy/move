@@ -22,7 +22,7 @@ impl TotalAmount {
         let find_amount = total_amount_exists(conn);
 
         match find_amount {
-            Ok(true) => panic!("Err: Total amount is already given"),
+            Ok(true) => panic!("Err: Total amount is already provided"),
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
