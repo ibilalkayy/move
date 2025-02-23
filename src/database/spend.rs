@@ -2,8 +2,8 @@ use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::usecases::{
     alert::alerts_exist,
-    budget::{budget_amount, budget_category_exists, get_budget_amount, spend_sum},
-    total_amount::total_amount_exists,
+    budget::{budget_amount, budget_category_exists, get_budget_amount, spend_sum, total_spend_sum},
+    total_amount::{total_amount_exists, calculate_total},
     total_categories::total_category_exists,
     status::status,
 };
@@ -29,14 +29,10 @@ impl SpendData {
         let find_budget_category = budget_category_exists(conn, category);
         let budget_amount_data = budget_amount(conn, category);
         let spend_sum = spend_sum(conn, category);
+        let total_spend_sum = total_spend_sum(conn);
         let budgetamount = get_budget_amount(conn, category);
         let status = status(conn);
         let find_alert = alerts_exist(conn);
-
-        // calculating the total, remaining and spent amounts
-        // let string_spent_amount = self.amount.clone().unwrap_or_else(|| "0".to_string());
-
-        // update_total_spent(conn, string_spent_amount, category);
 
         match find_total_category {
             Ok(true) => match find_total_amount {
@@ -53,16 +49,25 @@ impl SpendData {
                                                     if added_spend_amount <= amount_of_budget {
                                                         match find_alert {
                                                             Ok(true) => {
-                                                                match status {
-                                                                    Ok(status) => {
-                                                                        if status == "active" {
-                                                                            conn.execute(
-                                                                                "insert into spend(category, amount) values(?1, ?2)",
-                                                                                (&self.category, spending_amount),
-                                                                            )?;
-                                                                            println!("Money is spent successfully on the {} category", category);
-                                                                        } else {
-                                                                            panic!("Err: The status is not active yet");
+                                                                match total_spend_sum {
+                                                                    Ok(total_sum_spend) => {
+                                                                        let total_spend_amount = total_sum_spend + spending_amount;
+                                                                        match status {
+                                                                            Ok(status) => {
+                                                                                if status == "active" {
+                                                                                    conn.execute(
+                                                                                        "insert into spend(category, amount) values(?1, ?2)",
+                                                                                        (&self.category, spending_amount),
+                                                                                    )?;
+                                                                                    calculate_total(conn, spending_amount, total_spend_amount)
+                                                                                        .expect("failed to calculate the total amount");
+                                                                                    
+                                                                                    println!("Money is spent successfully on the {} category", category);
+                                                                                } else {
+                                                                                    panic!("Err: The status is not active yet");
+                                                                                }
+                                                                            }
+                                                                            Err(error) => panic!("Err: {}", error),
                                                                         }
                                                                     }
                                                                     Err(error) => panic!("Err: {}", error),

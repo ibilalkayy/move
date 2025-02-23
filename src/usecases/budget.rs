@@ -45,6 +45,15 @@ pub fn spend_sum(conn: &Connection, category: &str) -> Result<u64, rusqlite::Err
     Ok(spend_sum)
 }
 
+pub fn total_spend_sum(conn: &Connection) -> Result<u64, rusqlite::Error> {
+    let mut stmt = conn.prepare("SELECT SUM(amount) FROM spend")?;
+    let spend_sum: u64 = stmt
+        .query_row([], |row| row.get::<_, Option<u64>>(0))?
+        .unwrap_or(0);
+
+    Ok(spend_sum)
+}
+
 pub fn get_budget_amount(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
     let mut stmt = conn.prepare("SELECT CAST(amount AS INTEGER) FROM budget where category =?")?;
     let budget_amount: u64 = stmt
