@@ -37,18 +37,6 @@ create table if not exists budget (
     remaining_amount int not null
 );
 
-create table if not exists alert (
-    id serial primary key,
-    category text not null,
-    frequency text not null,
-    method text not null,
-    dayz int not null,
-    hourz int not null,
-    minutez int not null,
-    secondz int not null,
-    weekdays text not null
-);
-
 create table if not exists spend (
     id serial primary key,
     category text not null,

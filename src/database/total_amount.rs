@@ -22,7 +22,7 @@ impl TotalAmount {
         let find_amount = total_amount_exists(conn);
 
         match find_amount {
-            Ok(true) => panic!("Err: Total amount is already provided"),
+            Ok(true) => panic!("Err: total amount is already provided"),
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
@@ -122,7 +122,7 @@ impl UpdateTotalAmount {
                     &[&self.amount, &self.amount],
                 )?;
             }
-            Ok(false) => panic!("Err: Amount is not present in the total amount list"),
+            Ok(false) => panic!("Err: amount is not present in the total amount list"),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -139,7 +139,7 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
                 return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
             }
         }
-        Ok(false) => panic!("Err: Amount is not present in the total amount list"),
+        Ok(false) => panic!("Err: amount is not present in the total amount list"),
         Err(error) => panic!("Err: {}", error),
     }
 
