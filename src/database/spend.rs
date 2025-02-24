@@ -1,7 +1,7 @@
 use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::usecases::{
-    budget::{budget_amount, budget_category_exists, get_budget_amount, category_spend_sum, total_spend_sum},
+    budget::{budget_amount, budget_category_exists, budget_data_exists, get_budget_amount, category_spend_sum, total_spend_sum},
     total_amount::{total_amount_exists, calculate_total},
     total_categories::total_category_exists,
     status::status,
@@ -30,7 +30,7 @@ impl SpendData {
     
         let total_amount_present = total_amount_exists(conn).unwrap_or_else(|e| panic!("Err: {}", e));
         if !total_amount_present {
-            panic!("Err: Amount is not present in the total amount list");
+            panic!("Err: amount is not present in the total amount list");
         }
     
         let budget_category_present = budget_category_exists(conn, category).unwrap_or_else(|e| panic!("Err: {}", e));
@@ -42,7 +42,7 @@ impl SpendData {
         let spending_amount = self.amount.unwrap_or_else(|| panic!("Err: Spending amount is not given"));
         
         if spending_amount > budget_amount {
-            panic!("Err: Spending amount exceeded the budget amount");
+            panic!("Err: spending amount exceeded the budget amount");
         }
     
         let spend_sum = category_spend_sum(conn, category).unwrap_or_else(|e| panic!("Err: {}", e));
@@ -50,7 +50,7 @@ impl SpendData {
         
         let budget_amount = get_budget_amount(conn, category).unwrap_or_else(|e| panic!("Err: {}", e));
         if added_spend_amount > budget_amount {
-            panic!("Err: Spending amount exceeded the budget amount");
+            panic!("Err: spending amount exceeded the budget amount");
         }
     
         let total_spend_sum = total_spend_sum(conn).unwrap_or_else(|e| panic!("Err: {}", e));
@@ -58,7 +58,7 @@ impl SpendData {
     
         let status = status(conn).unwrap_or_else(|e| panic!("Err: {}", e));
         if status != "active" {
-            panic!("Err: The status is not active yet");
+            panic!("Err: the status is not active yet");
         }
     
         conn.execute(
@@ -84,7 +84,7 @@ impl SpendCategory {
         }
 
         if !total_amount_present {
-            panic!("Err: Amount is not present in the total amount list");
+            panic!("Err: amount is not present in the total amount list");
         }
 
         if !budget_category_present {
@@ -111,7 +111,7 @@ impl SpendCategory {
         Ok(())
     }
 
-    pub fn get_spending(&self, conn: &Connection) -> Result<()> {
+    pub fn get_category_spending(&self, conn: &Connection) -> Result<()> {
         let total_category_present = total_category_exists(conn, &self.category)?;
         let total_amount_present = total_amount_exists(conn)?;
         let budget_category_present = budget_category_exists(conn, &self.category)?;
@@ -121,7 +121,7 @@ impl SpendCategory {
         }
 
         if !total_amount_present {
-            panic!("Err: Amount is not present in the total amount list");
+            panic!("Err: amount is not present in the total amount list");
         }
 
         if !budget_category_present {
@@ -144,13 +144,13 @@ impl SpendCategory {
         let file_path = create_file("spend.csv");
         let mut wtr = Writer::from_writer(file_path);
         wtr.write_record(&["Category", "Amount"])
-            .expect("failed to write the data in a CSV file");
+            .expect("Err: failed to write the data in a CSV file");
 
         for spending in result {
             wtr.write_record(&[spending.category, spending.amount.to_string()])
-                .expect("failed to write the data in a CSV file");
+                .expect("Err: failed to write the data in a CSV file");
         }
-        wtr.flush().expect("failed to flush the content");
+        wtr.flush().expect("Err: failed to flush the content");
     
         Ok(())
     }
@@ -165,7 +165,7 @@ impl SpendCategory {
         }
 
         if !total_amount_present {
-            panic!("Err: Amount is not present in the total amount list");
+            panic!("Err: amount is not present in the total amount list");
         }
 
         if !budget_category_present {
@@ -183,4 +183,44 @@ impl SpendCategory {
 
         Ok(())
     }
+}
+
+pub fn get_all_spending(conn: &Connection) -> Result<()> {
+    let total_amount_present = total_amount_exists(conn)?;
+
+    if !total_amount_present {
+        panic!("Err: amount is not present in the total amount list");
+    }
+
+    let budget_data_present = budget_data_exists(conn)?;
+
+    if !budget_data_present {
+        panic!("Err: budget data is not present");
+    }
+
+    let mut stmt = conn.prepare("select category, amount from spend")?;
+    let rows = stmt.query_map([], |row| {
+        Ok(SpendingRow {
+            category: row.get(0)?,
+            amount: row.get(1)?,
+        })
+    })?;
+
+    let mut result = Vec::new();
+    for row in rows {
+        result.push(row?)
+    }
+
+    let file_path = create_file("spend.csv");
+    let mut wtr = Writer::from_writer(file_path);
+    wtr.write_record(&["Category", "Amount"])
+        .expect("Err: failed to write the data in a CSV file");
+
+    for spending in result {
+        wtr.write_record(&[spending.category, spending.amount.to_string()])
+            .expect("Err: failed to write the data in a CSV file");
+    }
+    wtr.flush().expect("Err: failed to flush the content");
+
+    Ok(())
 }

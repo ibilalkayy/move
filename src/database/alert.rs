@@ -197,7 +197,7 @@ impl AlertData {
                     "Second",
                     "Weekday",
                 ])
-                .expect("failed to write the data in a CSV file");
+                .expect("Err: failed to write the data in a CSV file");
 
                 for alert in results {
                     wtr.write_record(&[
@@ -210,10 +210,10 @@ impl AlertData {
                         alert.second,
                         alert.weekday,
                     ])
-                    .expect("failed to write the data in CSV file");
+                    .expect("Err: failed to write the data in CSV file");
                 }
 
-                wtr.flush().expect("failed to flush the content");
+                wtr.flush().expect("Err: failed to flush the content");
             }
             Ok(false) => panic!("Err: Alert data is not present in the alert list"),
             Err(error) => panic!("Err: {}", error),

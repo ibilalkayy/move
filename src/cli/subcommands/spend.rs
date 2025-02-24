@@ -19,5 +19,20 @@ pub enum SpendSubcommand {
     Delete(SpendCategory),
 
     /// Get the spending data
-    Get(SpendCategory),
+    Get(GetData),
+}
+
+#[derive(Debug, Parser)]
+pub struct GetData {
+    #[clap(subcommand)]
+    pub get_subcommand: GetSubcommand,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum GetSubcommand {
+    /// Get the spending data by category
+    Category(SpendCategory),
+
+    /// Get all the spending data
+    All,
 }

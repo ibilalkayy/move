@@ -4,7 +4,7 @@ use crate::database::{budget::show_budget, db::connection};
 pub fn handle_budget(info: BudgetInfo) {
     match info.budget_subcommand {
         BudgetSubcommand::Add(budget) => {
-            let conn = connection().expect("failed to connect to the database");
+            let conn = connection().expect("Err: failed to connect to the database");
             let result = budget.insert_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully saved"),
@@ -13,7 +13,7 @@ pub fn handle_budget(info: BudgetInfo) {
         }
 
         BudgetSubcommand::View(budget) => {
-            let conn = connection().expect("failed to connect to the database");
+            let conn = connection().expect("Err: failed to connect to the database");
             let result = budget.view_budget(&conn);
             match result {
                 Ok(_) => (),
@@ -22,7 +22,7 @@ pub fn handle_budget(info: BudgetInfo) {
         }
 
         BudgetSubcommand::Show => {
-            let conn = connection().expect("failed to connect to the database");
+            let conn = connection().expect("Err: failed to connect to the database");
             let result = show_budget(&conn);
             match result {
                 Ok(_) => (),
@@ -31,7 +31,7 @@ pub fn handle_budget(info: BudgetInfo) {
         }
 
         BudgetSubcommand::Get(budget) => {
-            let conn = connection().expect("failed to connect to the database");
+            let conn = connection().expect("Err: failed to connect to the database");
             let result = budget.get_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully saved in a CSV file"),
@@ -40,7 +40,7 @@ pub fn handle_budget(info: BudgetInfo) {
         }
 
         BudgetSubcommand::Update(budget) => {
-            let conn = connection().expect("failed to connect to the database");
+            let conn = connection().expect("Err: failed to connect to the database");
             let result = budget.update_budget(&conn);
             match result {
                 Ok(_) => println!("Budget data is successfully updated"),
@@ -52,7 +52,7 @@ pub fn handle_budget(info: BudgetInfo) {
         }
 
         BudgetSubcommand::Delete(budget) => {
-            let conn = connection().expect("failed to connect to the database");
+            let conn = connection().expect("Err: failed to connect to the database");
             let result = budget.delete_budget(&conn);
             match result {
                 Ok(_) => println!("The row(s) in a budget is successfully deleted"),

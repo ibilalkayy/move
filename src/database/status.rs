@@ -10,7 +10,7 @@ struct StatusRow {
 pub fn insert_status(conn: &Connection) {
     conn.execute(
         "insert into statuss(statuss) values(?1)",
-        &[&"inactive"]).expect("failed to insert");
+        &[&"inactive"]).expect("Err: failed to insert");
 }
 
 pub fn view_status(conn: &Connection) -> Result<()> {

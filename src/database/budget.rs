@@ -95,13 +95,13 @@ impl BudgetData {
 
                 let mut wtr = Writer::from_writer(file_path);
                 wtr.write_record(&["Category", "Amount"])
-                    .expect("failed to write the data in a CSV file");
+                    .expect("Err: failed to write the data in a CSV file");
 
                 for budget in results {
                     wtr.write_record(&[budget.category, budget.amount.to_string()])
-                        .expect("failed to write the data in a CSV file");
+                        .expect("Err: failed to write the data in a CSV file");
                 }
-                wtr.flush().expect("failed to flush the content");
+                wtr.flush().expect("Err: failed to flush the content");
             }
             Ok(false) => panic!(
                 "Err: {} category is not present in the total categories list",

@@ -13,7 +13,7 @@ pub struct SpendData {
 
 #[derive(Debug, Parser)]
 pub struct SpendCategory {
-    /// Write the category name to spend the money on
+    /// Write the category to perform the view, get, or delete action
     #[clap(short, long)]
     pub category: String,
 }

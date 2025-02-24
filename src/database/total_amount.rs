@@ -60,7 +60,7 @@ impl TotalAmount {
                 let mut wtr = Writer::from_writer(file_path);
 
                 wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount"])
-                    .expect("failed to write the data in a CSV file");
+                    .expect("Err: failed to write the data in a CSV file");
 
                 for amount in result {
                     wtr.write_record(&[
@@ -68,10 +68,10 @@ impl TotalAmount {
                         amount.spent_amount,
                         amount.remaining_amount,
                     ])
-                    .expect("failed to write the data in a CSV file");
+                    .expect("Err: failed to write the data in a CSV file");
                 }
 
-                wtr.flush().expect("failed to flush the content");
+                wtr.flush().expect("Err: failed to flush the content");
             }
             Ok(false) => panic!("Err: Amount is not present in the total amount list"),
             Err(error) => panic!("Err: {}", error),

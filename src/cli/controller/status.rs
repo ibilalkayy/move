@@ -5,7 +5,7 @@ use crate::database::{
 };
 
 pub fn handle_status(info: StatusInfo) {
-    let conn = connection().expect("failed to connect to the database");
+    let conn = connection().expect("Err: failed to connect to the database");
     match info.status_info {
         StatusSubcommand::Active => {
             let result = update_status(&conn, "active");
