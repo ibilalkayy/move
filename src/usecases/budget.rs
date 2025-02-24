@@ -36,35 +36,18 @@ pub fn budget_data_exists(conn: &Connection) -> Result<bool> {
     Ok(exists)
 }
 
-pub fn budget_amount(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
-    let mut stmt = conn.prepare("select amount from budget where category = ?")?;
+pub fn budget_amount(conn: &Connection, category: &str) -> Result<(u64, u64), rusqlite::Error> {
+    let mut stmt = conn.prepare("select amount, remaining_amount from budget where category = ?")?;
     let amount = stmt.query_row([category], |row| row.get::<_, u64>(0))?;
-    Ok(amount)
+    let remaining_amount = stmt.query_row([category], |row| row.get::<_, u64>(1))?;
+    Ok((amount, remaining_amount))
 }
 
-pub fn category_spend_sum(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
-    let mut stmt = conn.prepare("select sum(amount) from spend where category =?")?;
-    let spend_sum: u64 = stmt
-        .query_row([category], |row| row.get::<_, Option<u64>>(0))?
-        .unwrap_or(0);
-
-    Ok(spend_sum)
-}
-
-pub fn total_spend_sum(conn: &Connection) -> Result<u64, rusqlite::Error> {
-    let mut stmt = conn.prepare("select sum(amount) from spend")?;
-    let spend_sum: u64 = stmt
-        .query_row([], |row| row.get::<_, Option<u64>>(0))?
-        .unwrap_or(0);
-
-    Ok(spend_sum)
-}
-
-pub fn get_budget_amount(conn: &Connection, category: &str) -> Result<u64, rusqlite::Error> {
-    let mut stmt = conn.prepare("select amount from budget where category = ?")?;
-    let budget_amount: u64 = stmt
-        .query_row([category], |row| row.get::<_, Option<u64>>(0))?
-        .unwrap_or(0);
-
-    Ok(budget_amount)
+pub fn calculate_budget(conn: &Connection, category: &str, spending_amount: u64, spending_sum_category: u64) {
+    let (_, remaining) = budget_amount(conn, category).unwrap_or_else(|e| panic!("Err: {}", e));
+    let remaining_amount = remaining - spending_amount;
+    conn.execute(
+        "update budget set spent_amount = ?, remaining_amount = ? where category = ?",
+        (&spending_sum_category, &remaining_amount, &category),
+    ).expect("Err: failed to calculate the budget amount");
 }

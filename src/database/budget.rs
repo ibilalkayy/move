@@ -49,7 +49,7 @@ impl BudgetData {
                                 )?;
                             } else {
                                 panic!(
-                                    "Err: Budget amount exceeded the total amount: {} > {}",
+                                    "Err: budget amount exceeded the total amount: {} > {}",
                                     budget_amount, total_amount
                                 );
                             }
@@ -58,7 +58,7 @@ impl BudgetData {
                     },
                     Err(error) => panic!("Err: {}", error),
                 },
-                Ok(false) => panic!("Err: Amount is not added into the total amount yet"),
+                Ok(false) => panic!("Err: amount is not added into the total amount yet"),
                 Err(error) => panic!("Err: {}", error),
             },
             Ok(false) => panic!(
@@ -276,7 +276,7 @@ impl UpdateBudget {
                                         }
                                     } else {
                                         panic!(
-                                            "Err: Budget amount exceeded the total amount: {} > {}",
+                                            "Err: budget amount exceeded the total amount: {} > {}",
                                             budget_amount, total_amount,
                                         );
                                     }
@@ -301,7 +301,7 @@ impl UpdateBudget {
                     ),
                     Err(error) => panic!("Err: {}", error),
                 },
-                Ok(false) => panic!("Err: Amount is not present in the total amount"),
+                Ok(false) => panic!("Err: amount is not present in the total amount"),
                 Err(error) => panic!("Err: {}", error),
             },
             Ok(false) => panic!(

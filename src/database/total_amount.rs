@@ -8,13 +8,13 @@ use tabled::{Table, Tabled};
 #[derive(Tabled)]
 struct TotalAmountRow {
     #[tabled(rename = "Total Amount")]
-    total_amount: String,
+    total_amount: u64,
 
     #[tabled(rename = "Spent Amount")]
-    spent_amount: String,
+    spent_amount: u64,
 
     #[tabled(rename = "Remaining Amount")]
-    remaining_amount: String,
+    remaining_amount: u64,
 }
 
 impl TotalAmount {
@@ -64,9 +64,9 @@ impl TotalAmount {
 
                 for amount in result {
                     wtr.write_record(&[
-                        amount.total_amount,
-                        amount.spent_amount,
-                        amount.remaining_amount,
+                        amount.total_amount.to_string(),
+                        amount.spent_amount.to_string(),
+                        amount.remaining_amount.to_string(),
                     ])
                     .expect("Err: failed to write the data in a CSV file");
                 }
