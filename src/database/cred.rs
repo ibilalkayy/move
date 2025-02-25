@@ -1,8 +1,5 @@
-use crate::cli::flags::cred::{BlockchainCred, GmailCred};
-use crate::common::common::create_file;
-use csv::Writer;
+use crate::cli::flags::cred::BlockchainCred;
 use rusqlite::{params, Connection, Result, ToSql};
-use std::process::exit;
 use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
@@ -14,18 +11,6 @@ struct BlockchainRow {
     alchemy_url: String,
 }
 
-#[derive(Tabled)]
-struct GmailRow {
-    #[tabled(rename = "Username")]
-    username: String,
-
-    #[tabled(rename = "Gmail Address")]
-    gmail_address: String,
-
-    #[tabled(rename = "App Password")]
-    app_password: String,
-}
-
 impl BlockchainCred {
     pub fn insert_blockchain(&self, conn: &Connection) -> Result<()> {
         let row_exists: bool = conn.query_row(
@@ -35,14 +20,18 @@ impl BlockchainCred {
         )?;
 
         if row_exists {
-            println!("Inserting the blockchain credentials multiple times is not allowed");
-            exit(0);
+            panic!("Err: inserting the blockchain credentials multiple times is not allowed");
         }
 
-        conn.execute(
-            "insert into blockchain(private_key, alchemy_url) values(?1, ?2)",
-            &[&self.private_key, &self.alchemy_url],
-        )?;
+        match self.private_key {
+            Some(_) => {
+                conn.execute(
+                    "insert into blockchain(private_key, alchemy_url) values(?1, ?2)",
+                    &[&self.private_key, &self.alchemy_url],
+                ).expect("Err: failed to execute");
+            },
+            None => panic!("Err: enter the cred. For more help, write: 'move cred add -h'"),
+        }
         Ok(())
     }
 
@@ -62,134 +51,15 @@ impl BlockchainCred {
         }
 
         if field.is_empty() {
-            return Err(rusqlite::Error::InvalidQuery);
+            panic!("Err: enter the cred first. For more help, write: 'move cred add -h'");
         }
 
         query.push_str(&field.join(", "));
 
-        let affected_row = conn.execute(&query, rusqlite::params_from_iter(value))?;
-        if affected_row == 0 {
+        let affected_row = conn.execute(&query, rusqlite::params_from_iter(value));
+        if affected_row == Ok(0) {
             return Err(rusqlite::Error::QueryReturnedNoRows);
         }
-
-        Ok(())
-    }
-
-    pub fn get_blockchain(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare("select private_key, alchemy_url from blockchain")?;
-
-        let rows = stmt.query_map(params![], |row| {
-            Ok(BlockchainRow {
-                private_key: row.get(0)?,
-                alchemy_url: row.get(1)?,
-            })
-        })?;
-
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?)
-        }
-
-        let file_path = create_file("blockchain.csv");
-
-        let mut wtr = Writer::from_writer(file_path);
-
-        wtr.write_record(&["Private Key", "Alchemy URL"])
-            .expect("Err: failed to write the data in a CSV file");
-
-        for blockchain in result {
-            wtr.write_record(&[blockchain.private_key, blockchain.alchemy_url])
-                .expect("Err: failed to write the data in a CSV file");
-        }
-
-        wtr.flush().expect("Err: failed to flush the content");
-
-        Ok(())
-    }
-}
-
-impl GmailCred {
-    pub fn insert_gmail(&self, conn: &Connection) -> Result<()> {
-        let row_exists: bool =
-            conn.query_row("select exists (select 1 from gmail)", params![], |row| {
-                row.get(0)
-            })?;
-
-        if row_exists {
-            println!("Inserting the gmail credentials multiple times is not allowed");
-            exit(0);
-        }
-
-        conn.execute(
-            "insert into gmail(username, gmail_address, app_password) values(?1, ?2, ?3)",
-            &[&self.username, &self.gmail_address, &self.app_password],
-        )?;
-        Ok(())
-    }
-
-    pub fn update_gmail(&self, conn: &Connection) -> Result<()> {
-        let mut query = String::from("update gmail set ");
-        let mut field = Vec::new();
-        let mut value: Vec<&dyn ToSql> = Vec::new();
-
-        if let Some(username) = &self.username {
-            field.push("username = ?");
-            value.push(username);
-        }
-
-        if let Some(gmail_address) = &self.gmail_address {
-            field.push("gmail_address = ?");
-            value.push(gmail_address);
-        }
-
-        if let Some(app_password) = &self.app_password {
-            field.push("app_password = ?");
-            value.push(app_password);
-        }
-
-        if field.is_empty() {
-            return Err(rusqlite::Error::InvalidQuery);
-        }
-
-        query.push_str(&field.join(", "));
-
-        let affected_row = conn.execute(&query, rusqlite::params_from_iter(value))?;
-        if affected_row == 0 {
-            return Err(rusqlite::Error::QueryReturnedNoRows);
-        }
-
-        Ok(())
-    }
-
-    pub fn get_gmail(&self, conn: &Connection) -> Result<()> {
-        let mut stmt = conn.prepare("select username, gmail_address, app_password from gmail")?;
-
-        let rows = stmt.query_map(params![], |row| {
-            Ok(GmailRow {
-                username: row.get(0)?,
-                gmail_address: row.get(1)?,
-                app_password: row.get(2)?,
-            })
-        })?;
-
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?)
-        }
-
-        let file_path = create_file("gmail.csv");
-
-        let mut wtr = Writer::from_writer(file_path);
-
-        wtr.write_record(&["Username", "Gmail Address", "App Password"])
-            .expect("Err: failed to write the data in a CSV file");
-
-        for gmail in result {
-            wtr.write_record(&[gmail.username, gmail.gmail_address, gmail.app_password])
-                .expect("Err: failed to write the data in a CSV file");
-        }
-
-        wtr.flush().expect("Err: failed to flush the content");
 
         Ok(())
     }
@@ -216,43 +86,11 @@ pub fn view_blockchain(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-pub fn view_gmail(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare("select username, gmail_address, app_password from gmail")?;
-
-    let rows = stmt.query_map(params![], |row| {
-        Ok(GmailRow {
-            username: row.get(0)?,
-            gmail_address: row.get(1)?,
-            app_password: row.get(2)?,
-        })
-    })?;
-
-    let mut results = Vec::new();
-    for row in rows {
-        results.push(row?);
-    }
-
-    let table = Table::new(results);
-    println!("{}", table);
-
-    Ok(())
-}
-
 pub fn delete_blockchain(conn: &Connection) -> Result<()> {
     let affected_rows = conn.execute("delete from blockchain", [])?;
 
     if affected_rows == 0 {
-        return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
-    }
-
-    Ok(())
-}
-
-pub fn delete_gmail(conn: &Connection) -> Result<()> {
-    let affected_rows = conn.execute("delete from gmail", [])?;
-
-    if affected_rows == 0 {
-        return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+        panic!("Err: enter the cred first. For more help, write: 'move cred add -h'");
     }
 
     Ok(())
