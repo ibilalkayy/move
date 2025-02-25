@@ -12,7 +12,7 @@ pub enum CredSubcommand {
     /// Add the blockchain credentials
     Add(BlockchainCred),
 
-    /// View the blockchaincredentials
+    /// View the blockchain credentials
     View,
 
     /// Update the blockchain credentials

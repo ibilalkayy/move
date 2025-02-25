@@ -20,7 +20,8 @@ pub fn calculate_total(conn: &Connection, spent_amount: u64, total_spent_amount:
             conn.execute(
                 "update totalamount set spent_amount = ?, remaining_amount = ?",
                 &[&total_spent_amount, &remaining_amount],
-            ).expect("Err: failed to calculate the total amount");
+            )
+            .expect("Err: failed to calculate the total amount");
         }
         Err(error) => panic!("Err: {}", error),
     }

@@ -73,7 +73,9 @@ impl TotalAmount {
 
                 wtr.flush().expect("Err: failed to flush the content");
             }
-            Ok(false) => panic!("Err: Amount is not present in the total amount list"),
+            Ok(false) => panic!(
+                "Err: amount is not added to the total amount list. See 'move total-amount -h'"
+            ),
             Err(error) => panic!("Err: {}", error),
         }
 
@@ -85,9 +87,8 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
     let find_total_amount = total_amount_exists(conn);
     match find_total_amount {
         Ok(true) => {
-            let mut stmt = conn.prepare(
-                "select total_amount, spent_amount, remaining_amount from totalamount",
-            )?;
+            let mut stmt = conn
+                .prepare("select total_amount, spent_amount, remaining_amount from totalamount")?;
 
             let rows = stmt.query_map(params![], |row| {
                 Ok(TotalAmountRow {
@@ -105,7 +106,9 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("Err: Amount is not present in the total amount list"),
+        Ok(false) => {
+            panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'")
+        }
         Err(error) => panic!("Err: {}", error),
     }
 
@@ -122,7 +125,9 @@ impl UpdateTotalAmount {
                     &[&self.amount, &self.amount],
                 )?;
             }
-            Ok(false) => panic!("Err: amount is not present in the total amount list"),
+            Ok(false) => panic!(
+                "Err: amount is not added to the total amount list. See 'move total-amount -h'"
+            ),
             Err(error) => panic!("Err: {}", error),
         }
         Ok(())
@@ -139,7 +144,9 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
                 return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
             }
         }
-        Ok(false) => panic!("Err: amount is not present in the total amount list"),
+        Ok(false) => {
+            panic!("Err: amount is not added the total amount list. See 'move total-amount -h'")
+        }
         Err(error) => panic!("Err: {}", error),
     }
 

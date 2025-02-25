@@ -1,6 +1,6 @@
-Move is a budget planning application designed to empower users with the ability to track, analyze, and optimize their spending habits and financial goals.
+# **Move** 🚀
 
-With a user-friendly CLI. It manages the finances and achieve greater financial stability by leveraging different payment APIs for a comprehensive financial management solution.
+Move is a budget planning application designed to empower users with the ability to track, analyze, and optimize their spending habits and financial goals.
 
 ## **Commands**
 
@@ -23,8 +23,14 @@ move --help
 It will give you a list of all subcommands that you can execute like:
 
 ```
+// Setup the total amount
+move total-amount add amount --amount 500
+
+// Add the category in the total amount list
+move total-amount add category --category groceries --label "the list of groceries"
+
 // Create a budget
-move budget create --category groceries/utilities --amount 300
+move budget create --category groceries/utilities --amount 200
 
 // View the budget info
 move budget view --category groceries/utilities
@@ -34,13 +40,15 @@ move budget view --category groceries/utilities
 
 ## **Cloning**
 
-Clone the repository:
+1. Fork the repository
+
+2. Clone the repository:
 
 ```
-git clone https://github.com/ibilalkayy/move.git
+git clone https://github.com/your-username/move.git
 ```
 
-Navigate to the project directory:
+3. Navigate to the project directory:
 
 ```
 cd move
@@ -48,7 +56,7 @@ cd move
 
 ## **Contributing**
 
-We welcome contributions! If you have ideas for new features, find a bug, or want to improve documentation, feel free to open an issue or submit a pull request. Please follow our Contribution Guidelines for a smooth collaboration.
+We welcome contributions! If you have ideas for new features, find a bug, or want to improve documentation, feel free to open an issue or submit a pull request. Please follow our [Contribution Guidelines](contribution_guide.md) for a smooth collaboration.
 
 ## **License**
 

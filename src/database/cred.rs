@@ -28,9 +28,10 @@ impl BlockchainCred {
                 conn.execute(
                     "insert into blockchain(private_key, alchemy_url) values(?1, ?2)",
                     &[&self.private_key, &self.alchemy_url],
-                ).expect("Err: failed to execute");
-            },
-            None => panic!("Err: enter the cred. For more help, write: 'move cred add -h'"),
+                )
+                .expect("Err: failed to execute");
+            }
+            None => panic!("Err: cred is not added yet. See 'move cred -h'"),
         }
         Ok(())
     }
@@ -51,7 +52,7 @@ impl BlockchainCred {
         }
 
         if field.is_empty() {
-            panic!("Err: enter the cred first. For more help, write: 'move cred add -h'");
+            panic!("Err: cred is not added yet. See 'move cred -h'");
         }
 
         query.push_str(&field.join(", "));
@@ -90,7 +91,7 @@ pub fn delete_blockchain(conn: &Connection) -> Result<()> {
     let affected_rows = conn.execute("delete from blockchain", [])?;
 
     if affected_rows == 0 {
-        panic!("Err: enter the cred first. For more help, write: 'move cred add -h'");
+        panic!("Err: cred is not added yet. See 'move cred -h'");
     }
 
     Ok(())

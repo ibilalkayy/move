@@ -1,13 +1,13 @@
 use crate::cli::subcommands::total_amount::{
-    AddTotalSubcommand, GetTotalSubcommand, RemoveTotalSubcommand,
-    TotalAmountInfo, TotalAmountSubcommand, UpdateTotalSubcommand, ViewSubcommand,
+    AddTotalSubcommand, GetTotalSubcommand, RemoveTotalSubcommand, TotalAmountInfo,
+    TotalAmountSubcommand, UpdateTotalSubcommand, ViewSubcommand,
 };
 
 use crate::database::{
     db::connection,
+    status::insert_status,
     total_amount::{delete_total_amount, view_total_amount},
     total_categories::view_total_categories,
-    status::insert_status,
 };
 
 pub fn handle_total_amount(info: TotalAmountInfo) {
@@ -60,7 +60,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let conn = connection().expect("Err: failed to connect to the database");
                 let result = total_amount.update_total_amount(&conn);
                 match result {
-                    Ok(_) => println!("The total amount data is successfully updated"),
+                    Ok(_) => println!("Total amount data is successfully updated"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
@@ -69,9 +69,9 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let conn = connection().expect("Err: failed to connect to the database");
                 let result = total_category.update_total_category(&conn);
                 match result {
-                    Ok(_) => println!("The total amount category data is successfully updated"),
+                    Ok(_) => println!("Total amount category data is successfully updated"),
                     Err(rusqlite::Error::QueryReturnedNoRows) => {
-                        panic!("Err: No matching record found")
+                        panic!("Err: no matching record is found")
                     }
                     Err(error) => panic!("Err: {:?}", error),
                 }
@@ -83,7 +83,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let conn = connection().expect("Err: failed to connect to the database");
                 let result = delete_total_amount(&conn);
                 match result {
-                    Ok(_) => println!("The total amount data is successfully deleted"),
+                    Ok(_) => println!("Total amount data is successfully deleted"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
@@ -92,7 +92,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let conn = connection().expect("Err: failed to connect to the database");
                 let result = category.delete_total_category(&conn);
                 match result {
-                    Ok(_) => println!("The total amount category is successfully deleted"),
+                    Ok(_) => println!("Total amount category is successfully deleted"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
@@ -103,7 +103,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let conn = connection().expect("Err: failed to connect to the database");
                 let result = total_amount.get_total_amount(&conn);
                 match result {
-                    Ok(_) => println!("The total amount data is successfully saved in a CSV file"),
+                    Ok(_) => println!("Total amount data is successfully saved in a CSV file"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }
@@ -111,7 +111,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 let conn = connection().expect("Err: failed to connect to the database");
                 let result = total_amount.get_total_categories(&conn);
                 match result {
-                    Ok(_) => println!("The category data is successfully saved in a CSV file"),
+                    Ok(_) => println!("Category data is successfully saved in a CSV file"),
                     Err(error) => panic!("Err: {}", error),
                 }
             }

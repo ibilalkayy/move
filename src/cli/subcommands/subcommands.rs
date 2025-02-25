@@ -1,13 +1,13 @@
 use clap::Subcommand;
 
 use crate::cli::subcommands::{
-    budget::BudgetInfo, cred::CredInfo, spend::SpendInfo,
-    total_amount::TotalAmountInfo, status::StatusInfo,
+    budget::BudgetInfo, cred::CredInfo, spend::SpendInfo, status::StatusInfo,
+    total_amount::TotalAmountInfo,
 };
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Inserts the blockchain and gmail credentials and use them
+    /// Inserts the blockchain credentials and use them
     Cred(CredInfo),
 
     /// Allocates the total amount to manage the budget and spending under the limit
@@ -16,9 +16,9 @@ pub enum Command {
     /// Allows users to handle their budget allocations for different categories
     Budget(BudgetInfo),
 
-    /// Provides spending services on various categories
+    /// Allows users to spend money on different ategories
     Spend(SpendInfo),
 
-    /// Allows users to handle the status of the spending
+    /// Allows users to change the status of the spending
     Status(StatusInfo),
 }

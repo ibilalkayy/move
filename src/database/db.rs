@@ -13,7 +13,7 @@ pub fn connection() -> rusqlite::Result<Connection> {
 }
 
 pub fn create_table() -> rusqlite::Result<()> {
-    let conn = connection().expect("Err: failed to establish the content");
+    let conn = connection().expect("Err: failed to establish the connection");
     let sql_file_path = Path::new("sql/create_table.sql");
     let sql_query = fs::read_to_string(sql_file_path).expect("Err: failed to read the SQL file");
     conn.execute_batch(sql_query.as_str())?;

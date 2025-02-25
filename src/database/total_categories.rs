@@ -68,7 +68,7 @@ impl TotalCategory {
                 wtr.flush().expect("Err: failed to flush the content");
             }
             Ok(false) => panic!(
-                "Err: {} category is not present in the total categories list",
+                "Err: {} category is not added to the total categories list",
                 &self.category
             ),
             Err(error) => panic!("Err: {}", error),
@@ -81,7 +81,7 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
     let find_category = total_categories_exist(conn);
     match find_category {
         Ok(true) => {
-            let mut stmt = conn.prepare("SELECT category, label FROM totalcategories")?;
+            let mut stmt = conn.prepare("select category, label from totalcategories")?;
 
             let rows = stmt.query_map(params![], |row| {
                 Ok(CategoryRow {
@@ -98,7 +98,7 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("No category is present in the total categories list to be viewed"),
+        Ok(false) => panic!("Err: no category is added to the total categories list"),
         Err(error) => panic!("Err: {}", error),
     }
     Ok(())
@@ -142,7 +142,7 @@ impl UpdateTotalCategory {
                     }
                 }
                 Ok(false) => panic!(
-                    "Err: {} category is not present in the total categories list",
+                    "Err: {} category is not added to the total categories list",
                     &self.old_category
                 ),
                 Err(error) => panic!("Err: {}", error),
@@ -173,7 +173,7 @@ impl RemoveTotalCategory {
                 }
             }
             Ok(false) => panic!(
-                "Err: {} category is not present in the total categories list",
+                "Err: {} category is not added to the total categories list",
                 &self.category
             ),
             Err(error) => panic!("Err: {}", error),

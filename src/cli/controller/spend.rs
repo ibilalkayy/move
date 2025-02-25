@@ -1,6 +1,6 @@
-use crate::cli::subcommands::spend::{SpendInfo, SpendSubcommand, GetSubcommand};
-use crate::database::spend::get_all_spending;
+use crate::cli::subcommands::spend::{GetSubcommand, SpendInfo, SpendSubcommand};
 use crate::database::db::connection;
+use crate::database::spend::get_all_spending;
 
 pub fn handle_spending(info: SpendInfo) {
     match info.spend_subcommand {
@@ -26,7 +26,7 @@ pub fn handle_spending(info: SpendInfo) {
             let conn = connection().expect("Err: failed to connect to the database");
             let result = spend.delete_spending(&conn);
             match result {
-                Ok(_) => println!("The row(s) in spending is successfully deleted"),
+                Ok(_) => println!("The spending data is successfully deleted"),
                 Err(error) => panic!("Err: {}", error),
             }
         }
@@ -48,6 +48,6 @@ pub fn handle_spending(info: SpendInfo) {
                     Err(error) => panic!("Err: {}", error),
                 }
             }
-        }
+        },
     }
 }
