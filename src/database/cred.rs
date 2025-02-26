@@ -1,6 +1,8 @@
 use crate::cli::flags::cred::BlockchainCred;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
+use crate::common::common::encrypt_data;
+
 
 #[derive(Tabled)]
 struct BlockchainRow {
@@ -20,14 +22,15 @@ impl BlockchainCred {
         )?;
 
         if row_exists {
-            panic!("Err: inserting the blockchain credentials multiple times is not allowed");
+            panic!("Err: multiple insertions of blockchain credentials is not allowed");
         }
 
+        let private_key_data = encrypt_data(self.private_key.clone()); 
         match self.private_key {
             Some(_) => {
                 conn.execute(
                     "insert into blockchain(private_key, alchemy_url) values(?1, ?2)",
-                    &[&self.private_key, &self.alchemy_url],
+                    (&private_key_data, &self.alchemy_url),
                 )
                 .expect("Err: failed to execute");
             }
