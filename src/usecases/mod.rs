@@ -1,3 +1,4 @@
+pub mod cred;
 pub mod budget;
 pub mod spend;
 pub mod status;

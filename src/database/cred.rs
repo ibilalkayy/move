@@ -2,7 +2,7 @@ use crate::cli::flags::cred::BlockchainCred;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
 use crate::common::common::encrypt_data;
-
+// use crate::middleware::middleware::http_provider;
 
 #[derive(Tabled)]
 struct BlockchainRow {
@@ -26,11 +26,13 @@ impl BlockchainCred {
         }
 
         let private_key_data = encrypt_data(self.private_key.clone()); 
+        let alchemy_url_data = encrypt_data(self.alchemy_url.clone()); 
+
         match self.private_key {
             Some(_) => {
                 conn.execute(
-                    "insert into blockchain(private_key, alchemy_url) values(?1, ?2)",
-                    (&private_key_data, &self.alchemy_url),
+                    "insert into blockchain(private_key, alchemy_url, chain_id) values(?1, ?2, ?3)",
+                    (&private_key_data, &alchemy_url_data, &self.chain_id),
                 )
                 .expect("Err: failed to execute");
             }

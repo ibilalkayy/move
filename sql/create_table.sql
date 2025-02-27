@@ -1,7 +1,8 @@
 create table if not exists blockchain (
     id serial primary key,
     private_key text not null,
-    alchemy_url text not null
+    alchemy_url text not null,
+    chain_id int not null
 );
 
 create table if not exists gmail (

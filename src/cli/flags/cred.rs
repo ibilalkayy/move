@@ -6,7 +6,11 @@ pub struct BlockchainCred {
     #[clap(short = 'p', long, help = "Blockchain wallet private key")]
     pub private_key: Option<String>,
 
-    /// Your Alchemy URL
-    #[clap(short = 'a', long, help = "Your alchemy URL")]
+    /// Your Alchemy App URL for transaction
+    #[clap(short = 'a', long, help = "Your Alchemy App URL")]
     pub alchemy_url: Option<String>,
+
+    /// Chain ID of the network
+    #[clap(short = 'c', long, help = "Chain ID of the network")]
+    pub chain_id: u64,
 }

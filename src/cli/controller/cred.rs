@@ -11,7 +11,11 @@ pub fn handle_cred(info: CredInfo) {
             let conn = connection().expect("Err: failed to connect to the database");
             let result = cred.insert_blockchain(&conn);
             match result {
-                Ok(_) => println!("Blockchain data is successfully saved"),
+                Ok(_) => println!("
+Blockchain data is successfully saved\n
+Keep the above 2 keys and nonces with yourself. They are for private_key, and alchemy_url.
+They're not stored in the database. You will be asked these credentials in the time of spending. 
+                "),
                 Err(error) => panic!("Err: {}", error),
             }
         }

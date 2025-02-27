@@ -1,6 +1,7 @@
 use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::usecases::{
+    cred::perform_spending,
     budget::{budget_amount, budget_category_exists, budget_data_exists, calculate_budget},
     spend::{spending_sum, spending_sum_category},
     status::status,
@@ -67,6 +68,16 @@ impl SpendData {
             "insert into spend(category, amount) values(?1, ?2)",
             (&self.category, spending_amount),
         )?;
+
+        let key_nonce: [&str; 4] = [
+            "fds",
+            "fdas",
+            "fda",
+            "fds",
+        ];
+
+        let chain_id = perform_spending(conn, key_nonce)?;
+        println!("Here is the  chain id: {}", chain_id);
 
         let spending_sum_category = spending_sum_category(conn, category)?;
         calculate_total(conn, spending_amount, total_spend_amount);
