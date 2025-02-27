@@ -15,13 +15,13 @@ struct BudgetRow {
     category: String,
 
     #[tabled(rename = "Amount")]
-    amount: u64,
+    amount: f64,
 
     #[tabled[rename = "Spent Amount"]]
-    spent_amount: u64,
+    spent_amount: f64,
 
     #[tabled[rename = "Remaining Amount"]]
-    remaining_amount: u64,
+    remaining_amount: f64,
 }
 
 impl BudgetData {
@@ -263,7 +263,7 @@ impl UpdateBudget {
                             ),
                             Ok(false) => match is_budget_total_equal {
                                 Ok((total_amount, _, budget_except_sum, _)) => {
-                                    let mut budget_amount = 0;
+                                    let mut budget_amount: f64 = 0.0;
                                     match self.amount {
                                         Some(amount) => {
                                             budget_amount = budget_except_sum + amount

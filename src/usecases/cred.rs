@@ -11,11 +11,11 @@ fn credentials(conn: &Connection) -> Result<(String, String, u64), rusqlite::Err
     Ok(result)
 }
 
-pub fn perform_spending(conn: &Connection, key_nonce: [&str; 4]) -> Result<u64, rusqlite::Error> {
+pub fn give_data(conn: &Connection, key_nonce: [&str; 4]) -> Result<(String, String, u64), rusqlite::Error> {
     let (private_key, alchemy_url, chain_id) = credentials(conn)?;
 
-    decrypt_data(private_key.as_str(), key_nonce[0], key_nonce[1]);
-    decrypt_data(alchemy_url.as_str(), key_nonce[2], key_nonce[3]);
+    let private_key = decrypt_data(private_key.as_str(), key_nonce[0], key_nonce[1]);
+    let alchemy_url = decrypt_data(alchemy_url.as_str(), key_nonce[2], key_nonce[3]);
 
-    Ok(chain_id)
+    Ok((private_key, alchemy_url, chain_id))
 }

@@ -8,7 +8,11 @@ pub struct SpendData {
 
     /// Write the spending amount for a category
     #[clap(short, long)]
-    pub amount: Option<u64>,
+    pub amount: Option<f64>,
+
+    /// Write the recepient address
+    #[clap(short, long)]
+    pub recepient_address: Option<String>,
 }
 
 #[derive(Debug, Parser)]

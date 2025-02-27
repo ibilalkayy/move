@@ -14,9 +14,9 @@ create table if not exists gmail (
 
 create table if not exists totalamount (
     id serial primary key,
-    total_amount int not null,
-    spent_amount int not null,
-    remaining_amount int not null
+    total_amount float not null,
+    spent_amount float not null,
+    remaining_amount float not null
 );
 
 create table if not exists statuss (
@@ -33,13 +33,13 @@ create table if not exists totalcategories (
 create table if not exists budget (
     id serial primary key,
     category text not null,
-    amount int not null,
-    spent_amount int not null,
-    remaining_amount int not null
+    amount float not null,
+    spent_amount float not null,
+    remaining_amount float not null
 );
 
 create table if not exists spend (
     id serial primary key,
     category text not null,
-    amount int not null
+    amount float not null
 )

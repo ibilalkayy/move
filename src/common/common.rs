@@ -47,7 +47,7 @@ pub fn encrypt_data(data: Option<String>) -> String {
     }
 }
 
-pub fn decrypt_data(encrypted_hex: &str, key_hex: &str, nonce_hex: &str) {
+pub fn decrypt_data(encrypted_hex: &str, key_hex: &str, nonce_hex: &str) -> String {
     let key_bytes = hex::decode(key_hex).expect("Err: invalid hex key");
     let nonce_bytes = hex::decode(nonce_hex).expect("Err: invalid hex nonce");
     let mut encrypted_bytes = hex::decode(encrypted_hex).expect("Err: invalid hex ciphertext");
@@ -60,6 +60,5 @@ pub fn decrypt_data(encrypted_hex: &str, key_hex: &str, nonce_hex: &str) {
         .expect("Err: decryption failed");
 
     let decrypted_text = String::from_utf8_lossy(&encrypted_bytes);
-    println!("🔓 Decrypted text: {}", decrypted_text);
-    // decrypted_text.to_string()
+    decrypted_text.to_string()
 }

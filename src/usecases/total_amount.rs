@@ -6,13 +6,13 @@ pub fn total_amount_exists(conn: &Connection) -> Result<bool> {
     Ok(exists)
 }
 
-pub fn remaining_amount(conn: &Connection) -> Result<u64> {
+pub fn remaining_amount(conn: &Connection) -> Result<f64> {
     let mut stmt = conn.prepare("select remaining_amount from totalamount")?;
     let remaining = stmt.query_row([], |row| row.get(0))?;
     Ok(remaining)
 }
 
-pub fn calculate_total(conn: &Connection, spent_amount: u64, total_spent_amount: u64) {
+pub fn calculate_total(conn: &Connection, spent_amount: f64, total_spent_amount: f64) {
     let result = remaining_amount(conn);
     match result {
         Ok(remaining) => {

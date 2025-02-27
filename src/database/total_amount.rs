@@ -8,13 +8,13 @@ use tabled::{Table, Tabled};
 #[derive(Tabled)]
 struct TotalAmountRow {
     #[tabled(rename = "Total Amount")]
-    total_amount: u64,
+    total_amount: f64,
 
     #[tabled(rename = "Spent Amount")]
-    spent_amount: u64,
+    spent_amount: f64,
 
     #[tabled(rename = "Remaining Amount")]
-    remaining_amount: u64,
+    remaining_amount: f64,
 }
 
 impl TotalAmount {
@@ -26,7 +26,7 @@ impl TotalAmount {
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
-                    &[&self.amount, &Some(0), &self.amount],
+                    &[&self.amount, &Some(0.0), &self.amount],
                 )?;
             }
             Err(error) => panic!("Err: {}", error),

@@ -1,7 +1,7 @@
 use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::usecases::{
-    cred::perform_spending,
+    cred::give_data,
     budget::{budget_amount, budget_category_exists, budget_data_exists, calculate_budget},
     spend::{spending_sum, spending_sum_category},
     status::status,
@@ -18,7 +18,7 @@ struct SpendingRow {
     category: String,
 
     #[tabled(rename = "Amount")]
-    amount: u64,
+    amount: f64,
 }
 
 impl SpendData {
@@ -70,14 +70,22 @@ impl SpendData {
         )?;
 
         let key_nonce: [&str; 4] = [
-            "fds",
-            "fdas",
+            "dsfds",
+            "dfsa",
             "fda",
-            "fds",
+            "fdas",
         ];
 
-        let chain_id = perform_spending(conn, key_nonce)?;
-        println!("Here is the  chain id: {}", chain_id);
+        // alchemy
+        // private_key
+        // recepient
+        // amount,
+        // chain id,
+
+        let (private_key, alchemy_url, chain_id) = give_data(conn, key_nonce)?;
+        println!("Here is the chain id: {}", chain_id);
+        println!("{}", private_key);
+        println!("{}", alchemy_url);
 
         let spending_sum_category = spending_sum_category(conn, category)?;
         calculate_total(conn, spending_amount, total_spend_amount);
