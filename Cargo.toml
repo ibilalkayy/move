@@ -7,7 +7,7 @@ license = "Apache-2.0"
 repository = "https://github.com/ibilalkayy/move"
 homepage = "https://github.com/ibilalkayy/move"
 readme = "README.md"
-categories = ["command-line-budget"]
+categories = ["command-line-utilities"]
 keywords = ["cli", "command-line", "budgetplanning", "spending"]
 
 [dependencies]
