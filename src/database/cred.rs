@@ -18,7 +18,7 @@ impl BlockchainCred {
         let row_exists = cred_exists(conn)?;
 
         if row_exists {
-            panic!("Err: multiple insertions of blockchain credentials is not allowed");
+            panic!("❌ Inserting multiple credentials are not allowed");
         }
 
         let (private_key_data, private_key_nonce) = encrypt_data(self.private_key.clone()); 
@@ -29,13 +29,13 @@ impl BlockchainCred {
                 conn.execute(
                     "insert into blockchain(private_key, private_key_nonce, alchemy_url, alchemy_url_nonce, chain_id) values(?1, ?2, ?3, ?4, ?5)",
                     (&private_key_data, &private_key_nonce, &alchemy_url_data, &alchemy_url_nonce, &self.chain_id),
-                ).expect("Err: failed to execute");
+                ).expect("❌ Failed to insert the data");
             }
             None => {
                 conn.execute(
                     "insert into blockchain(private_key, private_key_nonce, chain_id) values(?1, ?2, ?3)",
                     (&private_key_data, &private_key_nonce, &self.chain_id),
-                ).expect("Err: failed to execute");
+                ).expect("❌ Failed to insert the data");
             }
         }
         
@@ -46,7 +46,7 @@ impl BlockchainCred {
         let row_exists = cred_exists(conn)?;
 
         if !row_exists {
-            panic!("Err: cred is not added yet. See move cred -h'");
+            panic!("❌ Credentials are not added yet. See move cred -h'");
         }
 
         let (private_key_data, private_key_nonce) = encrypt_data(self.private_key.clone()); 
@@ -56,13 +56,13 @@ impl BlockchainCred {
                 conn.execute(
                     "update blockchain set private_key = ?, private_key_nonce = ?, alchemy_url = ?, alchemy_url_nonce = ?, chain_id = ?", 
                     (&private_key_data, &private_key_nonce, &alchemy_url_data, &alchemy_url_nonce, &self.chain_id),
-                ).expect("Err: failed to update the status");
+                ).expect("❌ Failed to update the data");
             }
             None => {
                 conn.execute(
                     "update blockchain set private_key = ?, private_key_nonce = ?, chain_id = ?", 
                     (&private_key_data, &private_key_nonce, &self.chain_id),
-                ).expect("Err: failed to update the status");
+                ).expect("❌ Failed to update the data");
             }
         }
     
@@ -96,7 +96,7 @@ pub fn delete_blockchain(conn: &Connection) -> Result<()> {
     let affected_rows = conn.execute("delete from blockchain", [])?;
 
     if affected_rows == 0 {
-        panic!("Err: cred is not added yet. See 'move cred -h'");
+        panic!("❌ Credentials are not added yet. See 'move cred -h'");
     }
 
     Ok(())

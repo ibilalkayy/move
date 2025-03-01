@@ -21,8 +21,8 @@ pub fn calculate_total(conn: &Connection, spent_amount: f64, total_spent_amount:
                 "update totalamount set spent_amount = ?, remaining_amount = ?",
                 &[&total_spent_amount, &remaining_amount],
             )
-            .expect("Err: failed to calculate the total amount");
+            .expect("❌ Failed to calculate the total amount");
         }
-        Err(error) => panic!("Err: {}", error),
+        Err(error) => panic!("❌ {}", error),
     }
 }

@@ -22,14 +22,14 @@ impl TotalAmount {
         let find_amount = total_amount_exists(conn);
 
         match find_amount {
-            Ok(true) => panic!("Err: total amount is already provided"),
+            Ok(true) => panic!("❌ Total amount is already provided"),
             Ok(false) => {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
                     &[&self.amount, &Some(0.0), &self.amount],
                 )?;
             }
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }
@@ -60,7 +60,7 @@ impl TotalAmount {
                 let mut wtr = Writer::from_writer(file_path);
 
                 wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount"])
-                    .expect("Err: failed to write the data in a CSV file");
+                    .expect("❌ Failed to write into a CSV file");
 
                 for amount in result {
                     wtr.write_record(&[
@@ -68,15 +68,15 @@ impl TotalAmount {
                         amount.spent_amount.to_string(),
                         amount.remaining_amount.to_string(),
                     ])
-                    .expect("Err: failed to write the data in a CSV file");
+                    .expect("❌ Failed to write into a CSV file");
                 }
 
-                wtr.flush().expect("Err: failed to flush the content");
+                wtr.flush().expect("❌ Failed to flush the content");
             }
             Ok(false) => panic!(
-                "Err: amount is not added to the total amount list. See 'move total-amount -h'"
+                "❌ No amount is added to the total amount list. See 'move total-amount -h'"
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
 
         Ok(())
@@ -107,9 +107,9 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
             println!("{}", table);
         }
         Ok(false) => {
-            panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'")
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
         }
-        Err(error) => panic!("Err: {}", error),
+        Err(error) => panic!("❌ {}", error),
     }
 
     Ok(())
@@ -126,9 +126,9 @@ impl UpdateTotalAmount {
                 )?;
             }
             Ok(false) => panic!(
-                "Err: amount is not added to the total amount list. See 'move total-amount -h'"
+                "❌ No amount is added to the total amount list. See 'move total-amount -h'"
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }
@@ -145,9 +145,9 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
             }
         }
         Ok(false) => {
-            panic!("Err: amount is not added the total amount list. See 'move total-amount -h'")
+            panic!("❌ No amount is added the total amount list. See 'move total-amount -h'")
         }
-        Err(error) => panic!("Err: {}", error),
+        Err(error) => panic!("❌ {}", error),
     }
 
     Ok(())

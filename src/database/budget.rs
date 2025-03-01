@@ -35,7 +35,7 @@ impl BudgetData {
             Ok(true) => match total_amount_present {
                 Ok(true) => match budget_category_present {
                     Ok(true) => panic!(
-                        "Err: {} category is already present in the budget list. See 'move budget -h'",
+                        "❌ {} category is already present in the budget list. See 'move budget -h'",
                         &self.category
                     ),
                     Ok(false) => match is_budget_total_equal {
@@ -49,23 +49,23 @@ impl BudgetData {
                                 )?;
                             } else {
                                 panic!(
-                                    "Err: budget amount exceeded the total amount: {} > {}",
+                                    "❌ Budget amount exceeded the total amount: {} > {}",
                                     budget_amount, total_amount
                                 );
                             }
                         }
-                        Err(error) => panic!("Err: {}", error),
+                        Err(error) => panic!("❌ {}", error),
                     },
-                    Err(error) => panic!("Err: {}", error),
+                    Err(error) => panic!("❌ {}", error),
                 },
-                Ok(false) => panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'"),
-                Err(error) => panic!("Err: {}", error),
+                Ok(false) => panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'"),
+                Err(error) => panic!("❌ {}", error),
             },
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list. See 'move total-amount -h'",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 self.category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }
@@ -95,19 +95,19 @@ impl BudgetData {
 
                 let mut wtr = Writer::from_writer(file_path);
                 wtr.write_record(&["Category", "Amount"])
-                    .expect("Err: failed to write the data in a CSV file");
+                    .expect("❌ Failed to write into a CSV file");
 
                 for budget in results {
                     wtr.write_record(&[budget.category, budget.amount.to_string()])
-                        .expect("Err: failed to write the data in a CSV file");
+                        .expect("❌ Failed to write into a CSV file");
                 }
-                wtr.flush().expect("Err: failed to flush the content");
+                wtr.flush().expect("❌ Failed to flush the content");
             }
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list. See 'move total-amount -h'",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 &self.category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }
@@ -138,10 +138,10 @@ impl BudgetCategory {
                 println!("{}", table);
             }
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list. See 'move total-amount -h'",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 &self.category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
 
         Ok(())
@@ -155,14 +155,14 @@ impl BudgetCategory {
                     conn.execute("delete from budget where category = ?", &[&self.category])?;
 
                 if affected_rows == 0 {
-                    panic!("Err: budget is not added yet. See 'move budget -h'");
+                    panic!("❌ Budget is not added yet. See 'move budget -h'");
                 }
             }
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list. See 'move total-amount -h'",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 &self.category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
 
         Ok(())
@@ -194,9 +194,9 @@ pub fn show_budget(conn: &Connection) -> Result<()> {
             println!("{}", table);
         }
         Ok(false) => panic!(
-            "Err: no category is added to the total categories list. See 'move total-amount -h'"
+            "❌ No category is added to the total categories list. See 'move total-amount -h'"
         ),
-        Err(error) => panic!("Err: {}", error),
+        Err(error) => panic!("❌ {}", error),
     }
     Ok(())
 }
@@ -238,14 +238,12 @@ impl UpdateBudget {
         let budget_old_category_present = budget_category_exists(conn, &self.old_category);
         let is_budget_total_equal = budget_total_equal(conn, &self.old_category);
 
-        // Only check if the new category exists *if* it's provided
         let total_new_category_present = if let Some(new_category) = new_budget_category {
             total_category_exists(conn, new_category)
         } else {
             Ok(false)
         };
 
-        // Only check if the budget contains new category *if* it's provided
         let budget_new_category_present = if let Some(new_category) = new_budget_category {
             budget_category_exists(conn, new_category)
         } else {
@@ -258,7 +256,7 @@ impl UpdateBudget {
                     Ok(true) => match total_new_category_present {
                         Ok(true) => match budget_new_category_present {
                             Ok(true) => panic!(
-                                "Err: {} category is already present in the budget list. See 'move budget -h'",
+                                "❌ {} category is already present in the budget list. See 'move budget -h'",
                                 new_budget_category.unwrap()
                             ),
                             Ok(false) => match is_budget_total_equal {
@@ -274,42 +272,42 @@ impl UpdateBudget {
                                         let affected_rows = conn
                                             .execute(&query, rusqlite::params_from_iter(value))?;
                                         if affected_rows == 0 {
-                                            panic!("Err: budget is not added yet. See 'move budget -h'");
+                                            panic!("❌ Budget is not added yet. See 'move budget -h'");
                                         }
                                     } else {
                                         panic!(
-                                            "Err: budget amount exceeded the total amount: {} > {}",
+                                            "❌ Budget amount exceeded the total amount: {} > {}",
                                             budget_amount, total_amount,
                                         );
                                     }
                                 }
-                                Err(error) => panic!("Err: {}", error),
+                                Err(error) => panic!("❌ {}", error),
                             },
-                            Err(error) => panic!("Err: {}", error),
+                            Err(error) => panic!("❌ {}", error),
                         },
                         Ok(false) => {
                             let affected_rows =
                                 conn.execute(&query, rusqlite::params_from_iter(value))?;
                             if affected_rows == 0 {
-                                panic!("Err: budget is not added yet. See 'move budget -h'");
+                                panic!("❌ Budget is not added yet. See 'move budget -h'");
                             }
                         }
-                        Err(error) => panic!("Err: {}", error),
+                        Err(error) => panic!("❌ {}", error),
                     },
                     Ok(false) => panic!(
-                        "Err: {} category is not added to the budget list. See 'move budget -h'",
+                        "❌ {} category is not added to the budget list. See 'move budget -h'",
                         &self.old_category
                     ),
-                    Err(error) => panic!("Err: {}", error),
+                    Err(error) => panic!("❌ {}", error),
                 },
-                Ok(false) => panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'"),
-                Err(error) => panic!("Err: {}", error),
+                Ok(false) => panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'"),
+                Err(error) => panic!("❌ {}", error),
             },
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list. See 'move total-amount -h'",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 self.old_category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }

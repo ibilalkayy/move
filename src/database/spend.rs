@@ -32,34 +32,34 @@ impl SpendData {
         let cred_present = cred_exists(conn)?;
 
         if !total_category_present {
-            panic!("Err: {} category is not added to the total categories list. See 'move total-amount -h'", category);
+            panic!("❌ {} category is not added to the total categories list. See 'move total-amount -h'", category);
         }
         if !total_amount_present {
-            panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'");
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'");
         }
         if !budget_category_present {
             panic!(
-                "Err: {} category is not added to the budget list. See 'move budget -h'",
+                "❌ {} category is not added to the budget list. See 'move budget -h'",
                 category
             );
         }
 
         if !cred_present {
-            panic!("Err: Credentials are not added to the cred list. See 'move cred -h'");
+            panic!("❌ No credentials are added to the cred list. See 'move cred -h'");
         }
 
         let (budget_amount, _) = budget_amount(conn, category)?;
         let spending_amount = self
             .amount
-            .unwrap_or_else(|| panic!("Err: spending amount is not provided"));
+            .unwrap_or_else(|| panic!("❌ No spending amount is provided"));
         if spending_amount > budget_amount {
-            panic!("Err: spending amount exceeded the budget amount");
+            panic!("❌ Spending amount exceeded the budget amount");
         }
 
         let category_spend_sum = spending_sum_category(conn, category)?;
         let category_spend_amount = category_spend_sum + spending_amount;
         if category_spend_amount > budget_amount {
-            panic!("Err: spending amount exceeded the budget amount");
+            panic!("❌ Spending amount exceeded the budget amount");
         }
 
         let total_spend_sum = spending_sum(conn)?;
@@ -67,7 +67,7 @@ impl SpendData {
 
         let status = status(conn)?;
         if status != "active" {
-            panic!("Err: the status is not active yet. See 'move status -h'");
+            panic!("❌ No active status yet. See 'move status -h'");
         }
 
         conn.execute(
@@ -93,13 +93,13 @@ impl SpendData {
 
         match result {
             Ok(_) => println!("✅ Transaction function executed!"),
-            Err(error) => println!("❌ Transaction failed: {:?}", error),
+            Err(error) => println!("❌ Transaction Failed: {:?}", error),
         }
 
         let spending_sum_category = spending_sum_category(conn, category)?;
         calculate_total(conn, spending_amount, total_spend_amount);
         calculate_budget(conn, category, spending_amount, spending_sum_category);
-        println!("Money is spent successfully on the {} category", category);
+        println!("✅ Money is spent on the {} category", category);
 
         Ok(())
     }
@@ -112,14 +112,14 @@ impl SpendCategory {
         let budget_category_present = budget_category_exists(conn, &self.category)?;
 
         if !total_category_present {
-            panic!("Err: {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
+            panic!("❌ {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
         }
         if !total_amount_present {
-            panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'");
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'");
         }
         if !budget_category_present {
             panic!(
-                "Err: {} category is not added to the budget list. See 'move budget -h'",
+                "❌ {} category is not added to the budget list. See 'move budget -h'",
                 &self.category
             );
         }
@@ -149,14 +149,14 @@ impl SpendCategory {
         let budget_category_present = budget_category_exists(conn, &self.category)?;
 
         if !total_category_present {
-            panic!("Err: {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
+            panic!("❌ {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
         }
         if !total_amount_present {
-            panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'");
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'");
         }
         if !budget_category_present {
             panic!(
-                "Err: {} category is not added to the budget list. See 'move budget -h'",
+                "❌ {} category is not added to the budget list. See 'move budget -h'",
                 &self.category
             );
         }
@@ -177,13 +177,13 @@ impl SpendCategory {
         let file_path = create_file("spend.csv");
         let mut wtr = Writer::from_writer(file_path);
         wtr.write_record(&["Category", "Amount"])
-            .expect("Err: failed to write the data in a CSV file");
+            .expect("❌ Failed to write into a CSV file");
 
         for spending in result {
             wtr.write_record(&[spending.category, spending.amount.to_string()])
-                .expect("Err: failed to write the data in a CSV file");
+                .expect("❌ Failed to write into a CSV file");
         }
-        wtr.flush().expect("Err: failed to flush the content");
+        wtr.flush().expect("❌ Failed to flush the content");
 
         Ok(())
     }
@@ -194,14 +194,14 @@ impl SpendCategory {
         let budget_category_present = budget_category_exists(conn, &self.category)?;
 
         if !total_category_present {
-            panic!("Err: {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
+            panic!("❌ {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
         }
         if !total_amount_present {
-            panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'");
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'");
         }
         if !budget_category_present {
             panic!(
-                "Err: {} category is not added to the budget list. See 'move budget -h'",
+                "❌ {} category is not added to the budget list. See 'move budget -h'",
                 &self.category
             );
         }
@@ -222,10 +222,10 @@ pub fn get_all_spending(conn: &Connection) -> Result<()> {
     let budget_data_present = budget_data_exists(conn)?;
 
     if !total_amount_present {
-        panic!("Err: amount is not added to the total amount list. See 'move total-amount -h'");
+        panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'");
     }
     if !budget_data_present {
-        panic!("Err: budget is not added to the budget list. See 'move budget -h'");
+        panic!("❌ No budget is added to the budget list. See 'move budget -h'");
     }
 
     let mut stmt = conn.prepare("select category, amount from spend")?;
@@ -244,13 +244,13 @@ pub fn get_all_spending(conn: &Connection) -> Result<()> {
     let file_path = create_file("spend.csv");
     let mut wtr = Writer::from_writer(file_path);
     wtr.write_record(&["Category", "Amount"])
-        .expect("Err: failed to write the data in a CSV file");
+        .expect("❌ Failed to write into a CSV file");
 
     for spending in result {
         wtr.write_record(&[spending.category, spending.amount.to_string()])
-            .expect("Err: failed to write the data in a CSV file");
+            .expect("❌ Failed to write into a CSV file");
     }
-    wtr.flush().expect("Err: failed to flush the content");
+    wtr.flush().expect("❌ Failed to flush the content");
 
     Ok(())
 }

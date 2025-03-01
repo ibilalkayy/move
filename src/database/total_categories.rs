@@ -21,7 +21,7 @@ impl TotalCategory {
         let find_category = total_category_exists(conn, &self.category);
         match find_category {
             Ok(true) => panic!(
-                "Err: {} category is already present in the total categories list",
+                "❌ {} category is already present in the total categories list",
                 &self.category
             ),
             Ok(false) => {
@@ -30,7 +30,7 @@ impl TotalCategory {
                     &[&self.category, &self.label],
                 )?;
             }
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }
@@ -58,20 +58,20 @@ impl TotalCategory {
                 let mut wtr = Writer::from_writer(file_path);
 
                 wtr.write_record(&["Category", "Label"])
-                    .expect("Err: failed to write the data in a CSV file");
+                    .expect("❌ Failed to write into a CSV file");
 
                 for categories in result {
                     wtr.write_record(&[categories.category, categories.label])
-                        .expect("Err: failed to write the data in a CSV file");
+                        .expect("❌ Failed to write into a CSV file");
                 }
 
-                wtr.flush().expect("Err: failed to flush the content");
+                wtr.flush().expect("❌ Failed to flush the content");
             }
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 &self.category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }
@@ -98,8 +98,8 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("Err: no category is added to the total categories list"),
-        Err(error) => panic!("Err: {}", error),
+        Ok(false) => panic!("❌ No category is added to the total categories list. See 'move total-amount -h'"),
+        Err(error) => panic!("❌ {}", error),
     }
     Ok(())
 }
@@ -132,9 +132,8 @@ impl UpdateTotalCategory {
         value.push(&self.old_category);
 
         if !total_category_exists(conn, new_category)? {
-            // if the new category name is already present
-            let find_category = total_category_exists(conn, &self.old_category);
-            match find_category {
+            let total_category_present = total_category_exists(conn, &self.old_category);
+            match total_category_present {
                 Ok(true) => {
                     let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
                     if affected_rows == 0 {
@@ -142,14 +141,14 @@ impl UpdateTotalCategory {
                     }
                 }
                 Ok(false) => panic!(
-                    "Err: {} category is not added to the total categories list",
+                    "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                     &self.old_category
                 ),
-                Err(error) => panic!("Err: {}", error),
+                Err(error) => panic!("❌ {}", error),
             }
         } else {
             panic!(
-                "Err: {} category is already present in the total categories list",
+                "❌ {} category is already present in the total categories list. See 'move total-amount -h'",
                 new_category
             );
         }
@@ -173,10 +172,10 @@ impl RemoveTotalCategory {
                 }
             }
             Ok(false) => panic!(
-                "Err: {} category is not added to the total categories list",
+                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
                 &self.category
             ),
-            Err(error) => panic!("Err: {}", error),
+            Err(error) => panic!("❌ {}", error),
         }
         Ok(())
     }

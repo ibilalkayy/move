@@ -14,105 +14,105 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
     match info.total_amount_subcommand {
         TotalAmountSubcommand::Add(total) => match total.add_total {
             AddTotalSubcommand::Amount(total_amount) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let total_data = total_amount.insert_total_amount(&conn);
                 match total_data {
                     Ok(_) => {
                         insert_status(&conn);
-                        println!("Total amount is successfully saved");
+                        println!("✅ Total amount is successfully saved");
                     }
-                    Err(error) => panic!("Err: {}", error),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
 
             AddTotalSubcommand::Category(total_category) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = total_category.insert_total_category(&conn);
                 match result {
-                    Ok(_) => println!("Category is successfully saved"),
-                    Err(error) => panic!("Err: {}", error),
+                    Ok(_) => println!("✅ Category is successfully saved"),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
         },
 
         TotalAmountSubcommand::View(total) => match total.view_total {
             ViewSubcommand::Amount => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = view_total_amount(&conn);
                 match result {
                     Ok(_) => (),
-                    Err(error) => panic!("Err: {}", error),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
 
             ViewSubcommand::Categories => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = view_total_categories(&conn);
                 match result {
                     Ok(_) => (),
-                    Err(error) => panic!("Err: {}", error),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
         },
 
         TotalAmountSubcommand::Update(total) => match total.update_total {
             UpdateTotalSubcommand::Amount(total_amount) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = total_amount.update_total_amount(&conn);
                 match result {
-                    Ok(_) => println!("Total amount data is successfully updated"),
-                    Err(error) => panic!("Err: {}", error),
+                    Ok(_) => println!("✅ Total amount is successfully updated"),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
 
             UpdateTotalSubcommand::Categories(total_category) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = total_category.update_total_category(&conn);
                 match result {
-                    Ok(_) => println!("Total amount category data is successfully updated"),
+                    Ok(_) => println!("✅ Category data is successfully updated"),
                     Err(rusqlite::Error::QueryReturnedNoRows) => {
-                        panic!("Err: no matching record is found")
+                        panic!("❌ No matching data is found")
                     }
-                    Err(error) => panic!("Err: {:?}", error),
+                    Err(error) => panic!("❌ {:?}", error),
                 }
             }
         },
 
         TotalAmountSubcommand::Remove(total) => match total.remove_total {
             RemoveTotalSubcommand::Amount => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = delete_total_amount(&conn);
                 match result {
-                    Ok(_) => println!("Total amount data is successfully deleted"),
-                    Err(error) => panic!("Err: {}", error),
+                    Ok(_) => println!("✅ Total amount is successfully deleted"),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
 
             RemoveTotalSubcommand::Category(category) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = category.delete_total_category(&conn);
                 match result {
-                    Ok(_) => println!("Total amount category is successfully deleted"),
-                    Err(error) => panic!("Err: {}", error),
+                    Ok(_) => println!("✅ Category is successfully deleted"),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
         },
 
         TotalAmountSubcommand::Get(total) => match total.get_total {
             GetTotalSubcommand::Amount(total_amount) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = total_amount.get_total_amount(&conn);
                 match result {
-                    Ok(_) => println!("Total amount data is successfully saved in a CSV file"),
-                    Err(error) => panic!("Err: {}", error),
+                    Ok(_) => println!("✅ Total amount is saved in a CSV file"),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
             GetTotalSubcommand::Category(total_amount) => {
-                let conn = connection().expect("Err: failed to connect to the database");
+                let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = total_amount.get_total_categories(&conn);
                 match result {
-                    Ok(_) => println!("Category data is successfully saved in a CSV file"),
-                    Err(error) => panic!("Err: {}", error),
+                    Ok(_) => println!("✅ Category is saved in a CSV file"),
+                    Err(error) => panic!("❌ {}", error),
                 }
             }
         },

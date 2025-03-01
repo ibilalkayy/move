@@ -12,7 +12,7 @@ pub async fn cli() {
     let result = create_table();
     match result {
         Ok(_) => (),
-        Err(error) => panic!("Err: {}", error),
+        Err(error) => panic!("❌ {}", error),
     }
     let moves = Move::parse();
     match moves.command {
