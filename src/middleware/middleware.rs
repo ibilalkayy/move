@@ -8,9 +8,9 @@ use ethers::{
 use std::sync::Arc;
 use eyre::Result;
 
-pub async fn http_provider(rpc_url: String, private_key: String, recepient_address: String, amount: f64, chain_id: u64) -> Result<()> {
+pub async fn http_provider(alchemy_url: String, private_key: String, recepient_address: String, amount: f64, chain_id: u64) -> Result<()> {
     // Step 1: Connect to the RPC
-    let provider = match Provider::<Http>::try_from(rpc_url) {
+    let provider = match Provider::<Http>::try_from(alchemy_url) {
         Ok(p) => {
             println!("✅ Connected to RPC successfully!");
             Arc::new(p)

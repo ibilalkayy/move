@@ -2,7 +2,7 @@ use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::middleware::middleware::http_provider;
 use crate::usecases::{
-    cred::give_data,
+    cred::{give_data, cred_exists},
     budget::{budget_amount, budget_category_exists, budget_data_exists, calculate_budget},
     spend::{spending_sum, spending_sum_category},
     status::status,
@@ -29,6 +29,7 @@ impl SpendData {
         let total_category_present = total_category_exists(conn, category)?;
         let total_amount_present = total_amount_exists(conn)?;
         let budget_category_present = budget_category_exists(conn, category)?;
+        let cred_present = cred_exists(conn)?;
 
         if !total_category_present {
             panic!("Err: {} category is not added to the total categories list. See 'move total-amount -h'", category);
@@ -41,6 +42,10 @@ impl SpendData {
                 "Err: {} category is not added to the budget list. See 'move budget -h'",
                 category
             );
+        }
+
+        if !cred_present {
+            panic!("Err: Credentials are not added to the cred list. See 'move cred -h'");
         }
 
         let (budget_amount, _) = budget_amount(conn, category)?;
@@ -73,19 +78,10 @@ impl SpendData {
         let keys: [String; 2] = [
             self.private_key.clone().unwrap_or_default(),
             self.alchemy_url_key.clone().unwrap_or_default(),
-            // "81af03f628179ef044611b430f476c03cdbd69998476a6e7245e5eb7ac2e4e57".to_string(),
-            // "c7f8bf09b67970ef4cd8bd2f04265e9915e980da497cf5f63a575b62d1d7322f".to_string(),
         ];
-
-        // // alchemy
-        // // network_address
-        // // recepient
-        // // amount,
-        // // chain id,
 
         let (private_key, alchemy_url, chain_id) = give_data(conn, keys)?;
         let recepient_address = self.recepient_address.clone().unwrap_or_default();
-        
 
         let result = http_provider(
             alchemy_url, 

@@ -2237,7 +2237,7 @@ dependencies = [
 
 [[package]]
 name = "move"
-version = "0.11.9"
+version = "0.12.0"
 dependencies = [
  "aes-gcm",
  "arc",

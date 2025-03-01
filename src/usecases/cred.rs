@@ -19,3 +19,9 @@ pub fn give_data(conn: &Connection, keys: [String; 2]) -> Result<(String, String
 
     Ok((private_key, alchemy_url, chain_id))
 }
+
+pub fn cred_exists(conn: &Connection) -> Result<bool> {
+    let mut stmt = conn.prepare("select exists(select 1 from blockchain)")?;
+    let exists: bool = stmt.query_row([], |row| row.get(0))?;
+    Ok(exists)
+}

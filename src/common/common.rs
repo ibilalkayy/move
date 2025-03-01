@@ -17,33 +17,28 @@ pub fn create_file(path: &str) -> File {
     return file_path;
 }
 
-pub fn encrypt_data(data: Option<String>) -> (String, String) {
-    match data {
-        Some(text) => {
-            // Generate encryption key and cipher
-            let key = Aes256Gcm::generate_key(&mut OsRng);
-            let cipher = Aes256Gcm::new(&key);
-            let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+pub fn encrypt_data(data: String) -> (String, String) {
+    // Generate encryption key and cipher
+    let key = Aes256Gcm::generate_key(&mut OsRng);
+    let cipher = Aes256Gcm::new(&key);
+    let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
 
-            // Convert plaintext to bytes
-            let mut buffer = text.as_bytes().to_vec();
+    // Convert plaintext to bytes
+    let mut buffer = data.as_bytes().to_vec();
 
-            // Encrypt the message in-place
-            cipher.encrypt_in_place(&nonce, b"", &mut buffer)
-                .expect("Err: encryption failed");
+    // Encrypt the message in-place
+    cipher.encrypt_in_place(&nonce, b"", &mut buffer)
+        .expect("Err: encryption failed");
 
-            // Store encrypted data as hex
-            let encrypted_text = hex::encode(&buffer);
-            let key_hex = hex::encode(key);
-            let nonce_hex = hex::encode(nonce);
+    // Store encrypted data as hex
+    let encrypted_text = hex::encode(&buffer);
+    let key_hex = hex::encode(key);
+    let nonce_hex = hex::encode(nonce);
 
-            println!("");
-            println!("🗝️  Key: {}", key_hex);
+    println!("");
+    println!("🗝️  Key: {}", key_hex);
 
-            return (encrypted_text, nonce_hex);
-        }
-        None => panic!("Err: no data is provided"),
-    }
+    return (encrypted_text, nonce_hex);
 }
 
 pub fn decrypt_data(encrypted_hex: String, key_hex: String, nonce_hex: String) -> String {
