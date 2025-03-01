@@ -11,11 +11,13 @@ pub fn handle_cred(info: CredInfo) {
             let conn = connection().expect("❌ Failed to establish the DB connection");
             let result = cred.insert_blockchain(&conn);
             match result {
-                Ok(_) => println!("
+                Ok(_) => println!(
+                    "
 ✅ Blockchain data is successfully saved\n
 Keep the above 2 keys. First is for private key, and second is for alchemy url.
 They're not stored in the database. You will be asked these keys in the time of spending. 
-                "),
+                "
+                ),
                 Err(error) => panic!("❌ {}", error),
             }
         }
@@ -33,11 +35,13 @@ They're not stored in the database. You will be asked these keys in the time of 
             let conn = connection().expect("❌ Failed to establish the DB connection");
             let result = cred.update_blockchain(&conn);
             match result {
-                Ok(_) => println!("
+                Ok(_) => println!(
+                    "
 ✅ Blockchain data is successfully updated\n
 Keep the above 2 keys. First is for private key, and second is for alchemy url.
 They're not stored in the database. You will be asked these keys in the time of spending
-                "),
+                "
+                ),
                 Err(error) => panic!("❌ {}", error),
             }
         }

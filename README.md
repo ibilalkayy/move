@@ -78,7 +78,7 @@ cd move
 
 ## **Contributing**
 
-We welcome contributions! If you have ideas for new features, find a bug, or want to improve documentation, feel free to open an issue or submit a pull request. Please follow our [Contribution Guidelines](CONTRIBUING.md) for a smooth collaboration.
+We welcome contributions! If you have ideas for new features, find a bug, or want to improve documentation, feel free to open an issue or submit a pull request. Please follow our [Contribution Guidelines](CONTRIBUTING.md) for a smooth collaboration.
 
 ## **License**
 

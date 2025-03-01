@@ -28,7 +28,8 @@ impl TotalCategory {
                 conn.execute(
                     "insert into totalcategories(category, label) values(?1, ?2)",
                     &[&self.category, &self.label],
-                )?;
+                )
+                .expect("❌ Failed to add a category");
             }
             Err(error) => panic!("❌ {}", error),
         }
@@ -98,7 +99,9 @@ pub fn view_total_categories(conn: &Connection) -> Result<()> {
             let table = Table::new(results);
             println!("{}", table);
         }
-        Ok(false) => panic!("❌ No category is added to the total categories list. See 'move total-amount -h'"),
+        Ok(false) => panic!(
+            "❌ No category is added to the total categories list. See 'move total-amount -h'"
+        ),
         Err(error) => panic!("❌ {}", error),
     }
     Ok(())

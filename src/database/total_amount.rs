@@ -27,7 +27,7 @@ impl TotalAmount {
                 conn.execute(
                     "insert into totalamount(total_amount, spent_amount, remaining_amount) values(?1, ?2, ?3)",
                     &[&self.amount, &Some(0.0), &self.amount],
-                )?;
+                ).expect("❌ Failed to add the total amount");
             }
             Err(error) => panic!("❌ {}", error),
         }
@@ -73,9 +73,9 @@ impl TotalAmount {
 
                 wtr.flush().expect("❌ Failed to flush the content");
             }
-            Ok(false) => panic!(
-                "❌ No amount is added to the total amount list. See 'move total-amount -h'"
-            ),
+            Ok(false) => {
+                panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
+            }
             Err(error) => panic!("❌ {}", error),
         }
 
@@ -123,11 +123,12 @@ impl UpdateTotalAmount {
                 conn.execute(
                     "update totalamount set total_amount=?, remaining_amount = ?",
                     &[&self.amount, &self.amount],
-                )?;
+                )
+                .expect("❌ Failed to update the total amount");
             }
-            Ok(false) => panic!(
-                "❌ No amount is added to the total amount list. See 'move total-amount -h'"
-            ),
+            Ok(false) => {
+                panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
+            }
             Err(error) => panic!("❌ {}", error),
         }
         Ok(())
@@ -138,10 +139,10 @@ pub fn delete_total_amount(conn: &Connection) -> Result<()> {
     let find_total_amount = total_amount_exists(conn);
     match find_total_amount {
         Ok(true) => {
-            let affected_rows = conn.execute("delete from totalamount", [])?;
+            let row = conn.execute("delete from totalamount", [])?;
 
-            if affected_rows == 0 {
-                return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+            if row == 0 {
+                panic!("❌ Total amount is not added yet. See 'move total-amount -h'")
             }
         }
         Ok(false) => {

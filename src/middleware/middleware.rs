@@ -1,14 +1,20 @@
 use ethers::{
+    middleware::SignerMiddleware,
     providers::{Http, Middleware, Provider},
     signers::{LocalWallet, Signer},
     types::{Address, TransactionRequest},
-    middleware::SignerMiddleware,
     utils::parse_ether,
 };
-use std::sync::Arc;
 use eyre::Result;
+use std::sync::Arc;
 
-pub async fn http_provider(alchemy_url: String, private_key: String, recepient_address: String, amount: f64, chain_id: u64) -> Result<()> {
+pub async fn http_provider(
+    alchemy_url: String,
+    private_key: String,
+    recepient_address: String,
+    amount: f64,
+    chain_id: u64,
+) -> Result<()> {
     // Step 1: Connect to the RPC
     let provider = match Provider::<Http>::try_from(alchemy_url) {
         Ok(p) => {
@@ -25,7 +31,10 @@ pub async fn http_provider(alchemy_url: String, private_key: String, recepient_a
     let wallet = match private_key.parse::<LocalWallet>() {
         Ok(w) => {
             println!("✅ Private key parsed successfully!");
-            Arc::new(SignerMiddleware::new(provider.clone(), w.with_chain_id(chain_id)))
+            Arc::new(SignerMiddleware::new(
+                provider.clone(),
+                w.with_chain_id(chain_id),
+            ))
         }
         Err(e) => {
             println!("❌ Invalid private key: {:?}", e);
@@ -91,7 +100,10 @@ pub async fn http_provider(alchemy_url: String, private_key: String, recepient_a
     // Step 8: Wait for Confirmation
     match pending_tx.await {
         Ok(Some(receipt)) => {
-            println!("✅ Transaction confirmed! Tx hash: {:?}", receipt.transaction_hash);
+            println!(
+                "✅ Transaction confirmed! Tx hash: {:?}",
+                receipt.transaction_hash
+            );
         }
         Ok(None) => {
             println!("❌ Transaction is pending, but no receipt yet.");

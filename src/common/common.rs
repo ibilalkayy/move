@@ -1,8 +1,9 @@
-use std::{fs, fs::File};
 use aes_gcm::{
-    aead::{AeadCore, AeadInPlace, KeyInit, OsRng}, Aes256Gcm, Nonce,
+    aead::{AeadCore, AeadInPlace, KeyInit, OsRng},
+    Aes256Gcm, Nonce,
 };
 use hex;
+use std::{fs, fs::File};
 
 pub fn create_file(path: &str) -> File {
     let home_dir = dirs::home_dir().expect("❌ Failed to get a home directory");
@@ -23,7 +24,8 @@ pub fn encrypt_data(data: String) -> (String, String) {
     let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
 
     let mut buffer = data.as_bytes().to_vec();
-    cipher.encrypt_in_place(&nonce, b"", &mut buffer)
+    cipher
+        .encrypt_in_place(&nonce, b"", &mut buffer)
         .expect("❌ Encryption failed");
 
     let encrypted_text = hex::encode(&buffer);
@@ -45,7 +47,8 @@ pub fn decrypt_data(encrypted_hex: String, key_hex: String, nonce_hex: String) -
     let nonce = Nonce::from_slice(&nonce_bytes);
     let cipher = Aes256Gcm::new(key);
 
-    cipher.decrypt_in_place(nonce, b"", &mut encrypted_bytes)
+    cipher
+        .decrypt_in_place(nonce, b"", &mut encrypted_bytes)
         .expect("❌ Decryption failed");
 
     let decrypted_text = String::from_utf8_lossy(&encrypted_bytes);

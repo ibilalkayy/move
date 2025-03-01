@@ -2,8 +2,8 @@ use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
 use crate::middleware::middleware::http_provider;
 use crate::usecases::{
-    cred::{give_data, cred_exists},
     budget::{budget_amount, budget_category_exists, budget_data_exists, calculate_budget},
+    cred::{cred_exists, give_data},
     spend::{spending_sum, spending_sum_category},
     status::status,
     total_amount::{calculate_total, total_amount_exists},
@@ -56,16 +56,17 @@ impl SpendData {
             panic!("❌ Spending amount exceeded the budget amount");
         }
 
-        let category_spend_sum = spending_sum_category(conn, category)?;
+        let category_spend_sum = spending_sum_category(conn, category)
+            .expect("❌ Failed to sum the category spending amount");
         let category_spend_amount = category_spend_sum + spending_amount;
         if category_spend_amount > budget_amount {
             panic!("❌ Spending amount exceeded the budget amount");
         }
 
-        let total_spend_sum = spending_sum(conn)?;
+        let total_spend_sum = spending_sum(conn).expect("❌ Failed to sum all the spending amount");
         let total_spend_amount = total_spend_sum + spending_amount;
 
-        let status = status(conn)?;
+        let status = status(conn).expect("❌ Failed to get the status");
         if status != "active" {
             panic!("❌ No active status yet. See 'move status -h'");
         }
@@ -73,7 +74,8 @@ impl SpendData {
         conn.execute(
             "insert into spend(category, amount, recepient_address) values(?1, ?2, ?3)",
             (&self.category, spending_amount, &self.recepient_address),
-        )?;
+        )
+        .expect("❌ Failed to insert the spending data");
 
         let keys: [String; 2] = [
             self.private_key.clone().unwrap_or_default(),
@@ -84,19 +86,21 @@ impl SpendData {
         let recepient_address = self.recepient_address.clone().unwrap_or_default();
 
         let result = http_provider(
-            alchemy_url, 
-            private_key, 
-            recepient_address, 
+            alchemy_url,
+            private_key,
+            recepient_address,
             spending_amount,
             chain_id,
-        ).await;
+        )
+        .await;
 
         match result {
             Ok(_) => println!("✅ Transaction function executed!"),
             Err(error) => println!("❌ Transaction Failed: {:?}", error),
         }
 
-        let spending_sum_category = spending_sum_category(conn, category)?;
+        let spending_sum_category = spending_sum_category(conn, category)
+            .expect("❌ Failed to sum the category spending amount");
         calculate_total(conn, spending_amount, total_spend_amount);
         calculate_budget(conn, category, spending_amount, spending_sum_category);
         println!("✅ Money is spent on the {} category", category);
@@ -189,9 +193,12 @@ impl SpendCategory {
     }
 
     pub fn delete_spending(&self, conn: &Connection) -> Result<()> {
-        let total_category_present = total_category_exists(conn, &self.category)?;
-        let total_amount_present = total_amount_exists(conn)?;
-        let budget_category_present = budget_category_exists(conn, &self.category)?;
+        let total_category_present =
+            total_category_exists(conn, &self.category).expect("❌ Failed to get the category");
+        let total_amount_present =
+            total_amount_exists(conn).expect("❌ Failed to get the total amount");
+        let budget_category_present = budget_category_exists(conn, &self.category)
+            .expect("❌ Failed to get the budget category");
 
         if !total_category_present {
             panic!("❌ {} category is not added to the total categories list. See 'move total-amount -h'", &self.category);
@@ -218,8 +225,9 @@ impl SpendCategory {
 }
 
 pub fn get_all_spending(conn: &Connection) -> Result<()> {
-    let total_amount_present = total_amount_exists(conn)?;
-    let budget_data_present = budget_data_exists(conn)?;
+    let total_amount_present = total_amount_exists(conn).expect("❌ Failed to get the category");
+    let budget_data_present =
+        budget_data_exists(conn).expect("❌ Failed to get the budget category");
 
     if !total_amount_present {
         panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'");

@@ -49,7 +49,8 @@ pub fn calculate_budget(
     spending_amount: f64,
     spending_sum_category: f64,
 ) {
-    let (_, remaining) = budget_amount(conn, category).unwrap_or_else(|error| panic!("❌ {}", error));
+    let (_, remaining) =
+        budget_amount(conn, category).unwrap_or_else(|error| panic!("❌ {}", error));
     let remaining_amount = remaining - spending_amount;
     conn.execute(
         "update budget set spent_amount = ?, remaining_amount = ? where category = ?",

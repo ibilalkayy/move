@@ -14,7 +14,7 @@ pub struct SpendData {
     #[clap(short, long)]
     pub recepient_address: Option<String>,
 
-    /// Write the private key, key 
+    /// Write the private key, key
     #[clap(short, long)]
     pub private_key: Option<String>,
 
