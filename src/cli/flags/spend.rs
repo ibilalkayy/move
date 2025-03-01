@@ -13,6 +13,14 @@ pub struct SpendData {
     /// Write the recepient address
     #[clap(short, long)]
     pub recepient_address: Option<String>,
+
+    /// Write the private key, key 
+    #[clap(short, long)]
+    pub private_key: Option<String>,
+
+    /// Write the alchemy url key
+    #[clap(short = 'k', long)]
+    pub alchemy_url_key: Option<String>,
 }
 
 #[derive(Debug, Parser)]

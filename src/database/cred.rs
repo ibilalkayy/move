@@ -2,7 +2,6 @@ use crate::cli::flags::cred::BlockchainCred;
 use rusqlite::{params, Connection, Result, ToSql};
 use tabled::{Table, Tabled};
 use crate::common::common::encrypt_data;
-// use crate::middleware::middleware::http_provider;
 
 #[derive(Tabled)]
 struct BlockchainRow {
@@ -25,14 +24,14 @@ impl BlockchainCred {
             panic!("Err: multiple insertions of blockchain credentials is not allowed");
         }
 
-        let private_key_data = encrypt_data(self.private_key.clone()); 
-        let alchemy_url_data = encrypt_data(self.alchemy_url.clone()); 
+        let (private_key_data, private_key_nonce) = encrypt_data(self.private_key.clone()); 
+        let (alchemy_url_data, alchemy_url_nonce) = encrypt_data(self.alchemy_url.clone()); 
 
         match self.private_key {
             Some(_) => {
                 conn.execute(
-                    "insert into blockchain(private_key, alchemy_url, chain_id) values(?1, ?2, ?3)",
-                    (&private_key_data, &alchemy_url_data, &self.chain_id),
+                    "insert into blockchain(private_key, private_key_nonce, alchemy_url, alchemy_url_nonce, chain_id) values(?1, ?2, ?3, ?4, ?5)",
+                    (&private_key_data, &private_key_nonce, &alchemy_url_data, &alchemy_url_nonce, &self.chain_id),
                 )
                 .expect("Err: failed to execute");
             }
@@ -41,7 +40,7 @@ impl BlockchainCred {
         Ok(())
     }
 
-    pub fn update_blockchain(&self, conn: &Connection) -> Result<()> {
+    pub fn update_blockchain(&self, conn: &Connection) -> Result<()> { 
         let mut query = String::from("update blockchain set ");
         let mut field = Vec::new();
         let mut value: Vec<&dyn ToSql> = Vec::new();
@@ -55,6 +54,9 @@ impl BlockchainCred {
             field.push("alchemy_url = ?");
             value.push(alchemy_url);
         }
+
+        field.push("chain_id = ?");
+        value.push(&self.chain_id);
 
         if field.is_empty() {
             panic!("Err: cred is not added yet. See 'move cred -h'");

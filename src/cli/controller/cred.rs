@@ -13,8 +13,8 @@ pub fn handle_cred(info: CredInfo) {
             match result {
                 Ok(_) => println!("
 Blockchain data is successfully saved\n
-Keep the above 2 keys and nonces with yourself. They are for private_key, and alchemy_url.
-They're not stored in the database. You will be asked these credentials in the time of spending. 
+Keep the above 2 keys. First is for private key, and second is for alchemy url.
+They're not stored in the database. You will be asked these keys in the time of spending. 
                 "),
                 Err(error) => panic!("Err: {}", error),
             }

@@ -2,11 +2,11 @@ use crate::cli::subcommands::spend::{GetSubcommand, SpendInfo, SpendSubcommand};
 use crate::database::db::connection;
 use crate::database::spend::get_all_spending;
 
-pub fn handle_spending(info: SpendInfo) {
+pub async fn handle_spending(info: SpendInfo) {
     match info.spend_subcommand {
         SpendSubcommand::Money(spend) => {
             let conn = connection().expect("Err: failed to connect to the database");
-            let result = spend.insert_spending(&conn);
+            let result = spend.insert_spending(&conn).await;
             match result {
                 Ok(_) => (),
                 Err(error) => panic!("Err: {}", error),

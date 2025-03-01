@@ -1,5 +1,6 @@
 use crate::cli::flags::spend::{SpendCategory, SpendData};
 use crate::common::common::create_file;
+use crate::middleware::middleware::http_provider;
 use crate::usecases::{
     cred::give_data,
     budget::{budget_amount, budget_category_exists, budget_data_exists, calculate_budget},
@@ -22,7 +23,7 @@ struct SpendingRow {
 }
 
 impl SpendData {
-    pub fn insert_spending(&self, conn: &Connection) -> Result<()> {
+    pub async fn insert_spending(&self, conn: &Connection) -> Result<()> {
         let category = self.category.as_deref().unwrap_or("");
 
         let total_category_present = total_category_exists(conn, category)?;
@@ -65,27 +66,39 @@ impl SpendData {
         }
 
         conn.execute(
-            "insert into spend(category, amount) values(?1, ?2)",
-            (&self.category, spending_amount),
+            "insert into spend(category, amount, recepient_address) values(?1, ?2, ?3)",
+            (&self.category, spending_amount, &self.recepient_address),
         )?;
 
-        let key_nonce: [&str; 4] = [
-            "dsfds",
-            "dfsa",
-            "fda",
-            "fdas",
+        let keys: [String; 2] = [
+            self.private_key.clone().unwrap_or_default(),
+            self.alchemy_url_key.clone().unwrap_or_default(),
+            // "81af03f628179ef044611b430f476c03cdbd69998476a6e7245e5eb7ac2e4e57".to_string(),
+            // "c7f8bf09b67970ef4cd8bd2f04265e9915e980da497cf5f63a575b62d1d7322f".to_string(),
         ];
 
-        // alchemy
-        // private_key
-        // recepient
-        // amount,
-        // chain id,
+        // // alchemy
+        // // network_address
+        // // recepient
+        // // amount,
+        // // chain id,
 
-        let (private_key, alchemy_url, chain_id) = give_data(conn, key_nonce)?;
-        println!("Here is the chain id: {}", chain_id);
-        println!("{}", private_key);
-        println!("{}", alchemy_url);
+        let (private_key, alchemy_url, chain_id) = give_data(conn, keys)?;
+        let recepient_address = self.recepient_address.clone().unwrap_or_default();
+        
+
+        let result = http_provider(
+            alchemy_url, 
+            private_key, 
+            recepient_address, 
+            spending_amount,
+            chain_id,
+        ).await;
+
+        match result {
+            Ok(_) => println!("✅ Transaction function executed!"),
+            Err(error) => println!("❌ Transaction failed: {:?}", error),
+        }
 
         let spending_sum_category = spending_sum_category(conn, category)?;
         calculate_total(conn, spending_amount, total_spend_amount);

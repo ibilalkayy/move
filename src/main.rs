@@ -6,6 +6,7 @@ mod middleware;
 
 use crate::cli::controller::cli::cli;
 
-fn main() {
-    cli();
+#[tokio::main]
+async fn main() {
+    cli().await;
 }

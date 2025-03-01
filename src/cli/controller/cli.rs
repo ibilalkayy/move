@@ -8,7 +8,7 @@ use crate::cli::controller::{
     total_amount::handle_total_amount,
 };
 
-pub fn cli() {
+pub async fn cli() {
     let result = create_table();
     match result {
         Ok(_) => (),
@@ -19,7 +19,7 @@ pub fn cli() {
         Command::Cred(details) => handle_cred(details),
         Command::TotalAmount(details) => handle_total_amount(details),
         Command::Budget(details) => handle_budget(details),
-        Command::Spend(details) => handle_spending(details),
+        Command::Spend(details) => handle_spending(details).await,
         Command::Status(details) => handle_status(details),
     }
 }

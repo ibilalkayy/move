@@ -17,7 +17,7 @@ pub fn create_file(path: &str) -> File {
     return file_path;
 }
 
-pub fn encrypt_data(data: Option<String>) -> String {
+pub fn encrypt_data(data: Option<String>) -> (String, String) {
     match data {
         Some(text) => {
             // Generate encryption key and cipher
@@ -39,15 +39,14 @@ pub fn encrypt_data(data: Option<String>) -> String {
 
             println!("");
             println!("🗝️  Key: {}", key_hex);
-            println!("🔑 Nonce: {}", nonce_hex);
 
-            return encrypted_text;
+            return (encrypted_text, nonce_hex);
         }
         None => panic!("Err: no data is provided"),
     }
 }
 
-pub fn decrypt_data(encrypted_hex: &str, key_hex: &str, nonce_hex: &str) -> String {
+pub fn decrypt_data(encrypted_hex: String, key_hex: String, nonce_hex: String) -> String {
     let key_bytes = hex::decode(key_hex).expect("Err: invalid hex key");
     let nonce_bytes = hex::decode(nonce_hex).expect("Err: invalid hex nonce");
     let mut encrypted_bytes = hex::decode(encrypted_hex).expect("Err: invalid hex ciphertext");
