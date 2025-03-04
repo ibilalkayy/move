@@ -1,7 +1,7 @@
 use crate::cli::flags::budget::{BudgetCategory, BudgetData, UpdateBudget};
 use crate::common::common::create_file;
 use crate::usecases::{
-    budget::{budget_category_exists, budget_total_equal},
+    budget::{budget_category_exists, budget_data_exists, budget_total_equal},
     total_amount::total_amount_exists,
     total_categories::{total_categories_exist, total_category_exists},
 };
@@ -129,39 +129,48 @@ impl BudgetCategory {
 
 pub fn get_budget(conn: &Connection) -> Result<()> {
     let category_present = total_categories_exist(conn);
+    let budget_present = budget_data_exists(conn);
     match category_present {
         Ok(true) => {
-            let mut stmt = conn.prepare(
-                "select category, amount, spent_amount, remaining_amount from budget",
-            )?;
-
-            let rows = stmt.query_map(params![], |row| {
-                Ok(BudgetRow {
-                    category: row.get(0)?,
-                    amount: row.get(1)?,
-                    spent_amount: row.get(2)?,
-                    remaining_amount: row.get(3)?,
-                })
-            })?;
-
-            let mut results = Vec::new();
-            for row in rows {
-                results.push(row?);
+            match budget_present {
+                Ok(true) => {
+                    let mut stmt = conn.prepare(
+                        "select category, amount, spent_amount, remaining_amount from budget",
+                    )?;
+        
+                    let rows = stmt.query_map(params![], |row| {
+                        Ok(BudgetRow {
+                            category: row.get(0)?,
+                            amount: row.get(1)?,
+                            spent_amount: row.get(2)?,
+                            remaining_amount: row.get(3)?,
+                        })
+                    })?;
+        
+                    let mut results = Vec::new();
+                    for row in rows {
+                        results.push(row?);
+                    }
+                    let file_path = create_file("budget.csv");
+        
+                    let mut wtr = Writer::from_writer(file_path);
+                    wtr.write_record(&["Category", "Amount"])
+                        .expect("❌ Failed to write into a CSV file");
+        
+                    for budget in results {
+                        wtr.write_record(&[budget.category, budget.amount.to_string()])
+                            .expect("❌ Failed to write into a CSV file");
+                    }
+                    wtr.flush().expect("❌ Failed to flush the content");
+                }
+                Ok(false) => panic!(
+                    "❌ No data is found in the budget list. See 'move budget -h'"
+                ),
+                Err(error) => panic!("❌ {}", error),
             }
-            let file_path = create_file("budget.csv");
-
-            let mut wtr = Writer::from_writer(file_path);
-            wtr.write_record(&["Category", "Amount"])
-                .expect("❌ Failed to write into a CSV file");
-
-            for budget in results {
-                wtr.write_record(&[budget.category, budget.amount.to_string()])
-                    .expect("❌ Failed to write into a CSV file");
-            }
-            wtr.flush().expect("❌ Failed to flush the content");
         }
         Ok(false) => panic!(
-            "❌ No category is added to the total categories list. See 'move total-amount -h'"
+            "❌ No category is present in the total categories list. See 'move total-amount -h'"
         ),
         Err(error) => panic!("❌ {}", error),
     }
@@ -170,27 +179,36 @@ pub fn get_budget(conn: &Connection) -> Result<()> {
 
 pub fn show_budget(conn: &Connection) -> Result<()> {
     let category_present = total_categories_exist(conn);
+    let budget_present = budget_data_exists(conn);
     match category_present {
         Ok(true) => {
-            let mut stmt = conn
-                .prepare("select category, amount, spent_amount, remaining_amount from budget")?;
+            match budget_present {
+                Ok(true) => {
+                    let mut stmt = conn
+                        .prepare("select category, amount, spent_amount, remaining_amount from budget")?;
 
-            let rows = stmt.query_map(params![], |row| {
-                Ok(BudgetRow {
-                    category: row.get(0)?,
-                    amount: row.get(1)?,
-                    spent_amount: row.get(2)?,
-                    remaining_amount: row.get(3)?,
-                })
-            })?;
+                    let rows = stmt.query_map(params![], |row| {
+                        Ok(BudgetRow {
+                            category: row.get(0)?,
+                            amount: row.get(1)?,
+                            spent_amount: row.get(2)?,
+                            remaining_amount: row.get(3)?,
+                        })
+                    })?;
 
-            let mut results = Vec::new();
-            for row in rows {
-                results.push(row?);
+                    let mut results = Vec::new();
+                    for row in rows {
+                        results.push(row?);
+                    }
+
+                    let table = Table::new(results);
+                    println!("{}", table);
+                }
+                Ok(false) => panic!(
+                    "❌ No data is found in the budget list. See 'move budget -h'"
+                ),
+                Err(error) => panic!("❌ {}", error),
             }
-
-            let table = Table::new(results);
-            println!("{}", table);
         }
         Ok(false) => panic!(
             "❌ No category is added to the total categories list. See 'move total-amount -h'"
