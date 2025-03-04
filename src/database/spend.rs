@@ -213,11 +213,11 @@ impl SpendCategory {
             );
         }
 
-        let affected_rows =
+        let rows =
             conn.execute("delete from spend where category = ?", &[&self.category])?;
 
-        if affected_rows == 0 {
-            return Err(rusqlite::Error::QueryReturnedNoRows);
+        if rows == 0 {
+            panic!("❌ No category is added yet. See 'move spend -h'");
         }
 
         Ok(())

@@ -1,6 +1,7 @@
 use crate::cli::flags::total_amount::{TotalAmount, UpdateTotalAmount};
 use crate::common::common::create_file;
 use crate::usecases::total_amount::total_amount_exists;
+use crate::usecases::budget::budget_whole_sum;
 use csv::Writer;
 use rusqlite::{params, Connection, Result};
 use tabled::{Table, Tabled};
@@ -117,14 +118,20 @@ pub fn view_total_amount(conn: &Connection) -> Result<()> {
 
 impl UpdateTotalAmount {
     pub fn update_total_amount(&self, conn: &Connection) -> Result<()> {
-        let find_total_amount = total_amount_exists(conn);
-        match find_total_amount {
+        let present_total_amount = total_amount_exists(conn);
+        let budget_sum = budget_whole_sum(conn)?;
+
+        match present_total_amount {
             Ok(true) => {
-                conn.execute(
-                    "update totalamount set total_amount=?, remaining_amount = ?",
-                    &[&self.amount, &self.amount],
-                )
-                .expect("❌ Failed to update the total amount");
+                if self.amount < budget_sum {
+                    conn.execute("delete from budget", [])?;
+                } else {
+                    conn.execute(
+                        "update totalamount set total_amount=?, remaining_amount = ?",
+                        &[&self.amount, &self.amount],
+                    )
+                    .expect("❌ Failed to update the total amount");
+                }
             }
             Ok(false) => {
                 panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
@@ -136,17 +143,19 @@ impl UpdateTotalAmount {
 }
 
 pub fn delete_total_amount(conn: &Connection) -> Result<()> {
-    let find_total_amount = total_amount_exists(conn);
-    match find_total_amount {
+    let total_amount_present = total_amount_exists(conn);
+    match total_amount_present {
         Ok(true) => {
             let row = conn.execute("delete from totalamount", [])?;
-
             if row == 0 {
                 panic!("❌ Total amount is not added yet. See 'move total-amount -h'")
             }
+
+            conn.execute("delete from budget", [])?;
+            
         }
         Ok(false) => {
-            panic!("❌ No amount is added the total amount list. See 'move total-amount -h'")
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
         }
         Err(error) => panic!("❌ {}", error),
     }

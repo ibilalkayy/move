@@ -23,6 +23,12 @@ pub fn budget_total_equal(
     ))
 }
 
+pub fn budget_whole_sum(conn: &Connection) -> Result<f64> {
+    let mut stmt = conn.prepare("select sum(amount) from budget")?;
+    let budget_whole_sum: f64 = stmt.query_row([], |row| row.get::<_, f64>(0))?;
+    Ok(budget_whole_sum)
+} 
+
 pub fn budget_category_exists(conn: &Connection, category: &str) -> Result<bool> {
     let mut stmt = conn.prepare("select exists(select 1 from budget where category = ?)")?;
     let exists: bool = stmt.query_row([category], |row| row.get(0))?;

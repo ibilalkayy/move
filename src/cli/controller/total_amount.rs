@@ -65,7 +65,7 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
                 }
             }
 
-            UpdateTotalSubcommand::Categories(total_category) => {
+            UpdateTotalSubcommand::Category(total_category) => {
                 let conn = connection().expect("❌ Failed to establish the DB connection");
                 let result = total_category.update_total_category(&conn);
                 match result {

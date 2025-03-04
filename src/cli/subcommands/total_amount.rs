@@ -71,7 +71,7 @@ pub enum UpdateTotalSubcommand {
     Amount(UpdateTotalAmount),
 
     /// Update the categories of total amount
-    Categories(UpdateTotalCategory),
+    Category(UpdateTotalCategory),
 }
 
 #[derive(Debug, Parser)]

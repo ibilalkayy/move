@@ -137,10 +137,12 @@ impl UpdateTotalCategory {
             let total_category_present = total_category_exists(conn, &self.old_category);
             match total_category_present {
                 Ok(true) => {
-                    let affected_rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
-                    if affected_rows == 0 {
-                        return Err(rusqlite::Error::QueryReturnedNoRows);
+                    let rows = conn.execute(&query, rusqlite::params_from_iter(value))?;
+                    if rows == 0 {
+                        panic!("❌ No category is added yet. See 'move total-amount -h'");
                     }
+
+                    conn.execute("delete from budget where category=?", [&self.old_category])?;
                 }
                 Ok(false) => panic!(
                     "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
@@ -164,14 +166,16 @@ impl RemoveTotalCategory {
         let find_category = total_category_exists(conn, &self.category);
         match find_category {
             Ok(true) => {
-                let affected_rows = conn.execute(
+                let rows = conn.execute(
                     "delete from totalcategories where category=?",
                     &[&self.category],
                 )?;
 
-                if affected_rows == 0 {
-                    return Err(rusqlite::Error::QueryReturnedNoRows); // No rows were deleted
+                if rows == 0 {
+                    panic!("❌ No category is added yet. See 'move total-amount -h'");
                 }
+
+                conn.execute("delete from budget where category=?", [&self.category])?;
             }
             Ok(false) => panic!(
                 "❌ {} category is not added to the total categories list. See 'move total-amount -h'",

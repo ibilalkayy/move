@@ -268,10 +268,10 @@ impl UpdateBudget {
                                         None => {},
                                     }
                                     if budget_amount <= total_amount {
-                                        let affected_rows = conn
+                                        let rows = conn
                                             .execute(&query, rusqlite::params_from_iter(value))?;
-                                        if affected_rows == 0 {
-                                            panic!("❌ Budget is not added yet. See 'move budget -h'");
+                                        if rows == 0 {
+                                            panic!("❌ No budget is added yet. See 'move budget -h'");
                                         }
                                     } else {
                                         panic!(
