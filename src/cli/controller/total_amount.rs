@@ -6,8 +6,8 @@ use crate::cli::subcommands::total_amount::{
 use crate::database::{
     db::connection,
     status::insert_status,
-    total_amount::{delete_total_amount, view_total_amount},
-    total_categories::view_total_categories,
+    total_amount::{delete_total_amount, view_total_amount, get_total_amount},
+    total_categories::{view_total_categories, get_total_categories},
 };
 
 pub fn handle_total_amount(info: TotalAmountInfo) {
@@ -99,19 +99,19 @@ pub fn handle_total_amount(info: TotalAmountInfo) {
         },
 
         TotalAmountSubcommand::Get(total) => match total.get_total {
-            GetTotalSubcommand::Amount(total_amount) => {
+            GetTotalSubcommand::Amount => {
                 let conn = connection().expect("❌ Failed to establish the DB connection");
-                let result = total_amount.get_total_amount(&conn);
+                let result = get_total_amount(&conn);
                 match result {
                     Ok(_) => println!("✅ Total amount is saved in a CSV file"),
                     Err(error) => panic!("❌ {}", error),
                 }
             }
-            GetTotalSubcommand::Category(total_amount) => {
+            GetTotalSubcommand::Categories => {
                 let conn = connection().expect("❌ Failed to establish the DB connection");
-                let result = total_amount.get_total_categories(&conn);
+                let result = get_total_categories(&conn);
                 match result {
-                    Ok(_) => println!("✅ Category is saved in a CSV file"),
+                    Ok(_) => println!("✅ Categories are saved in a CSV file"),
                     Err(error) => panic!("❌ {}", error),
                 }
             }

@@ -35,47 +35,46 @@ impl TotalCategory {
         }
         Ok(())
     }
+}
 
-    pub fn get_total_categories(&self, conn: &Connection) -> Result<()> {
-        let find_category = total_categories_exist(conn);
-        match find_category {
-            Ok(true) => {
-                let mut stmt = conn.prepare("select category, label from totalcategories")?;
+pub fn get_total_categories(conn: &Connection) -> Result<()> {
+    let find_category = total_categories_exist(conn);
+    match find_category {
+        Ok(true) => {
+            let mut stmt = conn.prepare("select category, label from totalcategories")?;
 
-                let rows = stmt.query_map(params![], |row| {
-                    Ok(CategoryRow {
-                        category: row.get(0)?,
-                        label: row.get(1)?,
-                    })
-                })?;
+            let rows = stmt.query_map(params![], |row| {
+                Ok(CategoryRow {
+                    category: row.get(0)?,
+                    label: row.get(1)?,
+                })
+            })?;
 
-                let mut result = Vec::new();
-                for row in rows {
-                    result.push(row?)
-                }
-
-                let file_path = create_file("categories.csv");
-
-                let mut wtr = Writer::from_writer(file_path);
-
-                wtr.write_record(&["Category", "Label"])
-                    .expect("❌ Failed to write into a CSV file");
-
-                for categories in result {
-                    wtr.write_record(&[categories.category, categories.label])
-                        .expect("❌ Failed to write into a CSV file");
-                }
-
-                wtr.flush().expect("❌ Failed to flush the content");
+            let mut result = Vec::new();
+            for row in rows {
+                result.push(row?)
             }
-            Ok(false) => panic!(
-                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
-                &self.category
-            ),
-            Err(error) => panic!("❌ {}", error),
+
+            let file_path = create_file("categories.csv");
+
+            let mut wtr = Writer::from_writer(file_path);
+
+            wtr.write_record(&["Category", "Label"])
+                .expect("❌ Failed to write into a CSV file");
+
+            for categories in result {
+                wtr.write_record(&[categories.category, categories.label])
+                    .expect("❌ Failed to write into a CSV file");
+            }
+
+            wtr.flush().expect("❌ Failed to flush the content");
         }
-        Ok(())
+        Ok(false) => panic!(
+            "❌ No category is added to the total categories list. See 'move total-amount -h'"
+        ),
+        Err(error) => panic!("❌ {}", error),
     }
+    Ok(())
 }
 
 pub fn view_total_categories(conn: &Connection) -> Result<()> {

@@ -69,48 +69,6 @@ impl BudgetData {
         }
         Ok(())
     }
-
-    pub fn get_budget(&self, conn: &Connection) -> Result<()> {
-        let category_present = total_category_exists(conn, &self.category);
-        match category_present {
-            Ok(true) => {
-                let mut stmt = conn.prepare(
-                    "select category, amount, spent_amount, remaining_amount from budget",
-                )?;
-
-                let rows = stmt.query_map(params![], |row| {
-                    Ok(BudgetRow {
-                        category: row.get(0)?,
-                        amount: row.get(1)?,
-                        spent_amount: row.get(2)?,
-                        remaining_amount: row.get(3)?,
-                    })
-                })?;
-
-                let mut results = Vec::new();
-                for row in rows {
-                    results.push(row?);
-                }
-                let file_path = create_file("budget.csv");
-
-                let mut wtr = Writer::from_writer(file_path);
-                wtr.write_record(&["Category", "Amount"])
-                    .expect("❌ Failed to write into a CSV file");
-
-                for budget in results {
-                    wtr.write_record(&[budget.category, budget.amount.to_string()])
-                        .expect("❌ Failed to write into a CSV file");
-                }
-                wtr.flush().expect("❌ Failed to flush the content");
-            }
-            Ok(false) => panic!(
-                "❌ {} category is not added to the total categories list. See 'move total-amount -h'",
-                &self.category
-            ),
-            Err(error) => panic!("❌ {}", error),
-        }
-        Ok(())
-    }
 }
 
 impl BudgetCategory {
@@ -167,6 +125,47 @@ impl BudgetCategory {
 
         Ok(())
     }
+}
+
+pub fn get_budget(conn: &Connection) -> Result<()> {
+    let category_present = total_categories_exist(conn);
+    match category_present {
+        Ok(true) => {
+            let mut stmt = conn.prepare(
+                "select category, amount, spent_amount, remaining_amount from budget",
+            )?;
+
+            let rows = stmt.query_map(params![], |row| {
+                Ok(BudgetRow {
+                    category: row.get(0)?,
+                    amount: row.get(1)?,
+                    spent_amount: row.get(2)?,
+                    remaining_amount: row.get(3)?,
+                })
+            })?;
+
+            let mut results = Vec::new();
+            for row in rows {
+                results.push(row?);
+            }
+            let file_path = create_file("budget.csv");
+
+            let mut wtr = Writer::from_writer(file_path);
+            wtr.write_record(&["Category", "Amount"])
+                .expect("❌ Failed to write into a CSV file");
+
+            for budget in results {
+                wtr.write_record(&[budget.category, budget.amount.to_string()])
+                    .expect("❌ Failed to write into a CSV file");
+            }
+            wtr.flush().expect("❌ Failed to flush the content");
+        }
+        Ok(false) => panic!(
+            "❌ No category is added to the total categories list. See 'move total-amount -h'"
+        ),
+        Err(error) => panic!("❌ {}", error),
+    }
+    Ok(())
 }
 
 pub fn show_budget(conn: &Connection) -> Result<()> {

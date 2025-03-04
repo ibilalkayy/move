@@ -19,7 +19,7 @@ pub enum BudgetSubcommand {
     Show,
 
     /// Get the budget data in a CSV file
-    Get(BudgetData),
+    Get,
 
     /// Update the budget details
     Update(UpdateBudget),

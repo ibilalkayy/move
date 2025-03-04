@@ -98,8 +98,8 @@ pub struct GetTotal {
 #[derive(Debug, Subcommand)]
 pub enum GetTotalSubcommand {
     /// Get the total amount data
-    Amount(TotalAmount),
+    Amount,
 
     /// Get the categories data
-    Category(TotalCategory),
+    Categories,
 }

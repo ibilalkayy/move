@@ -1,5 +1,5 @@
 use crate::cli::subcommands::budget::{BudgetInfo, BudgetSubcommand};
-use crate::database::{budget::show_budget, db::connection};
+use crate::database::{budget::{show_budget, get_budget}, db::connection};
 
 pub fn handle_budget(info: BudgetInfo) {
     match info.budget_subcommand {
@@ -30,9 +30,9 @@ pub fn handle_budget(info: BudgetInfo) {
             }
         }
 
-        BudgetSubcommand::Get(budget) => {
+        BudgetSubcommand::Get => {
             let conn = connection().expect("❌ Failed to establish the DB connection");
-            let result = budget.get_budget(&conn);
+            let result = get_budget(&conn);
             match result {
                 Ok(_) => println!("✅ Budget data is successfully saved in a CSV file"),
                 Err(error) => panic!("❌ {}", error),

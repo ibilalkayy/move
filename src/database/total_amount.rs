@@ -33,54 +33,54 @@ impl TotalAmount {
         }
         Ok(())
     }
+}
 
-    pub fn get_total_amount(&self, conn: &Connection) -> Result<()> {
-        let find_total_amount = total_amount_exists(conn);
-        match find_total_amount {
-            Ok(true) => {
-                let mut stmt = conn.prepare(
-                    "select total_amount, spent_amount, remaining_amount from totalamount",
-                )?;
+pub fn get_total_amount(conn: &Connection) -> Result<()> {
+    let total_amount_present = total_amount_exists(conn);
+    match total_amount_present {
+        Ok(true) => {
+            let mut stmt = conn.prepare(
+                "select total_amount, spent_amount, remaining_amount from totalamount",
+            )?;
 
-                let rows = stmt.query_map(params![], |row| {
-                    Ok(TotalAmountRow {
-                        total_amount: row.get(0)?,
-                        spent_amount: row.get(1)?,
-                        remaining_amount: row.get(2)?,
-                    })
-                })?;
+            let rows = stmt.query_map(params![], |row| {
+                Ok(TotalAmountRow {
+                    total_amount: row.get(0)?,
+                    spent_amount: row.get(1)?,
+                    remaining_amount: row.get(2)?,
+                })
+            })?;
 
-                let mut result = Vec::new();
-                for row in rows {
-                    result.push(row?)
-                }
-
-                let file_path = create_file("total_amount.csv");
-
-                let mut wtr = Writer::from_writer(file_path);
-
-                wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount"])
-                    .expect("❌ Failed to write into a CSV file");
-
-                for amount in result {
-                    wtr.write_record(&[
-                        amount.total_amount.to_string(),
-                        amount.spent_amount.to_string(),
-                        amount.remaining_amount.to_string(),
-                    ])
-                    .expect("❌ Failed to write into a CSV file");
-                }
-
-                wtr.flush().expect("❌ Failed to flush the content");
+            let mut result = Vec::new();
+            for row in rows {
+                result.push(row?)
             }
-            Ok(false) => {
-                panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
+
+            let file_path = create_file("total_amount.csv");
+
+            let mut wtr = Writer::from_writer(file_path);
+
+            wtr.write_record(&["Total Amount", "Spent Amount", "Remaining Amount"])
+                .expect("❌ Failed to write into a CSV file");
+
+            for amount in result {
+                wtr.write_record(&[
+                    amount.total_amount.to_string(),
+                    amount.spent_amount.to_string(),
+                    amount.remaining_amount.to_string(),
+                ])
+                .expect("❌ Failed to write into a CSV file");
             }
-            Err(error) => panic!("❌ {}", error),
+
+            wtr.flush().expect("❌ Failed to flush the content");
         }
-
-        Ok(())
+        Ok(false) => {
+            panic!("❌ No amount is added to the total amount list. See 'move total-amount -h'")
+        }
+        Err(error) => panic!("❌ {}", error),
     }
+
+    Ok(())
 }
 
 pub fn view_total_amount(conn: &Connection) -> Result<()> {
