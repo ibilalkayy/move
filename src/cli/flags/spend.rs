@@ -10,7 +10,7 @@ pub struct SpendData {
     #[clap(short, long)]
     pub amount: Option<f64>,
 
-    /// Write the recepient address
+    /// Write the recepient blockchain address
     #[clap(short, long)]
     pub recepient_address: Option<String>,
 

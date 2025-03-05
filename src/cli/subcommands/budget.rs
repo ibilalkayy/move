@@ -24,6 +24,6 @@ pub enum BudgetSubcommand {
     /// Update the budget details
     Update(UpdateBudget),
 
-    /// Delete the budget details
-    Delete(BudgetCategory),
+    /// Remove the budget details
+    Remove(BudgetCategory),
 }

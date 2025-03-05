@@ -12,7 +12,7 @@ It performs the following operations in pattern:
     ✅ Make the total amount status active
     ✅ Store the blockchain credentials
     ✅ The keys will be provided to use them later.
-    ✅ Spend the money(in ethereum) on different categories.
+    ✅ Spend the money(in blockchain) on different categories.
 
 You can also get the total amount, budget, and spending data in the CSV file for record saving.
 
@@ -28,18 +28,21 @@ Some of the crates that this project uses:
     ✅ Tokio -- Run the asynchronous functions
     ✅ Tabled -- Show the data in a nice table format
 
+## **Installation**
+
+You can easily install move application in your machine by writing the following command:
+
+```
+cargo install move
+```
+
+> **Note:** Make sure you have cargo already installed.
+
 ## **Commands**
 
 Move provides a variety of commands for managing the budget. Below are some key commands:
 
 To use the application, first run the following command:
-
-```
-✅ cargo build
-✅ cargo install --path . & cargo help
-```
-
-Once you run the above commands, you can then start working on this application by writing:
 
 ```
 move --help
@@ -75,6 +78,18 @@ git clone https://github.com/your-username/move.git
 ```
 cd move
 ```
+
+Once you run the above commands, you can then start working with the application by writing:
+
+```
+cargo build
+```
+
+```
+cargo install --path . & cargo help
+```
+
+After these commands, you can again run `move --help` and start making changes.
 
 ## **Contributing**
 

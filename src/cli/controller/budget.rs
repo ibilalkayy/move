@@ -44,14 +44,11 @@ pub fn handle_budget(info: BudgetInfo) {
             let result = budget.update_budget(&conn);
             match result {
                 Ok(_) => println!("✅ Budget data is successfully updated"),
-                Err(rusqlite::Error::QueryReturnedNoRows) => {
-                    panic!("❌ No matching record is found")
-                }
                 Err(error) => panic!("❌ {:?}", error),
             }
         }
 
-        BudgetSubcommand::Delete(budget) => {
+        BudgetSubcommand::Remove(budget) => {
             let conn = connection().expect("❌ Failed to establish the DB connection");
             let result = budget.delete_budget(&conn);
             match result {
